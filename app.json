@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "bite-buddy-fronted",
-    "slug": "bite-buddy-fronted",
+    "name": "bite-buddy-frontend",
+    "slug": "bite-buddy-frontend",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
