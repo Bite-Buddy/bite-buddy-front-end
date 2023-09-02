@@ -1,4 +1,4 @@
-// import 'react-native-url-polyfill/auto'
+import 'react-native-url-polyfill/auto'
 import { useState, useEffect } from 'react'
 import { supabase } from './supabaseService'
 import Auth from './components/Auth'
