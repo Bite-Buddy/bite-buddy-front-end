@@ -12,8 +12,9 @@ export default function Auth() {
   const [result, setResult] = useState<WebBrowser.WebBrowserResult | null>();
 
   async function handleThirdPartyRedirect(url: string) {
-    let result = await WebBrowser.openBrowserAsync(url);
+    const result = await WebBrowser.openBrowserAsync(url);
     setResult(result);
+    console.log(result);  
   };
 
   async function signInWithEmail() {
@@ -45,13 +46,13 @@ export default function Auth() {
     let { data, error } = await supabase.auth.signInWithOAuth({
       provider: provider,
     });
-
+    
     if (error) Alert.alert(error.message)
-
-    setLoading(false);
 
     console.log(data);
     await handleThirdPartyRedirect(data.url);
+
+    setLoading(false);
     console.log("LOGIN WITH GOOGLE", (await supabase.auth.getSession()).data.session?.user.id);
   }
 
