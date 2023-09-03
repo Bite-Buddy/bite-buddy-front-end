@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.18.2",
+    "@react-native-google-signin/google-signin": "^10.0.1",
     "@supabase/supabase-js": "^2.33.1",
     "expo": "^49.0.9",
     "expo-secure-store": "~12.3.1",
