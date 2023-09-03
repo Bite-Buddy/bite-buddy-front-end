@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { Button, Input } from "react-native-elements";
 import { supabase } from "../supabaseService";
+import { Provider } from "@supabase/supabase-js";
 
 export default function Auth() {
   const [email, setEmail] = useState('')
@@ -16,7 +17,9 @@ export default function Auth() {
     })
 
     if (error) Alert.alert(error.message)
+
     setLoading(false)
+    console.log("USER ON SIGN IN, SUPABASE ID: ", (await supabase.auth.getSession()).data.session?.user.id);
   }
 
   async function signUpWithEmail() {
@@ -28,6 +31,20 @@ export default function Auth() {
 
     if (error) Alert.alert(error.message)
     setLoading(false)
+  }
+
+  async function logInWithThirdParty(provider: Provider) {
+    setLoading(true);
+    let { data, error } = await supabase.auth.signInWithOAuth({
+      provider: provider,
+    });
+
+    if (error) Alert.alert(error.message)
+
+    setLoading(false);
+
+    console.log(data);
+    console.log("LOGIN WITH GOOGLE", (await supabase.auth.getSession()).data.session?.user.id);
   }
 
   return (
@@ -58,6 +75,9 @@ export default function Auth() {
       </View>
       <View style={styles.verticallySpaced}>
         <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
+      </View>
+      <View style={styles.verticallySpaced}>
+        <Button title="Google" disabled={loading} onPress={() => logInWithThirdParty("google")} />
       </View>
     </View>
   )
