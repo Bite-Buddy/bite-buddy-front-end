@@ -3,11 +3,18 @@ import { Alert, StyleSheet, View } from "react-native";
 import { Button, Input } from "react-native-elements";
 import { supabase } from "../supabaseService";
 import { Provider } from "@supabase/supabase-js";
+import * as WebBrowser from "expo-web-browser";
 
 export default function Auth() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState<WebBrowser.WebBrowserResult | null>();
+
+  async function handleThirdPartyRedirect(url: string) {
+    let result = await WebBrowser.openBrowserAsync(url);
+    setResult(result);
+  };
 
   async function signInWithEmail() {
     setLoading(true)
@@ -44,6 +51,7 @@ export default function Auth() {
     setLoading(false);
 
     console.log(data);
+    await handleThirdPartyRedirect(data.url);
     console.log("LOGIN WITH GOOGLE", (await supabase.auth.getSession()).data.session?.user.id);
   }
 
