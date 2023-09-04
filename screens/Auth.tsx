@@ -6,6 +6,7 @@ import { Provider } from "@supabase/supabase-js";
 import * as WebBrowser from "expo-web-browser";
 import { useNavigation } from "@react-navigation/native";
 // import * as Linking from "expo-linking";
+import { devUrls } from "../developmentUrls";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -51,7 +52,7 @@ export default function Auth() {
     setLoading(true);
     try {
       const supabase_url = "https://qlpmqnbgyofvhqyhxvhi.supabase.co";
-      const redirectUri = "exp://192.168.10.108:8081/"; 
+      const redirectUri = devUrls.danUrl; 
       const response = await WebBrowser.openAuthSessionAsync(
         `${supabase_url}/auth/v1/authorize?provider=${provider}&redirect_to=${redirectUri}`,
         redirectUri
