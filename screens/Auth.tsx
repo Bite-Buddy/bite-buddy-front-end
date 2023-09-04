@@ -1,30 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { Button, Input } from "react-native-elements";
 import { supabase } from "../supabaseService";
 import { Provider } from "@supabase/supabase-js";
 import * as WebBrowser from "expo-web-browser";
-import { useNavigation } from '@react-navigation/native';
-import * as Linking from "expo-linking";
+import { useNavigation } from "@react-navigation/native";
+// import * as Linking from "expo-linking";
 
 export default function Auth() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<WebBrowser.WebBrowserResult | null>();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-  useEffect(() => {
-    if (result) {
-      navigation.navigate("Account");
-    }
-  }, [result, navigation]);
-  async function handleThirdPartyRedirect(url: string) {
-    const result = await WebBrowser.openBrowserAsync(url);
-    setResult(result);
-    console.log(result);
-   
-    // WebBrowser.dismissBrowser();
-    // navigation.navigate("Account");
+
+  async function getCurrentSessionData(): Promise<void> {
+    const data = (await supabase.auth.getSession()).data.session;
+    console.log("User id: ", data?.user.id);
+    console.log("User email: ", data?.user.email);
+    console.log("User created at: ", data?.user.created_at);
+    console.log("User last signed in at: ", data?.user.last_sign_in_at);
   }
 
   async function signInWithEmail() {
@@ -51,19 +45,40 @@ export default function Auth() {
     setLoading(false)
   }
 
+  //this long ass mess is a workaround for supabase.auth.signInWithOauth
+  // which doesn't seem to want to store the session tokens etc
   async function logInWithThirdParty(provider: Provider) {
-    setLoading(true);
-    let { data, error } = await supabase.auth.signInWithOAuth({
-      provider: provider,
-    });
-    
-    if (error) Alert.alert(error.message)
+    setLoading(true)
+    try {
+      const supabase_url = "https://qlpmqnbgyofvhqyhxvhi.supabase.co";
+      const redirectUri = "exp://192.168.10.108:8081/"; 
+      const response = await WebBrowser.openAuthSessionAsync(
+        `${supabase_url}/auth/v1/authorize?provider=${provider}&redirect_to=${redirectUri}`,
+        redirectUri
+      );
 
-    console.log(data);
-    await handleThirdPartyRedirect(data.url);
+      if (response.type === "success") {
+        const url = response.url;
+        const params = url.split("#")[1];
+        const accessToken = params.split("&")[0].split("=")[1];
+        const refreshToken = params.split("&")[2].split("=")[1];
 
+        const { data, error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
+        if (error) {
+          Alert.alert(error.message);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      WebBrowser.maybeCompleteAuthSession();
+    }
+    const sesh = (await supabase.auth.getSession());
+    sesh.data.session?.user && navigation.navigate("Account");
     setLoading(false);
-    console.log("LOGIN WITH GOOGLE", (await supabase.auth.getSession()).data.session?.user.id);
   }
 
   return (
