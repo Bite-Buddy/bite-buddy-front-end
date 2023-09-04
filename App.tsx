@@ -15,11 +15,12 @@ export default function App() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      console.log(session?.user.email);
+      console.log("THE CURRENT USER EMAIL", session?.user.email);
     });
 
     supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
+      setSession(session);
+      console.log("THE NEW USER EMAIL", session?.user.email);
     })
   }, [])
 
@@ -33,8 +34,3 @@ export default function App() {
     </NavigationContainer>
   )
 }
-{/* <View>
-      {session && session.user ? <Account key={session.user.id} session={session} /> 
-      : 
-    <Auth />}
-    </View> */}
