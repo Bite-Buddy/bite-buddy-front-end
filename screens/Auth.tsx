@@ -22,7 +22,7 @@ export default function Auth() {
   }
 
   async function signInWithEmail() {
-    setLoading(true)
+    setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
@@ -30,25 +30,25 @@ export default function Auth() {
 
     if (error) Alert.alert(error.message)
 
-    setLoading(false)
+    setLoading(false);
     console.log("USER ON SIGN IN, SUPABASE ID: ", (await supabase.auth.getSession()).data.session?.user.id);
   }
 
   async function signUpWithEmail() {
-    setLoading(true)
+    setLoading(true);
     const { error } = await supabase.auth.signUp({
       email: email,
       password: password,
     })
 
     if (error) Alert.alert(error.message)
-    setLoading(false)
+    setLoading(false);
   }
 
   //this long ass mess is a workaround for supabase.auth.signInWithOauth
   // which doesn't seem to want to store the session tokens etc
   async function logInWithThirdParty(provider: Provider) {
-    setLoading(true)
+    setLoading(true);
     try {
       const supabase_url = "https://qlpmqnbgyofvhqyhxvhi.supabase.co";
       const redirectUri = "exp://192.168.10.108:8081/"; 
@@ -67,9 +67,7 @@ export default function Auth() {
           access_token: accessToken,
           refresh_token: refreshToken,
         });
-        if (error) {
-          Alert.alert(error.message);
-        }
+        if (error) Alert.alert(error.message);
       }
     } catch (error) {
       console.log(error);

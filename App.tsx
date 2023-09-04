@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { View } from "react-native";
 import { supabase } from "./supabaseService";
 import { Session } from "@supabase/supabase-js";
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import Auth from './screens/Auth';
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import Auth from "./screens/Auth";
 import Account from "./screens/Account";
 
 const Stack = createStackNavigator();

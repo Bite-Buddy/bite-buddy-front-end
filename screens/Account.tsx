@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { Button } from "react-native-elements";
 import { supabase } from "../supabaseService";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 
 export default function Account() {
 const navigation = useNavigation();
