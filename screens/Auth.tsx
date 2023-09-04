@@ -1,21 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { Button, Input } from "react-native-elements";
 import { supabase } from "../supabaseService";
 import { Provider } from "@supabase/supabase-js";
 import * as WebBrowser from "expo-web-browser";
+import { useNavigation } from '@react-navigation/native';
+import * as Linking from "expo-linking";
 
 export default function Auth() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<WebBrowser.WebBrowserResult | null>();
-
+  const navigation = useNavigation();
+  useEffect(() => {
+    if (result) {
+      navigation.navigate("Account");
+    }
+  }, [result, navigation]);
   async function handleThirdPartyRedirect(url: string) {
     const result = await WebBrowser.openBrowserAsync(url);
     setResult(result);
-    console.log(result);  
-  };
+    console.log(result);
+   
+    // WebBrowser.dismissBrowser();
+    // navigation.navigate("Account");
+  }
 
   async function signInWithEmail() {
     setLoading(true)
