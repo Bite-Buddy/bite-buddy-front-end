@@ -11,7 +11,7 @@ const navigation = useNavigation();
         <Button 
         title="Sign Out" 
         onPress={() => 
-        {supabase.auth.signOut(); 
+        {supabase.auth.signOut();
         navigation.navigate("Auth")}}
         />
       </View>
