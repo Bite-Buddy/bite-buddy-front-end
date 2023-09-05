@@ -4,25 +4,42 @@ const domain = "http://localhost:8000";
 
 async function createUser(supabase_id: string, email: string):Promise<Response> {
   const response = await fetch(`${domain}/users`, {
-    method: 'POST',
+    method: "POST",
     body: JSON.stringify({
       supabase_id: supabase_id,
       email: email,
     }),
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
+      "Accept": "application/json",
+      "Content-Type": "application/json",
     },
   });
   return response.json();
 }
 
-async function getUsers():Promise<Response>  {
+async function getUsers():Promise<Response> {
   const response = await fetch(`${domain}/users`, {
-    method: 'GET',
+    method: "GET",
   });
   return response.json();
 }
+
+async function getBySupabaseID(supabase_id: string):Promise<Response> {
+  const response = await fetch(`${domain}/users/:${supabase_id}`, {
+    method: "GET",
+  });
+  return response.json();
+}
+
+async function createFood() {
+
+}
+
+
+
+
+
+
 
 //testing
 async function getUserInfo(id: string) {
