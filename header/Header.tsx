@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Button, Pressable } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
+import { FontAwesome } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
+
+
 
 
 export default function Header() {
@@ -11,13 +17,13 @@ export default function Header() {
   return (
     <View style={styles.header}>
       <Pressable style={styles.button} title="Kitchen" onPress={() => navigate('Kitchen')}>
-      <Text style={styles.text}>Kitchen</Text>
+      <Text style={styles.text}><MaterialCommunityIcons name="fridge-outline" size={30} color="black" /></Text>
       </Pressable>
       <Pressable style={styles.button} title="List" onPress={() => navigate('List')}>
-      <Text style={styles.text} Icon={{ type: 'font-awesome', name: 'envelope' }}>List</Text>
+      <Text style={styles.text}><FontAwesome5 name="list-alt" size={24} color="black" /></Text>
       </Pressable>
       <Pressable style={styles.button} title="Profile" onPress={() => navigate('Profile')}>
-      <Text style={styles.text}>Profile</Text>
+      <Text style={styles.text}><Ionicons name="person-circle" size={33} color="black" /></Text>
       </Pressable>
     </View>
   )
