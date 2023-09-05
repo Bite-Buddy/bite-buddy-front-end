@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import { StyleSheet, View, Text, ScrollView, TextInput } from 'react-native';
 
 
@@ -9,7 +9,7 @@ export default function AddFood() {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.headline}>Add New Item</Text>
-      <View>
+      <View style={styles.formBox}>
         <Text style={styles.verticallySpaced}>Name</Text>
         <TextInput
           style={styles.userInput}
@@ -34,6 +34,10 @@ const styles = StyleSheet.create({
     paddingTop: 4,
     paddingBottom: 4,
     alignSelf: 'stretch',
+  },
+  formBox: {
+    borderColor: 'gray',
+    borderWidth: 1
   },
   userInput: {
     height: 40,
