@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TextInput } from 'react-native';
 
-const today = new Date()
+
 
 export default function AddFood() {
+  const today = new Date();
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.headline}>Add New Item</Text>
@@ -16,7 +18,7 @@ export default function AddFood() {
         <Text style={styles.verticallySpaced}>Bought on</Text>
         <TextInput
           style={styles.userInput}
-          defaultValue={today.toISOString()}
+          defaultValue={today.toLocaleString()}//Need to change it to calender input instead of text
         />
       </View>
     </ScrollView>
