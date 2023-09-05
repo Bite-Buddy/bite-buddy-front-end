@@ -1,6 +1,8 @@
-import { StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView, Pressable } from "react-native";
 import { Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 
 export default function Kitchen() {
 const navigation = useNavigation();
@@ -44,7 +46,7 @@ const foodList = [
         <View>
           {foodList.map((foodProduct) => {
             return (
-              <View style={styles.list}>
+              <View style={styles.list} key={`foodProduct${foodProduct.name}`}>
                 <Text style={styles.name}>{foodProduct.name}</Text>
                 <Text style={styles.date}>{foodProduct.date}</Text>
                 
@@ -52,8 +54,14 @@ const foodList = [
             );
           })}
         </View>
+      
       </ScrollView>
       </View>
+      <View>
+      <Pressable style={styles.button} title="AddFood" onPress={() => navigation.navigate('AddFood')}>
+        <Text style={styles.text}><MaterialCommunityIcons name="plus" size={30} color="black" /></Text>
+      </Pressable>
+        </View>
     </View>
   )
 }
@@ -65,15 +73,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#696666',
     padding: 20,
     margin: 0,
+   
   },
   verticallySpaced: {
     flex: 1,
     backgroundColor: '#EFCA46',
     borderWidth: 0,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    borderRadius: 20,
+    marginBottom: 20,
   },
   mt20: {
     marginTop: 20,
@@ -82,7 +89,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginTop: 10,
     marginBottom: 0,
-    flex: 0.3,
+    flex: 1,
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center',
@@ -114,5 +121,13 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 7,
     borderBottomLeftRadius: 7,
     borderBottomRightRadius: 7,
+  },
+  button: {
+    color: 'black',
+    display: 'flex',
+    alignItems: 'center',
+
+
   }
+
 })
