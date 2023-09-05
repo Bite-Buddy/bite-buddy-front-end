@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import { Button } from "react-native-elements";
+import { Text } from "react-native-elements";
 import { supabase } from "../supabaseService";
 import { useNavigation } from "@react-navigation/native";
 
@@ -8,28 +8,45 @@ const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <View style={styles.verticallySpaced}>
-        <Button 
-        title="Sign Out" 
-        onPress={() => 
-        {supabase.auth.signOut();
-        navigation.navigate("Auth")}}
-        />
+        <Text style={styles.heading}>Welcome to BiteBuddy</Text>
       </View>
     </View>
   )
 }
 
+/* <Button 
+title="Sign Out" 
+onPress={() => 
+{supabase.auth.signOut();
+navigation.navigate("Auth")}}
+/> */
+
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
-    padding: 12,
+    flex: 1,
+    justifyContent: 'space-between',
+    backgroundColor: '#696666',
+    padding: 20,
+    margin: 0,
   },
   verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    alignSelf: 'stretch',
+    flex: 1,
+    backgroundColor: '#EFCA46',
+    borderWidth: 0,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
   },
   mt20: {
     marginTop: 20,
   },
+  heading: {
+    fontSize: 50,
+    flex: 0.3,
+    fontWeight: 'bold',
+    color: 'black',
+    textAlign: 'center',
+   
+  }
 })
