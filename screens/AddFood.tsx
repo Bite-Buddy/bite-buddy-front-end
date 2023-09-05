@@ -9,14 +9,15 @@ export default function AddFood() {
         boughtOn: Date
     }[]
     const today = new Date();
+    const [itemNum, setItemNum] = useState<number>(1);
     const [items, setItems] = useState<Items>([{ name: "", boughtOn: today }]);
 
     return (
         <ScrollView style={styles.container}>
             <Text style={styles.headline}>Add New Item</Text>
-            {items.map((item, index) => { return <FoodInput key={index} name={item.name} boughtOn={item.boughtOn} /> })}
+            {items.map((item, index) => { return <FoodInput key={index} item={item.name} boughtOn={item.boughtOn} /> })}
             <Button
-                onPress={() => { setItems([...items, { name: "", boughtOn: today }]) }}
+                onPress={() => { setItemNum(itemNum + 1) }}
                 title={"+"} />
         </ScrollView>
     );
