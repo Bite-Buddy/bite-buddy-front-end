@@ -11,7 +11,7 @@ export default function AddFood() {
         <Text style={styles.verticallySpaced}>Name</Text>
         <TextInput
           style={styles.userInput}
-          defaultValue="You can type in me"
+          placeholder='Type the name of item'
         />
         <Text style={styles.verticallySpaced}>Bought on</Text>
         <TextInput
