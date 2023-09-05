@@ -25,7 +25,7 @@ export default function FoodInput({ mode, initialItemName }: Props) {
           return {
             name: item.name,
             boughtOn: item.boughtOn,
-            error: item.name === "" ? "Name is required" : ""
+            error: item.name === "" ? "*required" : ""
           }
         });
       //Update items array state
@@ -35,11 +35,21 @@ export default function FoodInput({ mode, initialItemName }: Props) {
   }
 
   const handleSubmit = (): void => {
-    //Need to implement "PUT" request for "Create" mode, and PATCH request for "Edit" mode
+    if (!isValid) return
+    if (mode === "Create") { 
+      //Need to implement "PUT" request
+    }
+    else if(mode==="Edit"){
+      //Need to implement "PATCH" request
+    }
   }
 
   const handleCancel = (): void => {
     //Need to implement cancelling the input and goes back to the appropreate screen
+  }
+
+  const handleDelete = (): void => { 
+    //Need to implement "DELETE" request
   }
 
   return (
@@ -47,7 +57,7 @@ export default function FoodInput({ mode, initialItemName }: Props) {
       {items.map((item) => {
         return (
           <View style={styles.formBox}>
-            <Text style={styles.verticallySpaced}>Name</Text>
+            <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
             <TextInput style={styles.userInput} placeholder="Type the name of item" defaultValue={item.name} />
             <Text style={styles.verticallySpaced}>Bought on</Text>
             <TextInput
@@ -64,6 +74,8 @@ export default function FoodInput({ mode, initialItemName }: Props) {
       }
       <View style={styles.buttons}>
         <Button title={mode} onPress={isValid ?? handleSubmit} />
+        {mode === "Edit" ?? <Button title="delete" onPress={isValid ?? handleDelete} />
+        }
         <Button title="Cancel" onPress={handleCancel} />
       </View>
     </>
@@ -95,7 +107,7 @@ const styles = StyleSheet.create({
   buttons: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent:'space-evenly'
+    justifyContent: 'space-evenly'
   }
   /**Copied below from the other component, not sure the intention */
   // mt20: {
