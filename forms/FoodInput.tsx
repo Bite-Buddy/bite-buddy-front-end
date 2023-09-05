@@ -57,13 +57,15 @@ export default function FoodInput({ mode, initialItemName }: Props) {
           </View>)
       })}
       {
-        mode === "Create"
-        ?? <Button
-          title="more+"
-          onPress={() => { setItems([...items, { name: "", boughtOn: today, error: "" }]) }} />
+        mode === "Create" && <View style={styles.more}>
+          <Button
+            title="more+"
+            onPress={() => { setItems([...items, { name: "", boughtOn: today, error: "" }]) }} /></View>
       }
-      <Button title={mode} onPress={isValid ?? handleSubmit} />
-      <Button title="Cancel" onPress={handleCancel} />
+      <View style={styles.buttons}>
+        <Button title={mode} onPress={isValid ?? handleSubmit} />
+        <Button title="Cancel" onPress={handleCancel} />
+      </View>
     </>
   );
 }
@@ -87,6 +89,14 @@ const styles = StyleSheet.create({
     borderColor: 'lightgray',
     borderWidth: 1,
   },
+  more: {
+    margin: 10
+  },
+  buttons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent:'space-evenly'
+  }
   /**Copied below from the other component, not sure the intention */
   // mt20: {
   //   marginTop: 20,
