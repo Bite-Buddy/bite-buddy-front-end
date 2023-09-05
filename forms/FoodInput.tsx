@@ -57,7 +57,7 @@ export default function FoodInput({ mode, initialItemName }: Props) {
           </View>)
       })}
       {
-        (mode === "Create" && index === items.length - 1)
+        mode === "Create"
         ?? <Button
           title="more+"
           onPress={() => { setItems([...items, { name: "", boughtOn: today, error: "" }]) }} />
