@@ -10,6 +10,9 @@ import Kitchen from "./screens/Kitchen";
 import Profile from "./screens/Profile";
 import List from "./screens/List";
 import Header from "./header/Header";
+import AddFood from "./forms/AddFood";
+import 'react-native-gesture-handler';
+
 
 const Stack = createStackNavigator();
 
@@ -33,19 +36,38 @@ export default function App() {
       <Stack.Navigator initialRouteName="Auth">
         <Stack.Screen name="Auth" component={Auth} />
         <Stack.Screen name="Account" component={Account} options={({ navigation }) => ({
-          headerTitle: () => <Header />
+          headerTitle: () => <Header />,
+          headerStyle: {
+            backgroundColor: '#EFCA46',
+          },
           
         })} />
         <Stack.Screen name="Kitchen" component={Kitchen} options={({ navigation }) => ({
-          headerTitle: () => <Header />
+          headerTitle: () => <Header />,
+          headerStyle: {
+            backgroundColor: '#EFCA46',
+          },
           
         })}/>
         <Stack.Screen name="Profile" component={Profile} options={({ navigation }) => ({
-          headerTitle: () => <Header />
+          headerTitle: () => <Header />,
+          headerStyle: {
+            backgroundColor: '#EFCA46',
+          },
           
         })}/>
         <Stack.Screen name="List" component={List} options={({ navigation }) => ({
-          headerTitle: () => <Header />
+          headerTitle: () => <Header />,
+          headerStyle: {
+            backgroundColor: '#EFCA46',
+          },
+          
+        })}/>
+        <Stack.Screen name="AddFood" component={AddFood} options={({ navigation }) => ({
+          headerTitle: () => <Header />,
+          headerStyle: {
+            backgroundColor: '#EFCA46',
+          },
           
         })}/>
         {/* Add more screens as needed */}
