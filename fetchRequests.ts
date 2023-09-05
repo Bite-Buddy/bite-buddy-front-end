@@ -1,8 +1,6 @@
-import { supabase } from "./supabaseService";
-
 const domain = "http://localhost:8000";
 
-async function createUser(supabase_id: string, email: string):Promise<Response> {
+export async function createUser(supabase_id: string, email: string):Promise<Response> {
   const response = await fetch(`${domain}/users`, {
     method: "POST",
     body: JSON.stringify({
@@ -17,14 +15,14 @@ async function createUser(supabase_id: string, email: string):Promise<Response> 
   return response.json();
 }
 
-async function getUsers():Promise<Response> {
+export async function getUsers():Promise<Response> {
   const response = await fetch(`${domain}/users`, {
     method: "GET",
   });
   return response.json();
 }
 
-async function getBySupabaseID(supabase_id: string):Promise<Response> {
+export async function getBySupabaseID(supabase_id: string):Promise<Response> {
   const response = await fetch(`${domain}/users/:${supabase_id}`, {
     method: "GET",
   });
