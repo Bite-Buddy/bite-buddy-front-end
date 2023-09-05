@@ -1,57 +1,44 @@
 import React, { useRef } from 'react';
-import { StyleSheet, View, Text, ScrollView, TextInput } from 'react-native';
+import { StyleSheet, View, Text, TextInput } from 'react-native';
 
-
-
-export default function AddFood() {
-  const today = new Date();
-
-  return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.headline}>Add New Item</Text>
-      <View style={styles.formBox}>
-        <Text style={styles.verticallySpaced}>Name</Text>
-        <TextInput
-          style={styles.userInput}
-          placeholder='Type the name of item'
-        />
-        <Text style={styles.verticallySpaced}>Bought on</Text>
-        <TextInput
-          style={styles.userInput}
-          defaultValue={today.toLocaleString()}//Need to change it to calender input instead of text
-        />
-      </View>
-    </ScrollView>
-  );
+type Props = {
+  name: string,
+  boughtOn: Date
 };
 
+export default function FoodInput({ boughtOn, name }: Props) {
+  return (
+    <View style={styles.formBox}>
+      <Text style={styles.verticallySpaced}>Name</Text>
+      <TextInput style={styles.userInput} placeholder="Type the name of item" defaultValue={name} />
+      <Text style={styles.verticallySpaced}>Bought on</Text>
+      <TextInput
+        style={styles.userInput}
+        defaultValue={boughtOn.toLocaleString()} //Need to change it to calender input instead of text
+      />
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 40,
-    padding: 12,
-  },
   verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
     alignSelf: 'stretch',
   },
   formBox: {
-    borderColor: 'gray',
-    borderWidth: 1
-  },
-  userInput: {
-    height: 40,
+    padding: 10,
+    paddingTop: 20,
     borderColor: 'gray',
     borderWidth: 1,
   },
-  headline: {
-    margin: 5,
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+  userInput: {
+    height: 40,
+    marginBottom: 15,
+    padding: 5,
+    borderColor: 'gray',
+    borderWidth: 1,
   },
   /**Copied below from the other component, not sure the intention */
   // mt20: {
   //   marginTop: 20,
   // },
-})
+});
