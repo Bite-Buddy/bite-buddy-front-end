@@ -85,8 +85,7 @@ export async function createFood(kitchenId: string, foodName: string, boughtOn: 
       method: "POST",
       body: JSON.stringify({
         name: foodName,
-        boughtOn: boughtOn
-
+        boughtOn: boughtOn.toISOString()
       }),
     });
     return response.json();
