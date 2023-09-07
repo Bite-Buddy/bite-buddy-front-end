@@ -94,3 +94,8 @@ async function createFood(id: string, foodName: string) {
     throw error;
   }
 }
+
+async function getFoodList(userid:number,kitchenId:number){
+  //Please implemnt fetch request.
+  //You can change the parameter names.
+}
