@@ -79,12 +79,14 @@ export async function getKitchens() {
   }
 }
 
-export async function createFood(kitchenId: string, foodName: string) {
+export async function createFood(kitchenId: string, foodName: string, boughtOn: Date) {
   try {
     const response = await fetch(`${DOMAIN}//kitchens/${kitchenId}/foods`, {
       method: "POST",
       body: JSON.stringify({
         name: foodName,
+        boughtOn: boughtOn
+
       }),
     });
     return response.json();
@@ -95,7 +97,7 @@ export async function createFood(kitchenId: string, foodName: string) {
   }
 }
 
-export async function getFoodList(userid: number, kitchenId: number) {
+export async function getFoodList(userid: string, kitchenId: string) {
   //Please implemnt fetch request.
   //You can change the parameter names.
   //Retrn value has to be an array of food items[{name:sring,boughtOn:date}]
