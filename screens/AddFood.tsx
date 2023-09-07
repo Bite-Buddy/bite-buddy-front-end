@@ -3,11 +3,11 @@ import { StyleSheet, View, Text, ScrollView, TextInput, Button } from 'react-nat
 import FoodInput from '../forms/FoodInput'
 
 
-export default function AddFood() {
+export default function AddFood(kitchenId: string) {
     return (
         <ScrollView style={styles.container}>
             <Text style={styles.headline}>Add New Item</Text>
-            <FoodInput mode="Create" initialItemName="" />
+            <FoodInput mode="Create" initialItemName="" kitchenId={kitchenId} />
         </ScrollView>
     );
 }
