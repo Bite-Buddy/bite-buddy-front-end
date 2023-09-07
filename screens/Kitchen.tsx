@@ -6,16 +6,21 @@ import { useEffect, useState } from "react";
 import { getFoodList } from "../fetchRequests"
 
 //Props are teporary plaeced. Need tbe changed accordingly
-export default function Kitchen(userId, kitchenId) {
+export default function Kitchen() {
   const today = new Date();
   const navigation = useNavigation();
   const [foodList, setFoodList] = useState<{ name: string, date: Date }[]>([]);
 
   /**Once fetch requst module is implemeted, code below should replace the one after. */
   // useEffect(() => {
-  //   const initalFoodList = getFoodList(userId, kitchenId);
-  //   setFoodList(initialFoodList);
-  //   initalFoodList()
+  //   const fetchFoodList = async () => {
+  //     try {
+  //       const initalFoodList = await getFoodList(userId, kitchenId);
+  //       setFoodList(initalFoodList);
+  //     } catch (e) {
+  //       console.error("Error fetching food list: ", e)
+  //     }
+  //   }
   // }, [])
   /**To be replaced from here --------------------*/
   const mockYesterDay = new Date();
@@ -28,12 +33,7 @@ export default function Kitchen(userId, kitchenId) {
     { name: "Eggs", date: mockYesterDay },
     { name: "Strawberries", date: mockThreeDaysAgo },
     { name: "Cheese", date: mockYesterDay },
-    { name: "Greek Yogurt", date: mockThreeDaysAgo },
-    { name: "Tomatoes", date: mockYesterDay },
-    { name: "Ham", date: mockSevenDaysAgo },
-    { name: "Lettuce", date: mockYesterDay },
-    { name: "Chicken", date: mockThreeDaysAgo },
-    { name: "Olives", date: mockSevenDaysAgo }
+    { name: "Greek Yogurt", date: mockSevenDaysAgo }
   ])
   /**--------------------Until here*/
 
