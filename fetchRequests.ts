@@ -53,7 +53,7 @@ export async function getBySupabaseID(supabase_id: string):Promise<Response> {
   }
 }
 
-async function createKitchen(id: string) {
+export async function createKitchen(id: string) {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/users/${id}`, {
       method: "POST",
@@ -66,7 +66,7 @@ async function createKitchen(id: string) {
   }
 }
 
-async function getKitchens() {
+export async function getKitchens() {
   try {
     const response = await fetch(`${DOMAIN}/kitchens`, {
       method: "GET",
@@ -79,7 +79,7 @@ async function getKitchens() {
   }
 }
 
-async function createFood(id: string, foodName: string) {
+export async function createFood(id: string, foodName: string) {
   try {
     const response = await fetch(`${DOMAIN}//kitchens/${id}/foods`, {
       method: "POST",
