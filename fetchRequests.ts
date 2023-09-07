@@ -21,6 +21,7 @@ export async function createUser(supabase_id: string, email: string): Promise<Re
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
+    return response.json();
   }
   catch (error) {
     throw error;
@@ -53,7 +54,39 @@ export async function getBySupabaseID(supabase_id: string): Promise<Response> {
   }
 }
 
-export async function createKitchen(id: string) {
+export async function getByDatabaseID(id: string): Promise<Response> {
+  try {
+    const response = await fetch(`${DOMAIN}/users/${id}`, {
+      method: "GET",
+    });
+    return response.json();
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+/**
+ * When we delete a user from our database we will probably want 
+ * to delete them from supabase user store as well.
+ * This function will likely do both operations at the same time
+ * in the future.
+ */
+export async function deleteUserFromDatabase(id: string):Promise<Response> {
+  try {
+    const response = await fetch (`${DOMAIN}/users/${id}`, {
+      method: "DELETE",
+    });
+    return response.json();
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function createKitchen(id: string):Promise<Response> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/users/${id}`, {
       method: "POST",
@@ -66,7 +99,7 @@ export async function createKitchen(id: string) {
   }
 }
 
-export async function getKitchens() {
+export async function getKitchens():Promise<Response> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens`, {
       method: "GET",
@@ -79,14 +112,13 @@ export async function getKitchens() {
   }
 }
 
-export async function createFood(kitchenId: string, foodName: string, boughtOn: Date) {
+export async function createFood(kitchenId: string, foodName: string, boughtOn: Date):Promise<Response> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/foods`, {
       method: "POST",
       body: JSON.stringify({
         name: foodName,
         boughtOn: boughtOn
-
       }),
     });
     return response.json();
@@ -96,9 +128,97 @@ export async function createFood(kitchenId: string, foodName: string, boughtOn: 
     throw error;
   }
 }
-
-export async function getFoodList(userid: string, kitchenId: string) {
-  //Please implemnt fetch request.
-  //You can change the parameter names.
-  //Retrn value has to be an array of food items[{name:sring,boughtOn:date}]
+/**
+ * We probably aren't going to need this on production
+ * Will be useful for testing
+ */
+export async function getAllFood():Promise<Response> {
+  try {
+    const response = await fetch(`${DOMAIN}/foods`, {
+      method: "GET",
+    });
+    return response.json();
+  }
+  catch (error) {
+    console.log(error);
+    throw error;
+  }
 }
+
+/**
+ * We probably aren't going to need this on production
+ * Will be useful for testing
+ */
+export async function getFoodByID(id: string): Promise<Response> {
+  try {
+    const response = await fetch(`${DOMAIN}/foods/${id}`, {
+      method: "GET",
+    });
+    return response.json();
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+interface IFoodUpdate {
+  name?: string,
+  bought_on?: Date,   
+  updated_on?: Date
+}
+export async function updateFoodById(kitchenId: string, foodId: string, food: IFoodUpdate):Promise<Response> {
+  try {
+    const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/foods/${foodId}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        food: food,
+      }),
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  }
+  catch (error) {
+    throw error;
+  }
+}
+
+export async function deleteFoodByID(kitchenId: string, foodId: string):Promise<Response> {
+  try {
+    const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/foods/${foodId}`, {
+      method: "DELETE",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  }
+  catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * This will need to be implemented on the backend
+ */
+export async function getFoodList(userid: string, kitchenId: string):Promise<Response> {
+  try {
+    const response = await fetch(``, {
+      method: "GET",
+    })
+    return response.json();
+  }
+  catch (error) {
+    throw error;
+  }
+} 
