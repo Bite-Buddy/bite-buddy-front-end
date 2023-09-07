@@ -11,6 +11,9 @@ import Profile from "./screens/Profile";
 import List from "./screens/List";
 import Header from "./header/Header";
 import AddFood from "./screens/AddFood";
+import AddKitchen from './screens/AddKitchen'
+import { createUser, getBySupabaseID } from "./fetchRequests";
+
 // import 'react-native-gesture-handler';
 
 
@@ -64,6 +67,14 @@ export default function App() {
           
         })}/>
         <Stack.Screen name="AddFood" component={AddFood} options={({ navigation }) => ({
+          headerTitle: () => <Header />,
+          headerStyle: {
+            backgroundColor: '#EFCA46',
+          },
+          
+        })}/>
+
+        <Stack.Screen name="AddKitchen" component={AddKitchen} options={({ navigation }) => ({
           headerTitle: () => <Header />,
           headerStyle: {
             backgroundColor: '#EFCA46',
