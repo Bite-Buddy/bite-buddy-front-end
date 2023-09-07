@@ -1,14 +1,19 @@
 import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-elements";
+import { Text, Button } from "react-native-elements";
 import { supabase } from "../supabaseService";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Account() {
-const navigation = useNavigation();
+  const navigation = useNavigation();
+  function createKitchen() {
+    navigation.navigate("AddKitchen")
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.verticallySpaced}>
         <Text style={styles.heading}>Welcome to BiteBuddy</Text>
+        <Button title="Create a Kitchen" onPress={() => createKitchen()} />
       </View>
     </View>
   )
