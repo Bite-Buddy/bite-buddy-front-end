@@ -10,7 +10,7 @@ import Kitchen from "./screens/Kitchen";
 import Profile from "./screens/Profile";
 import List from "./screens/List";
 import Header from "./header/Header";
-import AddFood from "./forms/AddFood";
+import AddFood from "./screens/AddFood";
 import 'react-native-gesture-handler';
 
 
