@@ -44,7 +44,7 @@ export default function FoodInput({ mode, initialItemName, kitchenId, userId }: 
         .then((res) => { setResponse("Kitchen updated!") })
         .catch((e) => { setResponse(e.message) });
     }
-    else if(mode==="Edit"){
+    else if (mode === "Edit") {
       //Need to implement "PATCH" request
     }
   }
@@ -53,15 +53,15 @@ export default function FoodInput({ mode, initialItemName, kitchenId, userId }: 
     //Need to implement cancelling the input and goes back to the appropreate screen
   }
 
-  const handleDelete = (): void => { 
+  const handleDelete = (): void => {
     //Need to implement "DELETE" request
   }
 
   return (
     <>
-      {items.map((item) => {
+      {items.map((item, index) => {
         return (
-          <View style={styles.formBox}>
+          <View style={styles.formBox} key={index}>
             <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
             <TextInput style={styles.userInput} placeholder="Type the name of item" defaultValue={item.name} />
             <Text style={styles.verticallySpaced}>Bought on</Text>
