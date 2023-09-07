@@ -11,7 +11,7 @@ import Profile from "./screens/Profile";
 import List from "./screens/List";
 import Header from "./header/Header";
 import AddFood from "./screens/AddFood";
-import 'react-native-gesture-handler';
+// import 'react-native-gesture-handler';
 
 
 const Stack = createStackNavigator();
