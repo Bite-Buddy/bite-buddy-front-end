@@ -53,18 +53,44 @@ export async function getBySupabaseID(supabase_id: string):Promise<Response> {
   }
 }
 
-async function createFood() {
-
+async function createKitchen(id: string) {
+  try {
+    const response = await fetch(`${DOMAIN}/kitchens/users/${id}`, {
+      method: "POST",
+    });
+    return response.json();
+  }
+  catch(error) {
+    console.error(error);
+    throw error;
+  }
 }
 
+async function getKitchens() {
+  try {
+    const response = await fetch(`${DOMAIN}/kitchens`, {
+      method: "GET",
+    });
+    return response.json();
+  }
+  catch(error) {
+    console.log(error);
+    throw error;
+  }
+}
 
-
-
-
-
-
-//testing
-async function getUserInfo(id: string) {
-  const response = await fetch("");
-  return response.json();
+async function createFood(id: string, foodName: string) {
+  try {
+    const response = await fetch(`${DOMAIN}//kitchens/${id}/foods`, {
+      method: "POST",
+      body: JSON.stringify({
+        name: foodName,
+      }),
+    });
+    return response.json();
+  }
+  catch(error) {
+    console.log(error);
+    throw error;
+  }
 }
