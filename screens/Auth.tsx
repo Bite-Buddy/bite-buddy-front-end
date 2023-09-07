@@ -8,19 +8,11 @@ import { useNavigation } from "@react-navigation/native";
 // import * as Linking from "expo-linking";
 import { devUrls } from "../developmentUrls";
 
-export default function Auth() {
+export default function Auth() { 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-
-  async function getCurrentSessionData(): Promise<void> {
-    const data = (await supabase.auth.getSession()).data.session;
-    console.log("User id: ", data?.user.id);
-    console.log("User email: ", data?.user.email);
-    console.log("User created at: ", data?.user.created_at);
-    console.log("User last signed in at: ", data?.user.last_sign_in_at);
-  }
 
   async function signInWithEmail() {
     setLoading(true);
