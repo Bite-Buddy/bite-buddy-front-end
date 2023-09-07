@@ -3,22 +3,20 @@ import { StyleSheet, View, Text, ScrollView, TextInput, Button } from 'react-nat
 import { Input } from "react-native-elements";
 import { useStateValue } from '../store/State'
 
-
 export default function AddKitchen() {
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
-  const [{ theme }, dispatch] = useStateValue();
-
-  function changeState() {
-    dispatch({
-      type: 'changeTheme',
-      newTheme: { primary: 'blue'}
-    })
-  }
+  const [{ kitchens }, dispatch] = useStateValue();
 
   async function submitKitchen() {
     setLoading(true)
-
+    // TODO: send post request
+    
+    // Add kitchen to application state
+    dispatch({
+      type: 'addKitchen',
+      newKitchen: {name: name}
+    })
   }
     return (
         <ScrollView style={styles.container}>
@@ -31,8 +29,6 @@ export default function AddKitchen() {
               autoCapitalize={'none'}
             />
             <Button title="Submit" disabled={loading} onPress={() => submitKitchen()} />
-            <Button title="State Test" onPress={() => changeState()} />
-            <Text style={styles.headline}>{theme.primary}</Text>
         </ScrollView>
     );
 }
