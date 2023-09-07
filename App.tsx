@@ -17,12 +17,12 @@ import { StateProvider } from './store/State';
 
 // import 'react-native-gesture-handler';
 
-
 const Stack = createStackNavigator();
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
-  const [userDbId, setUserDbId] = useState<Response>();
+  const [userDbData, setUserDbData] = useState<Response | null>(null);
+  const [sessionChecked, setSessionChecked] = useState(false);
 
   const initialState = {
     user: {
@@ -55,18 +55,6 @@ export default function App() {
         return state;
     }
   };
-
-  // useEffect(() => {
-  //   supabase.auth.getSession().then(({ data: { session } }) => {
-  //     setSession(session);
-  //     console.log("THE CURRENT USER");
-  //     // getUsers().then(result => console.log(result));
-  //     if (session && !userDbId) getBySupabaseID(session.user.id).then(result => setUserDbId(result));
-  //     console.log(userDbId);
-  //   });
-  // }, [])
-  const [userDbData, setUserDbData] = useState<Response | null>(null);
-  const [sessionChecked, setSessionChecked] = useState(false);
 
   useEffect(() => {
     (async () => { //wrapped in IIFE so it invokes immediately
