@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
+import { createFood, getFoodList } from '../fetchRequests'
 
 type Props = {
   mode: string, //"Create" or "Edit"
   initialItemName: string
+  kitchenId: string
 }
 type Items = {
   name: string,
@@ -11,9 +13,10 @@ type Items = {
   error: string
 }[]
 
-export default function FoodInput({ mode, initialItemName }: Props) {
+export default function FoodInput({ mode, initialItemName, kitchenId, userId }: Props) {
   const today = new Date();
   const [items, setItems] = useState<Items>([{ name: initialItemName, boughtOn: today, error: "" }]);
+  const [response, setResponse] = useState<string>("")
 
   //Check empty input
   function isValid(): boolean {
@@ -36,8 +39,10 @@ export default function FoodInput({ mode, initialItemName }: Props) {
 
   const handleSubmit = (): void => {
     if (!isValid) return
-    if (mode === "Create") { 
-      //Need to implement "PUT" request
+    if (mode === "Create") {
+      Promise.all(items.map(item => { createFood(kitchenId, item.name, item.boughtOn) }))
+        .then((res) => { setResponse("Kitchen updated!") })
+        .catch((e) => { setResponse(e.message) });
     }
     else if(mode==="Edit"){
       //Need to implement "PATCH" request
