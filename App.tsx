@@ -12,7 +12,7 @@ import List from "./screens/List";
 import Header from "./header/Header";
 import AddFood from "./screens/AddFood";
 import 'react-native-gesture-handler';
-import { getBySupabaseID, getUsers } from "./fetchRequests";
+import { createUser, getBySupabaseID, getUsers } from "./fetchRequests";
 
 const Stack = createStackNavigator();
 
@@ -26,8 +26,19 @@ export default function App() {
       const session = (await supabase.auth.getSession()).data.session; //iife again
       setSession(session);
       if (session && !userDbData) {
-        const userData = await getBySupabaseID(session.user.id);
-        setUserDbData(userData);
+        try {
+          const userData = await getBySupabaseID(session.user.id);
+          if (!userData) {
+            const user = await createUser(session.user.id, session.user.email);
+            setUserDbData(user);
+          }
+          else {
+            setUserDbData(userData);
+          }
+        }
+        catch(error) {
+          console.error(error);
+        }
       } 
       setSessionChecked(true);
     })();
@@ -38,8 +49,8 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    userDbData && console.log("userDbData has changed: ", userDbData);
     session && console.log("session has changed: ", session.user.email);
+    userDbData && console.log("userDbData has changed: ", userDbData);
   }, [session, userDbData]);
 
   if (!sessionChecked) {
