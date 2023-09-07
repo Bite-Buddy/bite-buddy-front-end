@@ -13,6 +13,7 @@ import Header from "./header/Header";
 import AddFood from "./screens/AddFood";
 import AddKitchen from './screens/AddKitchen'
 import { createUser, getBySupabaseID } from "./fetchRequests";
+import { StateProvider } from './store/State';
 
 // import 'react-native-gesture-handler';
 
@@ -21,6 +22,35 @@ const Stack = createStackNavigator();
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
+  const [userDbId, setUserDbId] = useState<Response>();
+  const [kitchenList, setKitchenList] = useState([])
+
+  const initialState = {
+    theme: { primary: 'green' }
+  };
+
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case 'changeTheme':
+        return {
+          ...state,
+          theme: action.newTheme
+        };
+
+      default:
+        return state;
+    }
+  };
+
+  // useEffect(() => {
+  //   supabase.auth.getSession().then(({ data: { session } }) => {
+  //     setSession(session);
+  //     console.log("THE CURRENT USER");
+  //     // getUsers().then(result => console.log(result));
+  //     if (session && !userDbId) getBySupabaseID(session.user.id).then(result => setUserDbId(result));
+  //     console.log(userDbId);
+  //   });
+  // }, [])
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -35,6 +65,8 @@ export default function App() {
   }, [])
 
   return (
+    <StateProvider initialState={initialState} reducer={reducer}>
+
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Auth">
         <Stack.Screen name="Auth" component={Auth} />
@@ -84,5 +116,6 @@ export default function App() {
         {/* Add more screens as needed */}
       </Stack.Navigator>
     </NavigationContainer>
+    </StateProvider>
   )
 }
