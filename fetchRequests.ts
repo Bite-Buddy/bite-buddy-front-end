@@ -3,34 +3,36 @@
 const DOMAIN = process.env.DOMAIN;
 
 // use http and ip address instead of localhost
-// const domain = "http://192.168.10.108:8000"; //park local server
+// const DOMAIN = "http://192.168.10.108:8080"; //park local server
 
 export async function createUser(supabase_id: string, email: string):Promise<Response> {
-  const response = await fetch(`${DOMAIN}/users`, {
-    method: "POST",
-    body: JSON.stringify({
-      supabase_id: supabase_id,
-      email: email,
-    }),
-    headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json",
-    },
-  });
-  return response.json();
+  try {
+    const response = await fetch(`${DOMAIN}/users`, {
+      method: "POST",
+      body: JSON.stringify({
+        supabase_id: supabase_id,
+        email: email,
+      }),
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  }
+  catch(error) {
+    throw error;
+  }
 }
 
 export async function getUsers():Promise<Response> {
   try {
     const response = await fetch(`${DOMAIN}/users`, {
       method: "GET",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      }
     });
-    const resolved = await response.json();
-    return resolved;
+    return response.json();
   }
   catch(error) {
     console.error(error);
@@ -39,24 +41,56 @@ export async function getUsers():Promise<Response> {
 }
 
 export async function getBySupabaseID(supabase_id: string):Promise<Response> {
-  const response = await fetch(`${DOMAIN}/users/:${supabase_id}`, {
-    method: "GET",
-  });
-  return response.json();
+  try {
+    const response = await fetch(`${DOMAIN}/users/supabase/${supabase_id}`, {
+      method: "GET",
+    });
+    return response.json();
+  }
+  catch(error) {
+    console.error(error);
+    throw error;
+  }
 }
 
-async function createFood() {
-
+async function createKitchen(id: string) {
+  try {
+    const response = await fetch(`${DOMAIN}/kitchens/users/${id}`, {
+      method: "POST",
+    });
+    return response.json();
+  }
+  catch(error) {
+    console.error(error);
+    throw error;
+  }
 }
 
+async function getKitchens() {
+  try {
+    const response = await fetch(`${DOMAIN}/kitchens`, {
+      method: "GET",
+    });
+    return response.json();
+  }
+  catch(error) {
+    console.log(error);
+    throw error;
+  }
+}
 
-
-
-
-
-
-//testing
-async function getUserInfo(id: string) {
-  const response = await fetch("");
-  return response.json();
+async function createFood(id: string, foodName: string) {
+  try {
+    const response = await fetch(`${DOMAIN}//kitchens/${id}/foods`, {
+      method: "POST",
+      body: JSON.stringify({
+        name: foodName,
+      }),
+    });
+    return response.json();
+  }
+  catch(error) {
+    console.log(error);
+    throw error;
+  }
 }
