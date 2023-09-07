@@ -2,66 +2,66 @@ import { StyleSheet, View, ScrollView, Pressable } from "react-native";
 import { Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useEffect, useState } from "react";
+import { getFoodList } from "../fetchRequests"
 
+//Props are teporary plaeced. Need tbe changed accordingly
+export default function Kitchen(userId, kitchenId) {
+  const today = new Date();
+  const navigation = useNavigation();
+  const [foodList, setFoodList] = useState<{ name: string, date: Date }[]>([]);
 
-export default function Kitchen() {
-const navigation = useNavigation();
-const foodList = [
-{ name: "Milk",
-  date: "Added 2 days ago"
-}, 
-{ name: "Eggs",
-  date: "Added 1 day ago"
-},
-{ name: "Strawberries",
-  date: "Added 2 days ago"
-}, 
-{ name: "Cheese",
-  date: "Added 1 day ago"
-},
-{ name: "Greek Yogurt",
-  date: "Added 2 days ago"
-}, 
-{ name: "Tomatoes",
-  date: "Added 1 day ago"
-},
-{ name: "Ham",
-  date: "Added 4 days ago"
-}, 
-{ name: "Lettuce",
-  date: "Added 1 days ago"
-},
-{ name: "Chicken",
-  date: "Added 2 days ago"
-}, 
-{ name: "Olives",
-  date: "Added 14 days ago"
-}
-]
+  /**Once fetch requst module is implemeted, code below should replace the one after. */
+  // useEffect(() => {
+  //   const initalFoodList = getFoodList(userId, kitchenId);
+  //   setFoodList(initialFoodList);
+  //   initalFoodList()
+  // }, [])
+  /**To be replaced from here --------------------*/
+  const mockYesterDay = new Date();
+  const mockThreeDaysAgo = new Date();
+  const mockSevenDaysAgo = new Date();
+  mockYesterDay.setDate(mockYesterDay.getDate() - 1);
+  mockThreeDaysAgo.setDate(mockThreeDaysAgo.getDate() - 3);
+  setFoodList([
+    { name: "Milk", date: mockYesterDay },
+    { name: "Eggs", date: mockYesterDay },
+    { name: "Strawberries", date: mockThreeDaysAgo },
+    { name: "Cheese", date: mockYesterDay },
+    { name: "Greek Yogurt", date: mockThreeDaysAgo },
+    { name: "Tomatoes", date: mockYesterDay },
+    { name: "Ham", date: mockSevenDaysAgo },
+    { name: "Lettuce", date: mockYesterDay },
+    { name: "Chicken", date: mockThreeDaysAgo },
+    { name: "Olives", date: mockSevenDaysAgo }
+  ])
+  /**--------------------Until here*/
+
   return (
     <View style={styles.container}>
       <View style={styles.verticallySpaced}>
         <Text style={styles.heading}>Kitchen</Text>
         <ScrollView>
-        <View>
-          {foodList.map((foodProduct) => {
-            return (
-              <View style={styles.list} key={`foodProduct${foodProduct.name}`}>
-                <Text style={styles.name}>{foodProduct.name}</Text>
-                <Text style={styles.date}>{foodProduct.date}</Text>
-                
-              </View>
-            );
-          })}
-        </View>
-      
-      </ScrollView>
+          <View>
+            {foodList.map((foodProduct) => {
+              //Calculate the day offset of te bought day from today
+              const dayOffSet = Math.floor(today.getTime() - foodProduct.date.getTime() / (24 * 60 * 60 * 1000))
+              return (
+                <View style={styles.list} key={`foodProduct${foodProduct.name}`}>
+                  <Text style={styles.name}>{foodProduct.name}</Text>
+                  <Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
+                </View>
+              );
+            })}
+          </View>
+
+        </ScrollView>
       </View>
       <View>
-      <Pressable style={styles.button} title="AddFood" onPress={() => navigation.navigate('AddFood')}>
-        <Text style={styles.text}><MaterialCommunityIcons name="plus" size={30} color="black" /></Text>
-      </Pressable>
-        </View>
+        <Pressable style={styles.button} onPress={() => navigation.navigate('AddFood')}>
+          <Text style={styles.text}><MaterialCommunityIcons name="plus" size={30} color="black" /></Text>
+        </Pressable>
+      </View>
     </View>
   )
 }
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#696666',
     padding: 20,
     margin: 0,
-   
+
   },
   verticallySpaced: {
     flex: 1,
@@ -126,8 +126,6 @@ const styles = StyleSheet.create({
     color: 'black',
     display: 'flex',
     alignItems: 'center',
-
-
-  }
-
+  },
+  text: {}
 })
