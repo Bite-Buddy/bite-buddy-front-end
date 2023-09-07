@@ -23,7 +23,7 @@ export default function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [userDbData, setUserDbData] = useState<Response | null>(null);
   const [sessionChecked, setSessionChecked] = useState(false);
-
+  
   const initialState = {
     user: {
       id: null,
