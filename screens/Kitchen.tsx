@@ -9,7 +9,19 @@ import { getFoodList } from "../fetchRequests"
 export default function Kitchen() {
   const today = new Date();
   const navigation = useNavigation();
-  const [foodList, setFoodList] = useState<{ name: string, date: Date }[]>([]);
+  const mockYesterDay = new Date();
+  const mockThreeDaysAgo = new Date();
+  const mockSevenDaysAgo = new Date();
+  mockYesterDay.setDate(mockYesterDay.getDate() - 1);
+  mockThreeDaysAgo.setDate(mockThreeDaysAgo.getDate() - 3);
+  mockSevenDaysAgo.setDate(mockSevenDaysAgo.getDate() - 7);
+  const [foodList, setFoodList] = useState<{ name: string, date: Date }[]>([
+    { name: "Milk", date: mockYesterDay },
+    { name: "Eggs", date: mockYesterDay },
+    { name: "Strawberries", date: mockThreeDaysAgo },
+    { name: "Cheese", date: mockYesterDay },
+    { name: "Greek Yogurt", date: mockSevenDaysAgo }
+  ]);
 
   /**Once fetch requst module is implemeted, code below should replace the one after. */
   // useEffect(() => {
@@ -23,18 +35,6 @@ export default function Kitchen() {
   //   }
   // }, [])
   /**To be replaced from here --------------------*/
-  const mockYesterDay = new Date();
-  const mockThreeDaysAgo = new Date();
-  const mockSevenDaysAgo = new Date();
-  mockYesterDay.setDate(mockYesterDay.getDate() - 1);
-  mockThreeDaysAgo.setDate(mockThreeDaysAgo.getDate() - 3);
-  setFoodList([
-    { name: "Milk", date: mockYesterDay },
-    { name: "Eggs", date: mockYesterDay },
-    { name: "Strawberries", date: mockThreeDaysAgo },
-    { name: "Cheese", date: mockYesterDay },
-    { name: "Greek Yogurt", date: mockSevenDaysAgo }
-  ])
   /**--------------------Until here*/
 
   return (
