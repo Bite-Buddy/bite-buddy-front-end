@@ -20,19 +20,21 @@ export default function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [userDbData, setUserDbData] = useState<Response | null>(null);
   const [sessionChecked, setSessionChecked] = useState(false);
-  
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session && !userDbData) getBySupabaseID(session.user.id).
-      then(result => setUserDbData(result));
-      setSessionChecked(true);
-    });
 
+  useEffect(() => {
+    (async () => { //wrapped in IIFE so it invokes immediately
+      const session = (await supabase.auth.getSession()).data.session; //iife again
+      setSession(session);
+      if (session && !userDbData) {
+        const userData = await getBySupabaseID(session.user.id);
+        setUserDbData(userData);
+      } 
+      setSessionChecked(true);
+    })();
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setSessionChecked(true);
-    })
+    });
   }, [])
 
   useEffect(() => {
@@ -42,6 +44,7 @@ export default function App() {
 
   if (!sessionChecked) {
     // Render a loading screen while authentication check is in progress
+    // it's normally too quick to see anyway
     return (
       <NavigationContainer>
         <View>
