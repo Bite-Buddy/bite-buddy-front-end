@@ -23,18 +23,32 @@ const Stack = createStackNavigator();
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [userDbId, setUserDbId] = useState<Response>();
-  const [kitchenList, setKitchenList] = useState([])
 
   const initialState = {
-    theme: { primary: 'green' }
+    user: {
+      id: null,
+      supabase_id: null,
+      email: null
+    },
+    kitchens: []
   };
 
   const reducer = (state, action) => {
     switch (action.type) {
-      case 'changeTheme':
+      case 'changeUser':
         return {
           ...state,
-          theme: action.newTheme
+          user: action.newUser
+        };
+      case 'changeKitchens':
+        return {
+          ...state,
+          kitchens: action.newKitchens
+        };
+      case 'addKitchen':
+        return {
+          ...state,
+          kitchens: [...state.kitchens, action.newKitchen]
         };
 
       default:
