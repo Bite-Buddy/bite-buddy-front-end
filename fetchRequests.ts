@@ -81,7 +81,7 @@ export async function getKitchens() {
 
 export async function createFood(kitchenId: string, foodName: string, boughtOn: Date) {
   try {
-    const response = await fetch(`${DOMAIN}//kitchens/${kitchenId}/foods`, {
+    const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/foods`, {
       method: "POST",
       body: JSON.stringify({
         name: foodName,
