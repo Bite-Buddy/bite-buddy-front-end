@@ -21,6 +21,7 @@ export async function createUser(supabase_id: string, email: string):Promise<Res
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
+    return response.json();
   }
   catch(error) {
     throw error;
@@ -81,7 +82,7 @@ export async function getKitchens() {
 
 export async function createFood(id: string, foodName: string) {
   try {
-    const response = await fetch(`${DOMAIN}//kitchens/${id}/foods`, {
+    const response = await fetch(`${DOMAIN}/kitchens/${id}/foods`, {
       method: "POST",
       body: JSON.stringify({
         name: foodName,
