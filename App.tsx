@@ -64,8 +64,8 @@ export default function App() {
         try {
           const userData = await getBySupabaseID(session.user.id);
           if (!userData) {
-            const user = await createUser(session.user.id, session.user.email);
-            setUserDbData(user);
+            const newUser = await createUser(session.user.id, session.user.email);
+            setUserDbData(newUser);
           }
           else {
             setUserDbData(userData);
