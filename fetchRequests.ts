@@ -211,8 +211,8 @@ export async function getKitchenByID(kitchenId: string): Promise<Response> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/`, {
       method: "GET",
-    })
-    return response.json();
+    }).then(res => res.json())
+    return response;
     //must return [...{id:foodId, name:foodName, bought_on:Date, updated_on:Date, kitchenid:kitchenId}]
   }
   catch (error) {
