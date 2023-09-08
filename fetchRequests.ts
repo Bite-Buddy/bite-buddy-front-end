@@ -112,13 +112,17 @@ export async function getKitchens():Promise<Response> {
   }
 }
 
-export async function createFood(kitchenId: string, foodName: string, boughtOn: Date):Promise<Response> {
+interface IFood {
+  name: string,
+  bought_on: Date,   
+  updated_on: Date
+}
+export async function createFood(kitchenId: string, food: IFood):Promise<Response> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/foods`, {
       method: "POST",
       body: JSON.stringify({
-        name: foodName,
-        boughtOn: boughtOn
+        ...food,
       }),
     });
     return response.json();
@@ -162,17 +166,12 @@ export async function getFoodByID(id: string): Promise<Response> {
   }
 }
 
-interface IFoodUpdate {
-  name?: string,
-  bought_on?: Date,   
-  updated_on?: Date
-}
-export async function updateFoodById(kitchenId: string, foodId: string, food: IFoodUpdate):Promise<Response> {
+export async function updateFoodById(kitchenId: string, foodId: string, food: IFood):Promise<Response> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/foods/${foodId}`, {
       method: "PATCH",
       body: JSON.stringify({
-        food: food,
+        ...food,
       }),
       headers: {
         "Accept": "application/json",
@@ -207,18 +206,3 @@ export async function deleteFoodByID(kitchenId: string, foodId: string):Promise<
     throw error;
   }
 }
-
-/**
- * This will need to be implemented on the backend
- */
-export async function getFoodList(userid: string, kitchenId: string):Promise<Response> {
-  try {
-    const response = await fetch(``, {
-      method: "GET",
-    })
-    return response.json();
-  }
-  catch (error) {
-    throw error;
-  }
-} 
