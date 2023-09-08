@@ -14,47 +14,25 @@ import AddFood from "./screens/AddFood";
 import AddKitchen from './screens/AddKitchen'
 import { createUser, getBySupabaseID } from "./fetchRequests";
 import { StateProvider } from './store/State';
-
+import { reducer } from './store/reducer'
 // import 'react-native-gesture-handler';
 
 const Stack = createStackNavigator();
+/**This is a mock initial State. Please implement this state handling later*/
+// const initialState = {
+//   user: {
+//     id: "1",
+//     supabase_id: "test11test",
+//     email: "test@example.com",
+//     currentkitchenId: "1"
+//   },
+//   kitchens: ["1"]
+// };
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [userDbData, setUserDbData] = useState<Response | null>(null);
   const [sessionChecked, setSessionChecked] = useState(false);
-  
-  const initialState = {
-    user: {
-      id: null,
-      supabase_id: null,
-      email: null
-    },
-    kitchens: []
-  };
-
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case 'changeUser':
-        return {
-          ...state,
-          user: action.newUser
-        };
-      case 'changeKitchens':
-        return {
-          ...state,
-          kitchens: action.newKitchens
-        };
-      case 'addKitchen':
-        return {
-          ...state,
-          kitchens: [...state.kitchens, action.newKitchen]
-        };
-
-      default:
-        return state;
-    }
-  };
 
   useEffect(() => {
     (async () => { //wrapped in IIFE so it invokes immediately
@@ -71,10 +49,10 @@ export default function App() {
             setUserDbData(userData);
           }
         }
-        catch(error) {
+        catch (error) {
           console.error(error);
         }
-      } 
+      }
       setSessionChecked(true);
     })();
     supabase.auth.onAuthStateChange((_event, session) => {
