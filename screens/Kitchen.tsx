@@ -5,25 +5,28 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useEffect, useState } from "react";
 import { getFoodList } from "../fetchRequests"
 
-//Props are teporary plaeced. Need tbe changed accordingly
 export default function Kitchen() {
   const today = new Date();
   const navigation = useNavigation();
+  //Creting a mock foodList
   const mockYesterDay = new Date();
   const mockThreeDaysAgo = new Date();
   const mockSevenDaysAgo = new Date();
   mockYesterDay.setDate(mockYesterDay.getDate() - 1);
   mockThreeDaysAgo.setDate(mockThreeDaysAgo.getDate() - 3);
   mockSevenDaysAgo.setDate(mockSevenDaysAgo.getDate() - 7);
-  const [foodList, setFoodList] = useState<{ name: string, date: Date }[]>([
+  const mockList = [
     { name: "Milk", date: mockYesterDay },
     { name: "Eggs", date: mockYesterDay },
     { name: "Strawberries", date: mockThreeDaysAgo },
     { name: "Cheese", date: mockYesterDay },
-    { name: "Greek Yogurt", date: mockSevenDaysAgo }
-  ]);
+    { name: "Greek Yogurt", date: mockSevenDaysAgo }]
 
-  /**Once fetch requst module is implemeted, code below should replace the one after. */
+  //Initial state is set as an empty array
+  const [foodList, setFoodList] = useState<{ name: string, date: Date }[] | null>(null);
+  useEffect(() => { setFoodList(mockList) }, [])
+
+  /**Once fetch requst module is implemeted, code below should replace the mock setup. */
   // useEffect(() => {
   //   const fetchFoodList = async () => {
   //     try {
@@ -34,8 +37,6 @@ export default function Kitchen() {
   //     }
   //   }
   // }, [])
-  /**To be replaced from here --------------------*/
-  /**--------------------Until here*/
 
   return (
     <View style={styles.container}>
@@ -43,16 +44,17 @@ export default function Kitchen() {
         <Text style={styles.heading}>Kitchen</Text>
         <ScrollView>
           <View>
-            {foodList.map((foodProduct) => {
-              //Calculate the day offset of te bought day from today
-              const dayOffSet = Math.floor(today.getTime() - foodProduct.date.getTime() / (24 * 60 * 60 * 1000))
-              return (
-                <View style={styles.list} key={`foodProduct${foodProduct.name}`}>
-                  <Text style={styles.name}>{foodProduct.name}</Text>
-                  <Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
-                </View>
-              );
-            })}
+            {foodList === null ? <Text>"No item stored"</Text>
+              : foodList.map((foodProduct) => {
+                //Calculate the day offset of te bought day from today
+                const dayOffSet = Math.floor((today.getTime() - foodProduct.date.getTime()) / (24 * 60 * 60 * 1000))
+                return (
+                  <View style={styles.list} key={`foodProduct${foodProduct.name}`}>
+                    <Text style={styles.name}>{foodProduct.name}</Text>
+                    <Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
+                  </View>
+                );
+              })}
           </View>
 
         </ScrollView>
