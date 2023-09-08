@@ -112,6 +112,18 @@ export async function getKitchens(): Promise<Response> {
   }
 }
 
+export async function getKitchenByID(kitchenId: string): Promise<Response> {
+  try {
+    const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/`, {
+      method: "GET",
+    })
+    return response.json();
+  }
+  catch (error) {
+    throw error;
+  }
+}
+
 interface IFood {
   name: string,
   bought_on: Date,
@@ -201,19 +213,6 @@ export async function deleteFoodByID(kitchenId: string, foodId: string): Promise
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     return response.json();
-  }
-  catch (error) {
-    throw error;
-  }
-}
-
-export async function getKitchenByID(kitchenId: string): Promise<Response> {
-  try {
-    const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/`, {
-      method: "GET",
-    })
-    return response.json();
-    //must return [...{id:foodId, name:foodName, bought_on:Date, updated_on:Date, kitchenid:kitchenId}]
   }
   catch (error) {
     throw error;
