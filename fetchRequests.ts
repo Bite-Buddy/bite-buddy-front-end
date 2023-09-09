@@ -1,6 +1,6 @@
 //configure your .env.local file with the server domain link
 //REMOVE THE TRAILING SLASH (/) FROM THE URL IN YOUR .env.local FILE
-const DOMAIN = process.env.DOMAIN;
+const DOMAIN = "https://c268-153-246-207-32.ngrok-free.app";
 
 // use http and ip address instead of localhost
 // const DOMAIN = "http://192.168.10.108:8080"; //park local server
@@ -42,6 +42,7 @@ export async function getUsers(): Promise<Response> {
 }
 
 export async function getBySupabaseID(supabase_id: string): Promise<Response> {
+  console.log(`${DOMAIN}/users/supabase/${supabase_id}`)
   try {
     const response = await fetch(`${DOMAIN}/users/supabase/${supabase_id}`, {
       method: "GET",
