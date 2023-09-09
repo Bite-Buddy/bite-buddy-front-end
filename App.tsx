@@ -6,42 +6,28 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Auth, Account, Kitchen, Profile, List, AddFood, AddKitchen } from "./screens/screens";
 import Header from "./header/Header";
-import { createUser, getBySupabaseID } from "./fetchRequests";
-import { StateProvider } from './store/State';
-import { reducer } from './store/reducer'
-// import 'react-native-gesture-handler';
+import { createUser, getBySupabaseID } from "./utilities/fetchRequests";
+import { useAtom } from 'jotai'
+import { userAtom } from './utilities/store/atoms'
+import { kitchensAtom } from "./utilities/store/atoms";
+import { IUser } from "./utilities/interfaces";
 
 const Stack = createStackNavigator();
-/**This is a mock initial State. Please implement this state handling later*/
-// const initialState = {
-//   user: {
-//     id: "1",
-//     supabase_id: "test11test",
-//     email: "test@example.com",
-//     currentkitchenId: "1"
-//   },
-//   kitchens: ["1"]
-// };
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
-  const [userDbData, setUserDbData] = useState<Response | null>(null);
   const [sessionChecked, setSessionChecked] = useState(false);
-
+  const [user, setUser] = useAtom(userAtom);
+  const [kitchens, setKitchens] = useAtom(kitchensAtom);
+  
   useEffect(() => {
     (async () => { //wrapped in IIFE so it invokes immediately
       const session = (await supabase.auth.getSession()).data.session; //iife again
       setSession(session);
-      if (session && !userDbData) {
+      if (session && !user) {
         try {
-          const userData = await getBySupabaseID(session.user.id);
-          if (!userData) {
-            const newUser = await createUser(session.user.id, session.user.email);
-            setUserDbData(newUser);
-          }
-          else {
-            setUserDbData(userData);
-          }
+          const userData = (await getBySupabaseID(session.user.id));
+          setUser(userData);
         }
         catch (error) {
           console.error(error);
@@ -57,8 +43,10 @@ export default function App() {
 
   useEffect(() => {
     session && console.log("session has changed: ", session.user.email);
-    userDbData && console.log("userDbData has changed: ", userDbData);
-  }, [session, userDbData]);
+  }, [session]);
+  useEffect(() => {
+    session && console.log("user has changed: ", user);
+  }, [user]);
 
   if (!sessionChecked) {
     // Render a loading screen while authentication check is in progress
@@ -73,8 +61,6 @@ export default function App() {
   }
 
   return (
-    <StateProvider initialState={initialState} reducer={reducer}>
-
       <NavigationContainer>
         <Stack.Navigator initialRouteName={session ? "Account" : "Auth"}>
           <Stack.Screen name="Auth" component={Auth} />
@@ -124,6 +110,5 @@ export default function App() {
           {/* Add more screens as needed */}
         </Stack.Navigator>
       </NavigationContainer>
-    </StateProvider>
   )
 }

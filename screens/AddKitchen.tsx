@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TextInput, Button } from 'react-native';
 import { Input } from "react-native-elements";
-import { useStateValue } from '../store/State'
+// import { useStateValue } from '../store/State'
+import { userAtom } from '../utilities/store/atoms'
+import { useAtom } from 'jotai'
 
 export default function AddKitchen() {
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
-  const [{ kitchens }, dispatch] = useStateValue();
+  const [user, setUser] = useAtom(userAtom)
+  // const [{ kitchens }, dispatch] = useStateValue();
 
   async function submitKitchen() {
     setLoading(true)
+    console.log(user)
     // TODO: send post request
     
     // Add kitchen to application state
-    dispatch({
-      type: 'addKitchen',
-      newKitchen: {name: name}
-    })
+    // dispatch({
+    //   type: 'addKitchen',
+    //   newKitchen: {name: name}
+    // })
   }
     return (
         <ScrollView style={styles.container}>

@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { StyleSheet, View, Text, TextInput, Button } from "react-native";
-import { useNavigation } from "@react-navigation/native"
-import { createFood, updateFoodById, deleteFoodByID } from "../fetchRequests";
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
+import { createFood, getFoodList } from '../utilities/fetchRequests'
 
 type Props = {
   mode: string, //"Create" or "Edit"

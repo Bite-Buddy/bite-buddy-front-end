@@ -1,11 +1,13 @@
 //configure your .env.local file with the server domain link
 //REMOVE THE TRAILING SLASH (/) FROM THE URL IN YOUR .env.local FILE
-const DOMAIN = process.env.DOMAIN;
+// const DOMAIN = process.env.DOMAIN;
 
 // use http and ip address instead of localhost
-// const DOMAIN = "http://192.168.10.108:8080"; //park local server
+// const DOMAIN = "http://192.168.1.226:8080"; //park local server
+import { IKitchen, IUser, IFood } from "./interfaces";
+const DOMAIN = "http://localhost:8080";
 
-export async function createUser(supabase_id: string, email: string): Promise<Response> {
+export async function createUser(supabase_id: string, email: string):Promise<IUser> {
   try {
     const response = await fetch(`${DOMAIN}/users`, {
       method: "POST",
@@ -28,7 +30,7 @@ export async function createUser(supabase_id: string, email: string): Promise<Re
   }
 }
 
-export async function getUsers(): Promise<Response> {
+export async function getUsers(): Promise<IUser[]> {
   try {
     const response = await fetch(`${DOMAIN}/users`, {
       method: "GET",
@@ -41,7 +43,7 @@ export async function getUsers(): Promise<Response> {
   }
 }
 
-export async function getBySupabaseID(supabase_id: string): Promise<Response> {
+export async function getBySupabaseID(supabase_id: string): Promise<IUser> {
   try {
     const response = await fetch(`${DOMAIN}/users/supabase/${supabase_id}`, {
       method: "GET",
@@ -54,7 +56,7 @@ export async function getBySupabaseID(supabase_id: string): Promise<Response> {
   }
 }
 
-export async function getByDatabaseID(id: string): Promise<Response> {
+export async function getByDatabaseID(id: string): Promise<IUser> {
   try {
     const response = await fetch(`${DOMAIN}/users/${id}`, {
       method: "GET",
@@ -73,7 +75,7 @@ export async function getByDatabaseID(id: string): Promise<Response> {
  * This function will likely do both operations at the same time
  * in the future.
  */
-export async function deleteUserFromDatabase(id: string): Promise<Response> {
+export async function deleteUserFromDatabase(id: string): Promise<IUser> {
   try {
     const response = await fetch(`${DOMAIN}/users/${id}`, {
       method: "DELETE",
@@ -86,7 +88,7 @@ export async function deleteUserFromDatabase(id: string): Promise<Response> {
   }
 }
 
-export async function createKitchen(id: string): Promise<Response> {
+export async function createKitchen(id: string): Promise<IKitchen> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/users/${id}`, {
       method: "POST",
@@ -99,7 +101,7 @@ export async function createKitchen(id: string): Promise<Response> {
   }
 }
 
-export async function getKitchens(): Promise<Response> {
+export async function getKitchens(): Promise<IKitchen[]> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens`, {
       method: "GET",
@@ -112,7 +114,7 @@ export async function getKitchens(): Promise<Response> {
   }
 }
 
-export async function getKitchenByID(kitchenId: string): Promise<Response> {
+export async function getKitchenByID(kitchenId: string): Promise<IKitchen> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}`, {
       method: "GET",
@@ -124,13 +126,7 @@ export async function getKitchenByID(kitchenId: string): Promise<Response> {
   }
 }
 
-interface IFood {
-  name: string,
-  bought_on: Date,
-  updated_on: Date,
-  inStock: boolean,
-}
-export async function createFood(kitchenId: string, food: IFood): Promise<Response> {
+export async function createFood(kitchenId: string, food: IFood): Promise<IFood> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/foods`, {
       method: "POST",
@@ -149,7 +145,7 @@ export async function createFood(kitchenId: string, food: IFood): Promise<Respon
  * We probably aren't going to need this on production
  * Will be useful for testing
  */
-export async function getAllFood(): Promise<Response> {
+export async function getAllFood(): Promise<IFood[]> {
   try {
     const response = await fetch(`${DOMAIN}/foods`, {
       method: "GET",
@@ -166,7 +162,7 @@ export async function getAllFood(): Promise<Response> {
  * We probably aren't going to need this on production
  * Will be useful for testing
  */
-export async function getFoodByID(id: string): Promise<Response> {
+export async function getFoodByID(id: string): Promise<IFood> {
   try {
     const response = await fetch(`${DOMAIN}/foods/${id}`, {
       method: "GET",
@@ -179,7 +175,7 @@ export async function getFoodByID(id: string): Promise<Response> {
   }
 }
 
-export async function updateFoodById(foodId: string, food: IFood): Promise<Response> {
+export async function updateFoodById(foodId: string, food: IFood): Promise<IFood> {
   try {
     const response = await fetch(`${DOMAIN}/foods/${foodId}`, {
       method: "PATCH",
@@ -201,7 +197,7 @@ export async function updateFoodById(foodId: string, food: IFood): Promise<Respo
   }
 }
 
-export async function deleteFoodByID(foodId: string): Promise<Response> {
+export async function deleteFoodByID(foodId: string): Promise<IFood> {
   try {
     const response = await fetch(`${DOMAIN}/foods/${foodId}`, {
       method: "DELETE",
