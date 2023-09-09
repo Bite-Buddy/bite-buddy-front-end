@@ -13,7 +13,7 @@ type Items = {
   error: string
 }[]
 
-export default function FoodInput({ mode, initialItemName, kitchenId, userId }: Props) {
+export default function FoodInput({ mode, initialItemName, kitchenId = "" }: Props) {
   const today = new Date();
   const [items, setItems] = useState<Items>([{ name: initialItemName, boughtOn: today, error: "" }]);
   const [response, setResponse] = useState<string>("")
@@ -40,7 +40,10 @@ export default function FoodInput({ mode, initialItemName, kitchenId, userId }: 
   const handleSubmit = (): void => {
     if (!isValid) return
     if (mode === "Create") {
-      Promise.all(items.map(item => { createFood(kitchenId, item.name, item.boughtOn) }))
+      Promise.all(items.map(item => {
+        const foodItem = { name: item.name, bought_on: item.boughtOn, updated_on: today }
+        createFood(kitchenId, foodItem);
+      }))
         .then((res) => { setResponse("Kitchen updated!") })
         .catch((e) => { setResponse(e.message) });
     }
@@ -89,13 +92,13 @@ export default function FoodInput({ mode, initialItemName, kitchenId, userId }: 
 
 const styles = StyleSheet.create({
   verticallySpaced: {
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
   },
   formBox: {
     margin: 10,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     borderRadius: 10,
   },
@@ -103,16 +106,16 @@ const styles = StyleSheet.create({
     height: 40,
     marginBottom: 15,
     padding: 5,
-    borderColor: 'lightgray',
+    borderColor: "lightgray",
     borderWidth: 1,
   },
   more: {
     margin: 10
   },
   buttons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-evenly'
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-evenly"
   }
   /**Copied below from the other component, not sure the intention */
   // mt20: {
