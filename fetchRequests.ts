@@ -114,7 +114,7 @@ export async function getKitchens(): Promise<Response> {
 
 export async function getKitchenByID(kitchenId: string): Promise<Response> {
   try {
-    const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/`, {
+    const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}`, {
       method: "GET",
     })
     return response.json();
