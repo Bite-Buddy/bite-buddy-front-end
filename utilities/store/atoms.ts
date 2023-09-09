@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { IUser } from "../interfaces";
 
-export const userAtom = atom<IUser>({
+export const userAtom = atom<IUser | null>({
   id: "",
   supabase_id: "",
   email: "",

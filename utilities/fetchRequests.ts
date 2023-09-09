@@ -4,9 +4,10 @@
 
 // use http and ip address instead of localhost
 // const DOMAIN = "http://192.168.1.226:8080"; //park local server
+import { IUser } from "./interfaces";
 const DOMAIN = "http://localhost:8080";
 
-export async function createUser(supabase_id: string, email: string): Promise<Response> {
+export async function createUser(supabase_id: string, email: string): Promise<IUser> {
   try {
     const response = await fetch(`${DOMAIN}/users`, {
       method: "POST",
@@ -42,7 +43,7 @@ export async function getUsers(): Promise<Response> {
   }
 }
 
-export async function getBySupabaseID(supabase_id: string): Promise<Response> {
+export async function getBySupabaseID(supabase_id: string): Promise<IUser> {
   try {
     const response = await fetch(`${DOMAIN}/users/supabase/${supabase_id}`, {
       method: "GET",
