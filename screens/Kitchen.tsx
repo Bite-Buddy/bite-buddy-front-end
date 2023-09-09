@@ -1,5 +1,4 @@
 import { StyleSheet, View, ScrollView, Pressable } from "react-native";
-import { useStateValue } from "../store/State";
 import { Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -9,7 +8,6 @@ import { getKitchenByID } from "../fetchRequests"
 export default function Kitchen() {
   const today = new Date();
   const navigation = useNavigation();
-  const [{ user, kitchens }, dispatch] = useStateValue();
   //Initial state is set as an empty array
   interface IfoodItem { name: string, bought_on: Date, id: string }
   const [foodList, setFoodList] = useState<IfoodItem[] | null>(null);
