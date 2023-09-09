@@ -1,42 +1,32 @@
 import { StyleSheet, View, ScrollView, Pressable } from "react-native";
+import { useStateValue } from "../store/State";
 import { Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useEffect, useState } from "react";
-import { getFoodList } from "../fetchRequests"
+import { useEffect, useState, useContext } from "react";
+import { getKitchenByID } from "../fetchRequests"
 
 export default function Kitchen() {
   const today = new Date();
   const navigation = useNavigation();
-  //Creting a mock foodList
-  const mockYesterDay = new Date();
-  const mockThreeDaysAgo = new Date();
-  const mockSevenDaysAgo = new Date();
-  mockYesterDay.setDate(mockYesterDay.getDate() - 1);
-  mockThreeDaysAgo.setDate(mockThreeDaysAgo.getDate() - 3);
-  mockSevenDaysAgo.setDate(mockSevenDaysAgo.getDate() - 7);
-  const mockList = [
-    { name: "Milk", date: mockYesterDay },
-    { name: "Eggs", date: mockYesterDay },
-    { name: "Strawberries", date: mockThreeDaysAgo },
-    { name: "Cheese", date: mockYesterDay },
-    { name: "Greek Yogurt", date: mockSevenDaysAgo }]
-
+  const [{ user, kitchens }, dispatch] = useStateValue();
   //Initial state is set as an empty array
-  const [foodList, setFoodList] = useState<{ name: string, date: Date }[] | null>(null);
-  useEffect(() => { setFoodList(mockList) }, [])
+  interface IfoodItem { name: string, bought_on: Date, id: string }
+  const [foodList, setFoodList] = useState<IfoodItem[] | null>(null);
 
-  /**Once fetch requst module is implemeted, code below should replace the mock setup. */
-  // useEffect(() => {
-  //   const fetchFoodList = async () => {
-  //     try {
-  //       const initalFoodList = await getFoodList(userId, kitchenId);
-  //       setFoodList(initalFoodList);
-  //     } catch (e) {
-  //       console.error("Error fetching food list: ", e)
-  //     }
-  //   }
-  // }, [])
+  /**Fetch the foodList that belongs to thiskitchen */
+  const fetchFoodList = async () => {
+    try {
+      let kitchenInfo = await getKitchenByID(user.currentkitchenId);
+      let modList = await kitchenInfo.food_list.map(item => { return { "bought_on": new Date(item.bought_on), "name": item.name, "id": item.id } })
+      setFoodList(modList)
+    } catch (e) {
+      console.error("Error fetching food list: ", e)
+    }
+  }
+  useEffect(() => {
+    fetchFoodList()
+  }, [])
 
   return (
     <View style={styles.container}>
@@ -47,7 +37,7 @@ export default function Kitchen() {
             {foodList === null ? <Text>"No item stored"</Text>
               : foodList.map((foodProduct) => {
                 //Calculate the day offset of te bought day from today
-                const dayOffSet = Math.floor((today.getTime() - foodProduct.date.getTime()) / (24 * 60 * 60 * 1000))
+                const dayOffSet = Math.floor((today.getTime() - foodProduct.bought_on.getTime()) / (24 * 60 * 60 * 1000))
                 return (
                   <View style={styles.list} key={`foodProduct${foodProduct.name}`}>
                     <Text style={styles.name}>{foodProduct.name}</Text>
