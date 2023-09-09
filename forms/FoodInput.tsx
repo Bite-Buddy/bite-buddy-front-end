@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
-import { createFood, getFoodList } from '../fetchRequests'
+import { useNavigation } from '@react-navigation/native'
+import { createFood, getFoodList } from '../fetchRequests';
 
 type Props = {
   mode: string, //"Create" or "Edit"
@@ -15,6 +16,7 @@ type Items = {
 
 export default function FoodInput({ mode, initialItemName, kitchenId = "" }: Props) {
   const today = new Date();
+  const navigation = useNavigation();
   const [items, setItems] = useState<Items>([{ name: initialItemName, boughtOn: today, error: "" }]);
   const [response, setResponse] = useState<string>("")
 
@@ -52,10 +54,6 @@ export default function FoodInput({ mode, initialItemName, kitchenId = "" }: Pro
     }
   }
 
-  const handleCancel = (): void => {
-    //Need to implement cancelling the input and goes back to the appropreate screen
-  }
-
   const handleDelete = (): void => {
     //Need to implement "DELETE" request
   }
@@ -84,7 +82,7 @@ export default function FoodInput({ mode, initialItemName, kitchenId = "" }: Pro
         <Button title={mode} onPress={isValid ?? handleSubmit} />
         {mode === "Edit" ?? <Button title="delete" onPress={isValid ?? handleDelete} />
         }
-        <Button title="Cancel" onPress={handleCancel} />
+        <Button title="Cancel" onPress={() => navigation.navigate("Kitchen")} />
       </View>
     </>
   );
