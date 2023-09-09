@@ -112,7 +112,18 @@ export async function getKitchens(): Promise<Response> {
   }
 }
 
-export async function getKitchenByID(kitchenId: string): Promise<Response> {
+interface IFoodList {
+  id: string,
+  food_list: [
+    {
+      id: string | number,
+      name: string,
+      bought_on: string | Date,
+      updated_on: string | Date,
+      kitchen_id: string | number
+    }]
+}
+export async function getKitchenByID(kitchenId: string): Promise<IFoodList> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/`, {
       method: "GET",
