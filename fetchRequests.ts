@@ -112,20 +112,9 @@ export async function getKitchens(): Promise<Response> {
   }
 }
 
-interface IFoodList {
-  id: string,
-  food_list: [
-    {
-      id: string | number,
-      name: string,
-      bought_on: string | Date,
-      updated_on: string | Date,
-      kitchen_id: string | number
-    }]
-}
-export async function getKitchenByID(kitchenId: string): Promise<IFoodList> {
+export async function getKitchenByID(kitchenId: string): Promise<Response> {
   try {
-    const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/`, {
+    const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}`, {
       method: "GET",
     })
     return response.json();
@@ -138,7 +127,8 @@ export async function getKitchenByID(kitchenId: string): Promise<IFoodList> {
 interface IFood {
   name: string,
   bought_on: Date,
-  updated_on: Date
+  updated_on: Date,
+  inStock: boolean,
 }
 export async function createFood(kitchenId: string, food: IFood): Promise<Response> {
   try {
@@ -189,9 +179,9 @@ export async function getFoodByID(id: string): Promise<Response> {
   }
 }
 
-export async function updateFoodById(kitchenId: string, foodId: string, food: IFood): Promise<Response> {
+export async function updateFoodById(foodId: string, food: IFood): Promise<Response> {
   try {
-    const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/foods/${foodId}`, {
+    const response = await fetch(`${DOMAIN}/foods/${foodId}`, {
       method: "PATCH",
       body: JSON.stringify({
         ...food,
@@ -211,9 +201,9 @@ export async function updateFoodById(kitchenId: string, foodId: string, food: IF
   }
 }
 
-export async function deleteFoodByID(kitchenId: string, foodId: string): Promise<Response> {
+export async function deleteFoodByID(foodId: string): Promise<Response> {
   try {
-    const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/foods/${foodId}`, {
+    const response = await fetch(`${DOMAIN}/foods/${foodId}`, {
       method: "DELETE",
       headers: {
         "Accept": "application/json",
