@@ -24,10 +24,11 @@ export default function App() {
     (async () => { //wrapped in IIFE so it invokes immediately
       const session = (await supabase.auth.getSession()).data.session; //iife again
       setSession(session);
-      if (session && !user) {
+      if (session && user.id === 0) {
         try {
           const userData = (await getBySupabaseID(session.user.id));
           setUser(userData);
+          setKitchens(userData.kitchens)
         }
         catch (error) {
           console.error(error);

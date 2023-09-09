@@ -1,11 +1,11 @@
 import { atom } from "jotai";
-import { IUser } from "../interfaces";
+import { IKitchen, IUser } from "../interfaces";
 
-export const userAtom = atom<IUser | null>({
-  id: "",
+export const userAtom = atom<IUser>({
+  id: 0,
   supabase_id: "",
   email: "",
   kitchens: [],
 })
-export const kitchensAtom = atom([])
-export const currentKitchen = atom(null)
+export const kitchensAtom = atom<IKitchen[]>([])
+export const currentKitchenAtom = atom<IKitchen | null>(null)

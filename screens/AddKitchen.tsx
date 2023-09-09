@@ -2,25 +2,27 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TextInput, Button } from 'react-native';
 import { Input } from "react-native-elements";
 // import { useStateValue } from '../store/State'
-import { userAtom } from '../utilities/store/atoms'
+import { userAtom, kitchensAtom } from '../utilities/store/atoms'
 import { useAtom } from 'jotai'
+import { createKitchen } from '../utilities/fetchRequests'
+import { useNavigation } from "@react-navigation/native";
+
 
 export default function AddKitchen() {
-  const [name, setName] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [user, setUser] = useAtom(userAtom)
-  // const [{ kitchens }, dispatch] = useStateValue();
+  const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useAtom(userAtom);
+  const [kitchens, setKitchens] = useAtom(kitchensAtom);
+  const navigation = useNavigation();
+
 
   async function submitKitchen() {
-    setLoading(true)
-    console.log(user)
-    // TODO: send post request
-    
-    // Add kitchen to application state
-    // dispatch({
-    //   type: 'addKitchen',
-    //   newKitchen: {name: name}
-    // })
+    setLoading(true);
+    console.log(user);
+    const newKitchen = await createKitchen(user.id, name);
+    console.log("The new kitchen is:", newKitchen);
+    setKitchens(kitchens.concat(newKitchen.kitchen));
+    navigation.navigate("Kitchen");
   }
     return (
         <ScrollView style={styles.container}>

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
 import { createFood, getFoodList } from '../utilities/fetchRequests'
+import { currentKitchenAtom } from '../utilities/store/atoms';
+import { useAtomValue } from 'jotai';
 
 type Props = {
   mode: string, //"Create" or "Edit"
@@ -13,10 +15,11 @@ type Items = {
   error: string
 }[]
 
-export default function FoodInput({ mode, initialItemName, kitchenId, userId }: Props) {
+export default function FoodInput({ mode, initialItemName, kitchenId }: Props) {
   const today = new Date();
   const [items, setItems] = useState<Items>([{ name: initialItemName, boughtOn: today, error: "" }]);
   const [response, setResponse] = useState<string>("")
+  const currentKitchen = useAtomValue(currentKitchenAtom)
 
   //Check empty input
   function isValid(): boolean {
@@ -38,9 +41,11 @@ export default function FoodInput({ mode, initialItemName, kitchenId, userId }: 
   }
 
   const handleSubmit = (): void => {
+    console.log('submit')
     if (!isValid) return
-    if (mode === "Create") {
-      Promise.all(items.map(item => { createFood(kitchenId, item.name, item.boughtOn) }))
+    console.log('valid')
+    if (mode === "Create" && currentKitchen) {
+      Promise.all(items.map(item => { createFood(currentKitchen.id, {name: item.name, bought_on: item.boughtOn}) }))
         .then((res) => { setResponse("Kitchen updated!") })
         .catch((e) => { setResponse(e.message) });
     }
@@ -57,17 +62,24 @@ export default function FoodInput({ mode, initialItemName, kitchenId, userId }: 
     //Need to implement "DELETE" request
   }
 
+  function updateItem(value, index) {
+    const newItems = JSON.parse(JSON.stringify(items))
+    newItems[index].name = value
+    console.log(newItems)
+    setItems(newItems)
+  }
+
   return (
     <>
       {items.map((item, index) => {
         return (
-          <View style={styles.formBox} key={index}>
+          <View style={styles.formBox} key={`addFoodItem${index}`}>
             <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
-            <TextInput style={styles.userInput} placeholder="Type the name of item" defaultValue={item.name} />
+            <TextInput style={styles.userInput} placeholder="Type the name of item" value={item.name} onChangeText={(value) => updateItem(value, index)} />
             <Text style={styles.verticallySpaced}>Bought on</Text>
             <TextInput
               style={styles.userInput}
-              defaultValue={item.boughtOn.toLocaleString()} //Need to change it to calender input instead of text
+              value={item.boughtOn.toLocaleString()} //Need to change it to calender input instead of text
             />
           </View>)
       })}
@@ -78,7 +90,7 @@ export default function FoodInput({ mode, initialItemName, kitchenId, userId }: 
             onPress={() => { setItems([...items, { name: "", boughtOn: today, error: "" }]) }} /></View>
       }
       <View style={styles.buttons}>
-        <Button title={mode} onPress={isValid ?? handleSubmit} />
+        <Button title={mode} onPress={handleSubmit} />
         {mode === "Edit" ?? <Button title="delete" onPress={isValid ?? handleDelete} />
         }
         <Button title="Cancel" onPress={handleCancel} />

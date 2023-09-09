@@ -1,16 +1,25 @@
 export interface IUser {
-  id: string,
+  id: number,
   supabase_id: string,
   email: string,
   kitchens: IKitchen[],
 }
 
 export interface IKitchen {
-  kitchen_id: string,
-  user_id: string,
+  id: number,
   name: string,
+  users: IUser[],
   food_list: IFood[],
 }
+
+export interface IFoodRequest {
+  id?: string,
+  name?: string,
+  bought_on?: Date,
+  updated_on?: Date,
+  inStock?: boolean,
+}
+
 
 export interface IFood {
   id: string,
