@@ -6,9 +6,15 @@ export interface IFood {
   inStock: boolean,
 }
 
+export interface IKitchen {
+  kitchen_id: string,
+  user_id: string,
+  food_list: IFood[],
+}
+
 export interface IUser {
   id: string,
   supabase_id: string,
   email: string,
-  kitchens: IFood[],
+  kitchens: IKitchen[],
 }
