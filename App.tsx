@@ -6,10 +6,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Auth, Account, Kitchen, Profile, List, AddFood, AddKitchen } from "./screens/screens";
 import Header from "./header/Header";
-import { createUser, getBySupabaseID } from "./fetchRequests";
+import { createUser, getBySupabaseID } from "./utilities/fetchRequests";
 import { useAtom } from 'jotai'
-import { userAtom } from './store/atoms'
-import { kitchensAtom } from "./store/atoms";
+import { userAtom } from './utilities/store/atoms'
+import { kitchensAtom } from "./utilities/store/atoms";
 
 
 const Stack = createStackNavigator();
@@ -32,7 +32,6 @@ export default function App() {
           if (!userData) {
             const newUser = await createUser(session.user.id, session.user.email);
             // TODO: when creating a new user, there will be no kitchens property
-            newUser.kitchens = []
             setUserDbData(newUser);
           }
           else {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TextInput, Button } from 'react-native';
 import { Input } from "react-native-elements";
 // import { useStateValue } from '../store/State'
-import { userAtom } from '../store/atoms'
+import { userAtom } from '../utilities/store/atoms'
 import { useAtom } from 'jotai'
 
 export default function AddKitchen() {

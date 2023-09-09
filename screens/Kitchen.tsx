@@ -3,7 +3,7 @@ import { Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useEffect, useState, useContext } from "react";
-import { getKitchenByID } from "../fetchRequests"
+import { getKitchenByID } from "../utilities/fetchRequests"
 
 export default function Kitchen() {
   const today = new Date();

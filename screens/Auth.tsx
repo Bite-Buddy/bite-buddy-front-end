@@ -6,7 +6,7 @@ import { Provider } from "@supabase/supabase-js";
 import * as WebBrowser from "expo-web-browser";
 import { useNavigation } from "@react-navigation/native";
 // import * as Linking from "expo-linking";
-import { devUrls } from "../developmentUrls";
+import { devUrls } from "../utilities/developmentUrls";
 
 export default function Auth() { 
   const [email, setEmail] = useState("");
