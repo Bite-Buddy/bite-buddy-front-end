@@ -2,10 +2,8 @@
 //REMOVE THE TRAILING SLASH (/) FROM THE URL IN YOUR .env.local FILE
 // const DOMAIN = process.env.DOMAIN;
 
-// use http and ip address instead of localhost
-// const DOMAIN = "http://192.168.1.226:8080"; //park local server
 import { IKitchen, IUser, IFood } from "./interfaces";
-const DOMAIN = "http://localhost:8080";
+const DOMAIN = "http://192.168.1.226:8000";
 
 export async function createUser(supabase_id: string, email: string):Promise<IUser> {
   try {
@@ -26,6 +24,8 @@ export async function createUser(supabase_id: string, email: string):Promise<IUs
     return response.json();
   }
   catch (error) {
+    console.error(error);
+    console.log("CREATE USER ERROR");
     throw error;
   }
 }
@@ -52,6 +52,7 @@ export async function getBySupabaseID(supabase_id: string): Promise<IUser> {
   }
   catch (error) {
     console.error(error);
+    console.log("GET BY SUPABASE ID");
     throw error;
   }
 }
@@ -88,10 +89,17 @@ export async function deleteUserFromDatabase(id: string): Promise<IUser> {
   }
 }
 
-export async function createKitchen(id: string): Promise<IKitchen> {
+export async function createKitchen(id: string, name: string): Promise<IKitchen> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/users/${id}`, {
       method: "POST",
+      body: JSON.stringify({
+        name: name,
+      }),
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
     });
     return response.json();
   }

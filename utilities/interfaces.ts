@@ -8,6 +8,7 @@ export interface IUser {
 export interface IKitchen {
   kitchen_id: string,
   user_id: string,
+  name: string,
   food_list: IFood[],
 }
 
