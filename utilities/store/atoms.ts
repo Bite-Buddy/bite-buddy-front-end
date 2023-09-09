@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { IFood, IUser } from "../interfaces";
+import { IUser } from "../interfaces";
 
 export const userAtom = atom<IUser>({
   id: "",

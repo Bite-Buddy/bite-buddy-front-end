@@ -1,9 +1,8 @@
-export interface IFood {
+export interface IUser {
   id: string,
-  name: string,
-  bought_on: Date,
-  updated_on: Date,
-  inStock: boolean,
+  supabase_id: string,
+  email: string,
+  kitchens: IKitchen[],
 }
 
 export interface IKitchen {
@@ -12,9 +11,10 @@ export interface IKitchen {
   food_list: IFood[],
 }
 
-export interface IUser {
+export interface IFood {
   id: string,
-  supabase_id: string,
-  email: string,
-  kitchens: IKitchen[],
+  name: string,
+  bought_on: Date,
+  updated_on: Date,
+  inStock: boolean,
 }
