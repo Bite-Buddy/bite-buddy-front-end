@@ -27,7 +27,7 @@ const initialState: IState = {
     email: null
   },
   setUser: () => {
-    console.log('shit')
+    console.log('init')
   },
   setKitchens: () => {},
   addKitchen: () => {}
