@@ -31,6 +31,8 @@ export default function App() {
           console.log('get by supabaseid', userData)
           if (!userData) {
             const newUser = await createUser(session.user.id, session.user.email);
+            // TODO: when creating a new user, there will be no kitchens property
+            newUser.kitchens = []
             setUserDbData(newUser);
           }
           else {
