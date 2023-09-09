@@ -8,4 +8,4 @@ export const userAtom = atom<IUser | null>({
   kitchens: [],
 })
 export const kitchensAtom = atom([])
-export const currentKitchen = atom(null)
+export const currentKitchen = atom<string>("") //Please set kitchen_id.
