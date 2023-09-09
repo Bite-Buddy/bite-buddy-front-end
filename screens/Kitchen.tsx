@@ -2,7 +2,7 @@ import { StyleSheet, View, ScrollView, Pressable } from "react-native";
 import { Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { getKitchenByID } from "../utilities/fetchRequests"
 
 export default function Kitchen() {
