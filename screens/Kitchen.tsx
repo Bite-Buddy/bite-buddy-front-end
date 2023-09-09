@@ -3,7 +3,7 @@ import { useStateValue } from "../store/State";
 import { Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { getKitchenByID } from "../fetchRequests"
 
 export default function Kitchen() {
@@ -11,14 +11,14 @@ export default function Kitchen() {
   const navigation = useNavigation();
   const [{ user, kitchens }, dispatch] = useStateValue();
   //Initial state is set as an empty array
-  interface IfoodItem { name: string, bought_on: Date, id: string }
+  interface IfoodItem { name: string, bought_on: Date, id: string | number }
   const [foodList, setFoodList] = useState<IfoodItem[] | null>(null);
 
   /**Fetch the foodList that belongs to thiskitchen */
   const fetchFoodList = async () => {
     try {
       let kitchenInfo = await getKitchenByID(user.currentkitchenId);
-      let modList = await kitchenInfo.food_list.map(item => { return { "bought_on": new Date(item.bought_on), "name": item.name, "id": item.id } })
+      let modList = kitchenInfo.food_list.map(item => { return { "bought_on": new Date(item.bought_on), "name": item.name, "id": item.id } })
       setFoodList(modList)
     } catch (e) {
       console.error("Error fetching food list: ", e)
@@ -39,10 +39,10 @@ export default function Kitchen() {
                 //Calculate the day offset of te bought day from today
                 const dayOffSet = Math.floor((today.getTime() - foodProduct.bought_on.getTime()) / (24 * 60 * 60 * 1000))
                 return (
-                  <View style={styles.list} key={`foodProduct${foodProduct.name}`}>
+                  <Pressable style={styles.list} key={`foodProduct${foodProduct.name}`}>
                     <Text style={styles.name}>{foodProduct.name}</Text>
                     <Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
-                  </View>
+                  </Pressable>
                 );
               })}
           </View>
