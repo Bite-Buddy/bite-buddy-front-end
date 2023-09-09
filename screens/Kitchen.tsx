@@ -4,6 +4,8 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useEffect, useState } from "react";
 import { getKitchenByID } from "../utilities/fetchRequests"
+import { currentKitchen } from "../utilities/store/atoms";
+import { useAtom } from "jotai";
 
 export default function Kitchen() {
   const today = new Date();
@@ -11,11 +13,13 @@ export default function Kitchen() {
   //Initial state is set as an empty array
   interface IfoodItem { name: string, bought_on: Date, id: string | number }
   const [foodList, setFoodList] = useState<IfoodItem[] | null>(null);
+  const [kitchenId, setKitchenId] = useAtom(currentKitchen);
+  useEffect(() => { setKitchenId("2"); }, [])//must be removed once it is implemented properly in the kitchen trnsaction.
 
   /**Fetch the foodList that belongs to thiskitchen */
   const fetchFoodList = async () => {
     try {
-      let kitchenInfo = await getKitchenByID(user.currentkitchenId);
+      let kitchenInfo = await getKitchenByID(kitchenId);
       let modList = kitchenInfo.food_list.map(item => { return { "bought_on": new Date(item.bought_on), "name": item.name, "id": item.id } })
       setFoodList(modList)
     } catch (e) {
@@ -33,12 +37,12 @@ export default function Kitchen() {
         <ScrollView>
           <View>
             {foodList === null ? <Text>"No item stored"</Text>
-              : foodList.map((foodProduct) => {
+              : foodList.map((foodItem) => {
                 //Calculate the day offset of te bought day from today
-                const dayOffSet = Math.floor((today.getTime() - foodProduct.bought_on.getTime()) / (24 * 60 * 60 * 1000))
+                const dayOffSet = Math.floor((today.getTime() - foodItem.bought_on.getTime()) / (24 * 60 * 60 * 1000))
                 return (
-                  <Pressable style={styles.list} key={`foodProduct${foodProduct.name}`}>
-                    <Text style={styles.name}>{foodProduct.name}</Text>
+                  <Pressable style={styles.list} key={`foodItem${foodItem.id}`}>
+                    <Text style={styles.name}>{foodItem.name}</Text>
                     <Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
                   </Pressable>
                 );
