@@ -10,33 +10,24 @@ import { createUser, getBySupabaseID } from "./utilities/fetchRequests";
 import { useAtom } from 'jotai'
 import { userAtom } from './utilities/store/atoms'
 import { kitchensAtom } from "./utilities/store/atoms";
-
+import { IUser } from "./utilities/interfaces";
 
 const Stack = createStackNavigator();
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
-  const [userDbData, setUserDbData] = useState<Response | null>(null);
   const [sessionChecked, setSessionChecked] = useState(false);
   const [user, setUser] = useAtom(userAtom);
   const [kitchens, setKitchens] = useAtom(kitchensAtom);
-
+  
   useEffect(() => {
     (async () => { //wrapped in IIFE so it invokes immediately
       const session = (await supabase.auth.getSession()).data.session; //iife again
       setSession(session);
-      if (session && !userDbData) {
+      if (session && !user) {
         try {
-          const userData = await getBySupabaseID(session.user.id);
-          console.log('get by supabaseid', userData)
-          if (!userData) {
-            const newUser = await createUser(session.user.id, session.user.email);
-            // TODO: when creating a new user, there will be no kitchens property
-            setUserDbData(newUser);
-          }
-          else {
-            setUserDbData(userData);
-          }
+          const userData = (await getBySupabaseID(session.user.id));
+          setUser(userData);
         }
         catch (error) {
           console.error(error);
@@ -53,19 +44,9 @@ export default function App() {
   useEffect(() => {
     session && console.log("session has changed: ", session.user.email);
   }, [session]);
-
   useEffect(() => {
-    userDbData && console.log("userDbData has changed: ", userDbData);
-    if (userDbData) {
-      setUser({
-        id: userDbData.id,
-        supabase_id: userDbData.supabase_id,
-        email: userDbData.email,
-      })
-      console.log('setting kitchens to:', userDbData.kitchens)
-      setKitchens(userDbData.kitchens)
-    }
-  }, [userDbData]);
+    session && console.log("user has changed: ", user);
+  }, [user]);
 
   if (!sessionChecked) {
     // Render a loading screen while authentication check is in progress

@@ -7,11 +7,15 @@ import * as WebBrowser from "expo-web-browser";
 import { useNavigation } from "@react-navigation/native";
 // import * as Linking from "expo-linking";
 import { devUrls } from "../utilities/developmentUrls";
+import { createUser, getBySupabaseID } from "../utilities/fetchRequests";
+import { userAtom } from "../utilities/store/atoms";
+import { useAtom } from "jotai";
 
 export default function Auth() { 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useAtom(userAtom);
   const navigation = useNavigation();
 
   async function signInWithEmail() {
@@ -68,7 +72,13 @@ export default function Auth() {
       WebBrowser.maybeCompleteAuthSession();
     }
     const sesh = (await supabase.auth.getSession());
-    sesh.data.session?.user && navigation.navigate("Account");
+    const dbData = await getBySupabaseID(sesh.data.session?.user);
+    if (!dbData) {
+      const user = await createUser(sesh.data.session?.user.id, sesh.data.session?.user.email);
+      setUser(user);
+    }
+    
+    user && navigation.navigate("Account");
     setLoading(false);
   }
 
