@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
-import { useNavigation } from '@react-navigation/native'
-import { createFood, updateFoodById, deleteFoodByID } from '../fetchRequests';
+import React, { useState } from "react";
+import { StyleSheet, View, Text, TextInput, Button } from "react-native";
+import { useNavigation } from "@react-navigation/native"
+import { createFood, updateFoodById, deleteFoodByID } from "../fetchRequests";
 
 type Props = {
   mode: string, //"Create" or "Edit"
   initialItemName: string
   kitchenId: string
+  id: string
 }
 type Items = {
   name: string,
@@ -14,7 +15,7 @@ type Items = {
   error: string
 }[]
 
-export default function FoodInput({ mode, initialItemName, kitchenId = "" }: Props) {
+export default function FoodInput({ mode, initialItemName, kitchenId = "", id = "" }: Props) {
   const today = new Date();
   const navigation = useNavigation();
   const [items, setItems] = useState<Items>([{ name: initialItemName, boughtOn: today, error: "" }]);
@@ -43,7 +44,7 @@ export default function FoodInput({ mode, initialItemName, kitchenId = "" }: Pro
     if (!isValid) return
     if (mode === "Create") {
       Promise.all(items.map(item => {
-        const foodItem = { name: item.name, bought_on: item.boughtOn, updated_on: today }
+        const foodItem = { name: item.name, bought_on: item.boughtOn, updated_on: today, inStock: true }
         createFood(kitchenId, foodItem);
       }))
         .then((res) => { setResponse("Kitchen updated!") })
@@ -54,8 +55,10 @@ export default function FoodInput({ mode, initialItemName, kitchenId = "" }: Pro
     }
   }
 
-  const handleDelete = (): void => {
-    //Need to implement "DELETE" request
+  const handleDelete = async (): Promise<void> => {
+    const deleteRes = await deleteFoodByID(id)
+      .then(res => { setResponse("Deleted item!") })
+      .catch((e) => { setResponse(e.message) });
   }
 
   return (
