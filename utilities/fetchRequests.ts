@@ -1,11 +1,11 @@
 //configure your .env.local file with the server domain link
 //REMOVE THE TRAILING SLASH (/) FROM THE URL IN YOUR .env.local FILE
-// const DOMAIN = process.env.DOMAIN;
+const DOMAIN = process.env.DOMAIN;
 
 // use http and ip address instead of localhost
 // const DOMAIN = "http://192.168.1.226:8080"; //park local server
-import { IKitchen, IUser, IFood } from "./interfaces";
-const DOMAIN = "http://localhost:8080";
+import { IKitchen, IUser, IFood, IFoodRequest } from "./interfaces";
+// const DOMAIN = "http://localhost:8080";
 
 export async function createUser(supabase_id: string, email: string):Promise<IUser> {
   try {
@@ -26,6 +26,8 @@ export async function createUser(supabase_id: string, email: string):Promise<IUs
     return response.json();
   }
   catch (error) {
+    console.error(error);
+    console.log("CREATE USER ERROR");
     throw error;
   }
 }
@@ -52,6 +54,7 @@ export async function getBySupabaseID(supabase_id: string): Promise<IUser> {
   }
   catch (error) {
     console.error(error);
+    console.log("GET BY SUPABASE ID");
     throw error;
   }
 }
@@ -88,10 +91,18 @@ export async function deleteUserFromDatabase(id: string): Promise<IUser> {
   }
 }
 
-export async function createKitchen(id: string): Promise<IKitchen> {
+export async function createKitchen(id: number, name: string): Promise<{message: string, kitchen: IKitchen}> {
   try {
+    console.log('calling with arugments', id, name, `${DOMAIN}/kitchens/users/${id}`)
     const response = await fetch(`${DOMAIN}/kitchens/users/${id}`, {
       method: "POST",
+      body: JSON.stringify({
+        name: name,
+      }),
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
     });
     return response.json();
   }
@@ -114,7 +125,7 @@ export async function getKitchens(): Promise<IKitchen[]> {
   }
 }
 
-export async function getKitchenByID(kitchenId: string): Promise<IKitchen> {
+export async function getKitchenByID(kitchenId: number): Promise<IKitchen> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}`, {
       method: "GET",
@@ -126,13 +137,17 @@ export async function getKitchenByID(kitchenId: string): Promise<IKitchen> {
   }
 }
 
-export async function createFood(kitchenId: string, food: IFood): Promise<IFood> {
+export async function createFood(kitchenId: number, food: IFoodRequest): Promise<IFood> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/foods`, {
       method: "POST",
       body: JSON.stringify({
         ...food,
       }),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
     });
     return response.json();
   }

@@ -4,8 +4,9 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useEffect, useState } from "react";
 import { getKitchenByID } from "../utilities/fetchRequests"
-import { currentKitchen } from "../utilities/store/atoms";
 import { useAtom } from "jotai";
+import { kitchensAtom, currentKitchenAtom } from "../utilities/store/atoms";
+import { IKitchen } from "../utilities/interfaces";
 
 export default function Kitchen() {
   const today = new Date();
@@ -13,29 +14,49 @@ export default function Kitchen() {
   //Initial state is set as an empty array
   interface IfoodItem { name: string, bought_on: Date, id: string | number }
   const [foodList, setFoodList] = useState<IfoodItem[] | null>(null);
-  const [kitchenId, setKitchenId] = useAtom(currentKitchen);
-  useEffect(() => { setKitchenId("2"); }, [])//must be removed once it is implemented properly in the kitchen trnsaction.
+  const [kitchens, setKitchens] = useAtom(kitchensAtom)
+  const [currentKitchen, setCurrentKitchen] = useAtom(currentKitchenAtom)
+
+  useEffect(() => {
+    if (currentKitchen) {
+      fetchFoodList()
+    }
+  }, [currentKitchen])
 
   /**Fetch the foodList that belongs to thiskitchen */
   const fetchFoodList = async () => {
-    try {
-      let kitchenInfo = await getKitchenByID(kitchenId);
-      let modList = kitchenInfo.food_list.map(item => { return { "bought_on": new Date(item.bought_on), "name": item.name, "id": item.id } })
-      setFoodList(modList)
-    } catch (e) {
-      console.error("Error fetching food list: ", e)
+    console.log('fetching foodlist', currentKitchen)
+    if (currentKitchen) {
+      try {
+        let kitchenInfo = await getKitchenByID(currentKitchen.id);
+        let modList = await kitchenInfo.food_list.map(item => { return { "bought_on": new Date(item.bought_on), "name": item.name, "id": item.id } })
+        setFoodList(modList)
+      } catch (e) {
+        console.error("Error fetching food list: ", e)
+      }
     }
   }
-  useEffect(() => {
-    fetchFoodList()
-  }, [])
+
+  function selectKitchen(kitchen: IKitchen) {
+    setCurrentKitchen(kitchen);
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.verticallySpaced}>
-        <Text style={styles.heading}>Kitchen</Text>
+        <Text style={styles.heading}>{currentKitchen ? currentKitchen.name : 'Select a Kitchen'}</Text>
         <ScrollView>
           <View>
+            <View>
+              {kitchens.map(kitchen => {
+              return (
+                <Pressable key={`selectableKitchen${kitchen.id}`} style={styles.button} onPress={() => selectKitchen(kitchen)}>
+                  <Text style={styles.text}>
+                    {kitchen.name}
+                  </Text>
+                </Pressable>
+              )})}
+            </View>
             {foodList === null ? <Text>"No item stored"</Text>
               : foodList.map((foodItem) => {
                 //Calculate the day offset of te bought day from today

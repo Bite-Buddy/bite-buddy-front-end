@@ -78,7 +78,14 @@ export default function Auth() {
       setUser(user);
     }
     
-    user && navigation.navigate("Account");
+    if (user && user.kitchens.length === 0) {
+      navigation.navigate("Account");
+    }
+    
+    if (user && user.kitchens.length) {
+      navigation.navigate("Kitchen");
+    }
+
     setLoading(false);
   }
 
