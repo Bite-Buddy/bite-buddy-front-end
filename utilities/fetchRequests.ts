@@ -26,6 +26,8 @@ export async function createUser(supabase_id: string, email: string):Promise<IUs
     return response.json();
   }
   catch (error) {
+    console.error(error);
+    console.log("CREATE USER ERROR");
     throw error;
   }
 }
@@ -52,6 +54,7 @@ export async function getBySupabaseID(supabase_id: string): Promise<IUser> {
   }
   catch (error) {
     console.error(error);
+    console.log("GET BY SUPABASE ID");
     throw error;
   }
 }
@@ -94,11 +97,11 @@ export async function createKitchen(id: number, name: string): Promise<{message:
     const response = await fetch(`${DOMAIN}/kitchens/users/${id}`, {
       method: "POST",
       body: JSON.stringify({
-        name: name
+        name: name,
       }),
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        "Accept": "application/json",
+        "Content-Type": "application/json",
       },
     });
     return response.json();
