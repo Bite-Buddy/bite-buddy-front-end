@@ -49,7 +49,7 @@ export default function Kitchen() {
   return (
     <View style={styles.container}>
       <View style={styles.verticallySpaced}>
-        <Text style={styles.heading}>{currentKitchen ? currentKitchen.name : 'Select a Kitchen'}</Text>
+        <Text style={styles.heading}>My Kitchens</Text>
         <ScrollView>
           <View>
             <View>
@@ -62,23 +62,12 @@ export default function Kitchen() {
                 </Pressable>
               )})}
             </View>
-            {foodList === null ? <Text>"No item stored"</Text>
-              : foodList.map((foodItem) => {
-                //Calculate the day offset of te bought day from today
-                const dayOffSet = Math.floor((today.getTime() - foodItem.bought_on.getTime()) / (24 * 60 * 60 * 1000))
-                return (
-                  <Pressable style={styles.list} key={`foodItem${foodItem.id}`}>
-                    <Text style={styles.name}>{foodItem.name}</Text>
-                    <Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
-                  </Pressable>
-                );
-              })}
           </View>
 
         </ScrollView>
       </View>
       <View>
-        <Pressable style={styles.button} onPress={() => navigation.navigate('AddFood')}>
+        <Pressable style={styles.button} onPress={() => navigation.navigate('AddKitchen')}>
           <Text style={styles.text}><MaterialCommunityIcons name="plus" size={30} color="black" /></Text>
         </Pressable>
       </View>
