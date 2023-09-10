@@ -5,9 +5,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useEffect, useState } from "react";
 import { getKitchenByID } from "../utilities/fetchRequests"
 import { useAtom } from "jotai";
-import { kitchensAtom, currentKitchenAtom } from "../utilities/store/atoms";
+import { kitchensAtom, currentKitchenAtom, currentFoodListAtom } from "../utilities/store/atoms";
 import { IKitchen } from "../utilities/interfaces";
-import { Drawer } from 'expo-router/drawer';
 
 
 export default function Kitchen() {
@@ -18,6 +17,7 @@ export default function Kitchen() {
   const [foodList, setFoodList] = useState<IfoodItem[] | null>(null);
   const [kitchens, setKitchens] = useAtom(kitchensAtom)
   const [currentKitchen, setCurrentKitchen] = useAtom(currentKitchenAtom)
+  const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom)
 
   useEffect(() => {
     if (currentKitchen) {
@@ -31,8 +31,10 @@ export default function Kitchen() {
     if (currentKitchen) {
       try {
         let kitchenInfo = await getKitchenByID(currentKitchen.id);
-        let modList = await kitchenInfo.food_list.map(item => { return { "bought_on": new Date(item.bought_on), "name": item.name, "id": item.id } })
+        let modList = await kitchenInfo.food_list.map(item => { return { ...item, "bought_on": new Date(item.bought_on)} })
         setFoodList(modList)
+        console.log('setting', modList)
+        setCurrentFoodList(modList)
       } catch (e) {
         console.error("Error fetching food list: ", e)
       }
