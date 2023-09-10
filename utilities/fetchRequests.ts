@@ -137,7 +137,7 @@ export async function getKitchenByID(kitchenId: number): Promise<IKitchen> {
   }
 }
 
-export async function createFood(kitchenId: number, food: IFoodRequest): Promise<IFood> {
+export async function createFood(kitchenId: number, food: IFoodRequest): Promise<{message: string, food: IFood}> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/foods`, {
       method: "POST",

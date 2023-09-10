@@ -1,69 +1,25 @@
 import { StyleSheet, View, ScrollView, Pressable } from "react-native";
 import { Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
+import { useAtomValue } from 'jotai'
+import { currentKitchenAtom, currentFoodListAtom } from "../utilities/store/atoms";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useEffect, useState } from "react";
-import { getKitchenByID } from "../utilities/fetchRequests"
-import { useAtom } from "jotai";
-import { kitchensAtom, currentKitchenAtom, currentFoodListAtom } from "../utilities/store/atoms";
-import { IKitchen } from "../utilities/interfaces";
 
 
-export default function Kitchen() {
+
+export default function KitchenDetails() {
   const today = new Date();
   const navigation = useNavigation();
-  //Initial state is set as an empty array
-  interface IfoodItem { name: string, bought_on: Date, id: string | number }
-  const [foodList, setFoodList] = useState<IfoodItem[] | null>(null);
-  const [kitchens, setKitchens] = useAtom(kitchensAtom)
-  const [currentKitchen, setCurrentKitchen] = useAtom(currentKitchenAtom)
-  const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom)
-
-  useEffect(() => {
-    if (currentKitchen) {
-      fetchFoodList()
-    }
-  }, [currentKitchen])
-
-  /**Fetch the foodList that belongs to thiskitchen */
-  const fetchFoodList = async () => {
-    console.log('fetching foodlist', currentKitchen)
-    if (currentKitchen) {
-      try {
-        let kitchenInfo = await getKitchenByID(currentKitchen.id);
-        let modList = await kitchenInfo.food_list.map(item => { return { ...item, "bought_on": new Date(item.bought_on)} })
-        setFoodList(modList)
-        console.log('setting', modList)
-        setCurrentFoodList(modList)
-      } catch (e) {
-        console.error("Error fetching food list: ", e)
-      }
-    }
-  }
-
-  function selectKitchen(kitchen: IKitchen) {
-    navigation.navigate("Kitchen Settings");
-    setCurrentKitchen(kitchen);
-  }
+  const currentKitchen = useAtomValue(currentKitchenAtom);
+  const currentFoodList = useAtomValue(currentFoodListAtom);
 
   return (
     <View style={styles.container}>
-      <View style={styles.verticallySpaced}>
-        <Text style={styles.heading}>{currentKitchen ? currentKitchen.name : 'Select a Kitchen'}</Text>
         <ScrollView>
           <View>
-            <View>
-              {kitchens.map(kitchen => {
-              return (
-                <Pressable key={`selectableKitchen${kitchen.id}`} style={styles.button} onPress={() => selectKitchen(kitchen)}>
-                  <Text style={styles.text}>
-                    {kitchen.name}
-                  </Text>
-                </Pressable>
-              )})}
-            </View>
-            {foodList === null ? <Text>"No item stored"</Text>
-              : foodList.map((foodItem) => {
+            <View style={styles.verticallySpaced}>
+                   {!currentFoodList.length ? <Text>"No item stored"</Text>
+              : currentFoodList.map((foodItem) => {
                 //Calculate the day offset of te bought day from today
                 const dayOffSet = Math.floor((today.getTime() - foodItem.bought_on.getTime()) / (24 * 60 * 60 * 1000))
                 return (
@@ -74,9 +30,8 @@ export default function Kitchen() {
                 );
               })}
           </View>
-
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
       <View>
         <Pressable style={styles.button} onPress={() => navigation.navigate('AddFood')}>
           <Text style={styles.text}><MaterialCommunityIcons name="plus" size={30} color="black" /></Text>
@@ -97,7 +52,8 @@ const styles = StyleSheet.create({
   },
   verticallySpaced: {
     flex: 1,
-    backgroundColor: '#EFCA46',
+    // height: 30,
+    // backgroundColor: '#EFCA46',
     borderWidth: 0,
     borderRadius: 20,
     marginBottom: 20,
