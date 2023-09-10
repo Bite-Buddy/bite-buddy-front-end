@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
 import { createFood, getFoodList } from '../utilities/fetchRequests'
-import { currentKitchenAtom } from '../utilities/store/atoms';
-import { useAtomValue } from 'jotai';
+import { currentKitchenAtom, currentFoodListAtom, userAtom } from '../utilities/store/atoms';
+import { useAtomValue, useAtom } from 'jotai';
+import { useNavigation } from '@react-navigation/native'
 
 type Props = {
   mode: string, //"Create" or "Edit"
@@ -22,6 +23,7 @@ export default function FoodInput({ mode, initialItemName, kitchenId }: Props) {
   const [items, setItems] = useState<Items>([{ name: initialItemName, boughtOn: today, error: "" }]);
   const [response, setResponse] = useState<string>("")
   const currentKitchen = useAtomValue(currentKitchenAtom)
+  const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom)
 
   //Check empty input
   function isValid(): boolean {
@@ -47,8 +49,21 @@ export default function FoodInput({ mode, initialItemName, kitchenId }: Props) {
     if (!isValid) return
     console.log('valid')
     if (mode === "Create" && currentKitchen) {
-      Promise.all(items.map(item => { createFood(currentKitchen.id, {name: item.name, bought_on: item.boughtOn}) }))
-        .then((res) => { setResponse("Kitchen updated!") })
+      console.log('submitting')
+      Promise.all(items.map(item => createFood(currentKitchen.id, {name: item.name, bought_on: item.boughtOn})))
+        .then((res) => { 
+          setResponse("Kitchen updated!");
+          console.log('res', res);
+          const preparedFoodList = res.map(response => {
+            return {...response.food,   
+              bought_on: new Date(response.food.bought_on), 
+              updated_on: new Date(response.food.updated_on)
+            }
+          })
+          console.log(preparedFoodList)
+          setCurrentFoodList(currentFoodList.concat(preparedFoodList))
+          navigation.navigate("Kitchen Details")
+         })
         .catch((e) => { setResponse(e.message) });
     }
     else if (mode === "Edit") {
