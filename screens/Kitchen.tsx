@@ -12,7 +12,7 @@ export default function Kitchen() {
   const today = new Date();
   const navigation = useNavigation();
   //Initial state is set as an empty array
-  interface IfoodItem { name: string, bought_on: Date, id: string }
+  interface IfoodItem { name: string, bought_on: Date, id: string | number }
   const [foodList, setFoodList] = useState<IfoodItem[] | null>(null);
   const [kitchens, setKitchens] = useAtom(kitchensAtom)
   const [currentKitchen, setCurrentKitchen] = useAtom(currentKitchenAtom)
@@ -58,14 +58,14 @@ export default function Kitchen() {
               )})}
             </View>
             {foodList === null ? <Text>"No item stored"</Text>
-              : foodList.map((foodProduct) => {
+              : foodList.map((foodItem) => {
                 //Calculate the day offset of te bought day from today
-                const dayOffSet = Math.floor((today.getTime() - foodProduct.bought_on.getTime()) / (24 * 60 * 60 * 1000))
+                const dayOffSet = Math.floor((today.getTime() - foodItem.bought_on.getTime()) / (24 * 60 * 60 * 1000))
                 return (
-                  <View style={styles.list} key={`foodProduct${foodProduct.name}`}>
-                    <Text style={styles.name}>{foodProduct.name}</Text>
+                  <Pressable style={styles.list} key={`foodItem${foodItem.id}`}>
+                    <Text style={styles.name}>{foodItem.name}</Text>
                     <Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
-                  </View>
+                  </Pressable>
                 );
               })}
           </View>

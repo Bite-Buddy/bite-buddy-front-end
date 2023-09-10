@@ -8,6 +8,7 @@ type Props = {
   mode: string, //"Create" or "Edit"
   initialItemName: string
   kitchenId: string
+  id: string
 }
 type Items = {
   name: string,
@@ -17,6 +18,7 @@ type Items = {
 
 export default function FoodInput({ mode, initialItemName, kitchenId }: Props) {
   const today = new Date();
+  const navigation = useNavigation();
   const [items, setItems] = useState<Items>([{ name: initialItemName, boughtOn: today, error: "" }]);
   const [response, setResponse] = useState<string>("")
   const currentKitchen = useAtomValue(currentKitchenAtom)
@@ -93,7 +95,7 @@ export default function FoodInput({ mode, initialItemName, kitchenId }: Props) {
         <Button title={mode} onPress={handleSubmit} />
         {mode === "Edit" ?? <Button title="delete" onPress={isValid ?? handleDelete} />
         }
-        <Button title="Cancel" onPress={handleCancel} />
+        <Button title="Cancel" onPress={() => navigation.navigate("Kitchen")} />
       </View>
     </>
   );
@@ -101,13 +103,13 @@ export default function FoodInput({ mode, initialItemName, kitchenId }: Props) {
 
 const styles = StyleSheet.create({
   verticallySpaced: {
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
   },
   formBox: {
     margin: 10,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     borderRadius: 10,
   },
@@ -115,16 +117,16 @@ const styles = StyleSheet.create({
     height: 40,
     marginBottom: 15,
     padding: 5,
-    borderColor: 'lightgray',
+    borderColor: "lightgray",
     borderWidth: 1,
   },
   more: {
     margin: 10
   },
   buttons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-evenly'
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-evenly"
   }
   /**Copied below from the other component, not sure the intention */
   // mt20: {
