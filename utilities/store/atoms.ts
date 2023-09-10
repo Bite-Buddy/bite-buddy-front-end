@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { IKitchen, IUser } from "../interfaces";
+import { IFood, IKitchen, IUser } from "../interfaces";
 
 export const userAtom = atom<IUser>({
   id: 0,
@@ -9,3 +9,4 @@ export const userAtom = atom<IUser>({
 })
 export const kitchensAtom = atom<IKitchen[]>([])
 export const currentKitchenAtom = atom<IKitchen | null>(null)
+export const currentFoodListAtom = atom<IFood[]>([])
