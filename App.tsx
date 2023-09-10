@@ -6,7 +6,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Auth, Account, Kitchen, Profile, List, AddFood, AddKitchen } from "./screens/screens";
 import Header from "./header/Header";
-import { createUser, getBySupabaseID } from "./utilities/fetchRequests";
+import { createUser, getBySupabaseID, getUsers } from "./utilities/fetchRequests";
 import { useAtom } from 'jotai'
 import { userAtom } from './utilities/store/atoms'
 import { kitchensAtom } from "./utilities/store/atoms";
@@ -15,51 +15,66 @@ import { IUser } from "./utilities/interfaces";
 const Stack = createStackNavigator();
 
 export default function App() {
-  const [session, setSession] = useState<Session | null>(null);
   const [sessionChecked, setSessionChecked] = useState(false);
-  const [user, setUser] = useAtom(userAtom);
   const [kitchens, setKitchens] = useAtom(kitchensAtom);
-  
-  useEffect(() => {
-    (async () => { //wrapped in IIFE so it invokes immediately
-      const session = (await supabase.auth.getSession()).data.session; //iife again
-      setSession(session);
-      if (session && user.id === 0) {
-        try {
-          const userData = (await getBySupabaseID(session.user.id));
-          setUser(userData);
-          setKitchens(userData.kitchens)
-        }
-        catch (error) {
-          console.error(error);
-        }
-      }
-      setSessionChecked(true);
-    })();
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setSessionChecked(true);
-    });
-  }, [])
+  const [user, setUser] = useAtom(userAtom);
+  const [users, setUsers] = useState<IUser[]>();
+  const [session, setSession] = useState<Session | null>(null);
+  // useEffect(() => {
+  //   (async () => {
+  //     const session = await supabase.auth.getSession();
 
-  useEffect(() => {
-    session && console.log("session has changed: ", session.user.email);
-  }, [session]);
-  useEffect(() => {
-    session && console.log("user has changed: ", user);
-  }, [user]);
+  //     if (session && user.email === session) {
+  //       const sessionUser = await getSessionUser();
+  //       const fetchedUsers = await fetchUsers();
+  //       if (sessionUser && fetchedUsers) {
+  //         setUser(sessionUser);
+  //         setUsers(fetchedUsers);
+  //       }
+  //     }
+      
+  //     // const createdUser = await fetchAndCreateUser();
+      
+  //     setSessionChecked(true);
+  //   })()
+  // }, [])
+  // useEffect(() => {
+  //   if (user.email.length > 0 && sessionChecked && users) {
+  //     console.log("THE USER", user);
+  //     console.log("THE USERS", users);
+  //   }
+  // }, [user, users, sessionChecked])
 
-  if (!sessionChecked) {
-    // Render a loading screen while authentication check is in progress
-    // it's normally too quick to see anyway
-    return (
-      <NavigationContainer>
-        <View>
-          <Text>Loading</Text>
-        </View>
-      </NavigationContainer>
-    );
-  }
+  // async function getSessionUser() {
+  //   try {
+  //     const user = await getBySupabaseID(session?.user.id);
+  //     return user;
+  //   }
+  //   catch (error) {
+  //     throw error;
+  //   }
+  // }
+  // async function fetchUsers() {
+  //   try {
+  //     const users = await getUsers();
+  //     return users;
+  //   }
+  //   catch (error) {
+  //     throw error;
+  //   }
+  // }
+
+  // if (!sessionChecked) {
+  //   // Render a loading screen while authentication check is in progress
+  //   // it's normally too quick to see anyway
+  //   return (
+  //     <NavigationContainer>
+  //       <View>
+  //         <Text>Loading</Text>
+  //       </View>
+  //     </NavigationContainer>
+  //   );
+  // }
 
   return (
       <NavigationContainer>
