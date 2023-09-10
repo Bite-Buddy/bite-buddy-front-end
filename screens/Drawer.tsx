@@ -3,8 +3,13 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import { Text } from "react-native-elements";
 import Profile from './Profile'; 
 import Kitchen  from './Kitchen';
+import KitchenManagement from './KitchenManagement';
+import KitchenDetails from './KitchenDetails';
+import KitchenMembers from './KitchenMembers';
 import { useAtomValue } from 'jotai'
 import { currentKitchenAtom } from '../utilities/store/atoms'
+
+
 
 
 //screens import
@@ -14,14 +19,27 @@ import { currentKitchenAtom } from '../utilities/store/atoms'
 const Drawer = () => {
   const currentKitchen = useAtomValue(currentKitchenAtom)
   const Drawer = createDrawerNavigator();
+
   return (
     <Drawer.Navigator>
-      <Drawer.Screen name="Kitchen Details" component={Kitchen} options={({ navigation }) => ({
+      <Drawer.Screen name="Kitchen Details" component={KitchenDetails} options={({ navigation }) => ({
             headerTitle: () => <Text>{`${currentKitchen.name}`}</Text>,
             headerStyle: {
               backgroundColor: '#EFCA46',
             },
           })} />
+    <Drawer.Screen name="Members" component={KitchenMembers} options={({ navigation }) => ({
+        headerTitle: () => <Text>{`${currentKitchen.name} Members`}</Text>,
+        headerStyle: {
+          backgroundColor: '#EFCA46',
+        },
+      })} />
+    <Drawer.Screen name="Manage" component={KitchenManagement} options={({ navigation }) => ({
+        headerTitle: () => <Text>{`Manage ${currentKitchen.name}`}</Text>,
+        headerStyle: {
+          backgroundColor: '#EFCA46',
+        },
+      })} />
       {/* Drawer Screens here */}
       {/* <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Settings" component={Settings} /> */}
