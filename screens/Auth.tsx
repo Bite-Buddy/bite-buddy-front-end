@@ -8,39 +8,40 @@ import { useNavigation } from "@react-navigation/native";
 // import * as Linking from "expo-linking";
 import { devUrls } from "../utilities/developmentUrls";
 import { createUser, getBySupabaseID } from "../utilities/fetchRequests";
-import { userAtom } from "../utilities/store/atoms";
+import { userAtom, kitchensAtom } from "../utilities/store/atoms";
 import { useAtom } from "jotai";
 
-export default function Auth() { 
+export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useAtom(userAtom);
+  const [kitchens, setKitchens] = useAtom(kitchensAtom);
   const navigation = useNavigation();
 
-  async function signInWithEmail() {
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    })
+  // async function signInWithEmail() {
+  //   setLoading(true);
+  //   const { error } = await supabase.auth.signInWithPassword({
+  //     email: email,
+  //     password: password,
+  //   })
 
-    if (error) Alert.alert(error.message)
+  //   if (error) Alert.alert(error.message)
 
-    setLoading(false);
-    console.log("USER ON SIGN IN, SUPABASE ID: ", (await supabase.auth.getSession()).data.session?.user.id);
-  }
+  //   setLoading(false);
+  //   console.log("USER ON SIGN IN, SUPABASE ID: ", (await supabase.auth.getSession()).data.session?.user.id);
+  // }
 
-  async function signUpWithEmail() {
-    setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    })
+  // async function signUpWithEmail() {
+  //   setLoading(true);
+  //   const { error } = await supabase.auth.signUp({
+  //     email: email,
+  //     password: password,
+  //   })
 
-    if (error) Alert.alert(error.message)
-    setLoading(false);
-  }
+  //   if (error) Alert.alert(error.message)
+  //   setLoading(false);
+  // }
 
   //this long ass mess is a workaround for supabase.auth.signInWithOauth
   // which doesn't seem to want to store the session tokens etc
@@ -48,7 +49,7 @@ export default function Auth() {
     setLoading(true);
     try {
       const supabase_url = "https://qlpmqnbgyofvhqyhxvhi.supabase.co";
-      const redirectUri = devUrls.danUrl; 
+      const redirectUri = devUrls.danUrl;
       const response = await WebBrowser.openAuthSessionAsync(
         `${supabase_url}/auth/v1/authorize?provider=${provider}&redirect_to=${redirectUri}`,
         redirectUri
@@ -71,21 +72,32 @@ export default function Auth() {
     } finally {
       WebBrowser.maybeCompleteAuthSession();
     }
-    const sesh = (await supabase.auth.getSession());
-    const dbData = await getBySupabaseID(sesh.data.session?.user);
-    if (!dbData) {
-      const user = await createUser(sesh.data.session?.user.id, sesh.data.session?.user.email);
-      setUser(user);
+    const sesh = await supabase.auth.getSession();
+    if (sesh) {
+      const dbData = await getBySupabaseID(sesh.data.session?.user.id);
+      if (dbData) {
+        setUser(dbData);
+        setKitchens(dbData.kitchens)
+      }
     }
-    
-    if (user && user.kitchens.length === 0) {
-      navigation.navigate("Account");
-    }
-    
-    if (user && user.kitchens.length) {
-      navigation.navigate("Kitchen");
-    }
+    // if (sesh) {
+    //   const dbData = await getBySupabaseID(sesh.data.session?.user.id);
+    //   const parsedData = await JSON.parse(dbData);
+    //   if (!parsedData) {
+    //     // const user = await createUser(sesh.data.session?.user.id, sesh.data.session?.user.email);
+    //     if (user) {
+    //       setUser(user);
+    //     }
+    //   }
+    //   else {
+    //     // const user = await getBySupabaseID(sesh.data.session?.user.id);
+    //     if (user) {
+    //       setUser(user);
+    //     }
+    //   }
+    // }
 
+    user.kitchens.length > 0 ? navigation.navigate("Kitchen") : navigation.navigate("Account");
     setLoading(false);
   }
 

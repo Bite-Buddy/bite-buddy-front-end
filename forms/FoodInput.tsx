@@ -79,7 +79,7 @@ export default function FoodInput({ mode, initialItemName, kitchenId }: Props) {
     //Need to implement "DELETE" request
   }
 
-  function updateItem(value, index) {
+  function updateItem(value: string, index: number) {
     const newItems = JSON.parse(JSON.stringify(items))
     newItems[index].name = value
     console.log(newItems)
