@@ -2,12 +2,12 @@ import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 
-export default function Profile() {
+export default function KitchenManagement() {
 const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <View style={styles.verticallySpaced}>
-        <Text>Profile</Text>
+        <Text>Kitchen Management</Text>
       </View>
     </View>
   )
