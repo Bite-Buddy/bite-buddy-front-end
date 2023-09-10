@@ -212,9 +212,50 @@ export async function updateFoodById(foodId: string, food: IFood): Promise<IFood
   }
 }
 
+export async function updateKitchenById(kitchenId: number, name: string): Promise<{message: string, kitchenResponse: IKitchen}> {
+  try {
+    const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        name: name
+      }),
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  }
+  catch (error) {
+    throw error;
+  }
+}
+
 export async function deleteFoodByID(foodId: string): Promise<IFood> {
   try {
     const response = await fetch(`${DOMAIN}/foods/${foodId}`, {
+      method: "DELETE",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  }
+  catch (error) {
+    throw error;
+  }
+}
+
+export async function deleteKitchenById(kitchenId: number): Promise<{message: string, kitchenResponse: IKitchen}> {
+  try {
+    const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}`, {
       method: "DELETE",
       headers: {
         "Accept": "application/json",

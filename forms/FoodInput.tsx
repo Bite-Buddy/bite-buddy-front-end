@@ -110,7 +110,7 @@ export default function FoodInput({ mode, initialItemName, kitchenId }: Props) {
         <Button title={mode} onPress={handleSubmit} />
         {mode === "Edit" ?? <Button title="delete" onPress={isValid ?? handleDelete} />
         }
-        <Button title="Cancel" onPress={() => navigation.navigate("Kitchen")} />
+        <Button title="Cancel" onPress={() => navigation.navigate("Kitchen Details")} />
       </View>
     </>
   );

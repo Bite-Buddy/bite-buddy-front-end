@@ -23,19 +23,19 @@ const Drawer = () => {
   return (
     <Drawer.Navigator>
       <Drawer.Screen name="Kitchen Details" component={KitchenDetails} options={({ navigation }) => ({
-            headerTitle: () => <Text>{`${currentKitchen.name}`}</Text>,
+            headerTitle: () => <Text>{`${currentKitchen ? currentKitchen.name : ""}`}</Text>,
             headerStyle: {
               backgroundColor: '#EFCA46',
             },
           })} />
     <Drawer.Screen name="Members" component={KitchenMembers} options={({ navigation }) => ({
-        headerTitle: () => <Text>{`${currentKitchen.name} Members`}</Text>,
+        headerTitle: () => <Text>{`${currentKitchen ? currentKitchen.name : ""} Members`}</Text>,
         headerStyle: {
           backgroundColor: '#EFCA46',
         },
       })} />
     <Drawer.Screen name="Manage" component={KitchenManagement} options={({ navigation }) => ({
-        headerTitle: () => <Text>{`Manage ${currentKitchen.name}`}</Text>,
+        headerTitle: () => <Text>{`Manage ${currentKitchen ? currentKitchen.name : ""}`}</Text>,
         headerStyle: {
           backgroundColor: '#EFCA46',
         },
