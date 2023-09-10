@@ -11,6 +11,7 @@ import { useAtom } from 'jotai'
 import { userAtom } from './utilities/store/atoms'
 import { kitchensAtom } from "./utilities/store/atoms";
 import { IUser } from "./utilities/interfaces";
+import Drawer from "./screens/Drawer";
 
 const Stack = createStackNavigator();
 
@@ -64,6 +65,12 @@ export default function App() {
   return (
       <NavigationContainer>
         <Stack.Navigator initialRouteName={session ? "Account" : "Auth"}>
+          <Stack.Screen name="Kitchen Settings" component={Drawer} options={({ navigation }) => ({
+            headerTitle: () => <Header />,
+            headerStyle: {
+              backgroundColor: '#EFCA46',
+            },
+          })}  />
           <Stack.Screen name="Auth" component={Auth} />
           <Stack.Screen name="Account" component={Account} options={({ navigation }) => ({
             headerTitle: () => <Header />,

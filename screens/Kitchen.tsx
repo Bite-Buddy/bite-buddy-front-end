@@ -7,6 +7,8 @@ import { getKitchenByID } from "../utilities/fetchRequests"
 import { useAtom } from "jotai";
 import { kitchensAtom, currentKitchenAtom } from "../utilities/store/atoms";
 import { IKitchen } from "../utilities/interfaces";
+import { Drawer } from 'expo-router/drawer';
+
 
 export default function Kitchen() {
   const today = new Date();
@@ -38,6 +40,7 @@ export default function Kitchen() {
   }
 
   function selectKitchen(kitchen: IKitchen) {
+    navigation.navigate("Kitchen Settings");
     setCurrentKitchen(kitchen);
   }
 
