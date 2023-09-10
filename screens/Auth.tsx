@@ -8,14 +8,15 @@ import { useNavigation } from "@react-navigation/native";
 // import * as Linking from "expo-linking";
 import { devUrls } from "../utilities/developmentUrls";
 import { createUser, getBySupabaseID } from "../utilities/fetchRequests";
-import { userAtom } from "../utilities/store/atoms";
+import { userAtom, kitchensAtom } from "../utilities/store/atoms";
 import { useAtom } from "jotai";
 
-export default function Auth() { 
+export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useAtom(userAtom);
+  const [kitchens, setKitchens] = useAtom(kitchensAtom);
   const navigation = useNavigation();
 
   // async function signInWithEmail() {
@@ -48,7 +49,7 @@ export default function Auth() {
     setLoading(true);
     try {
       const supabase_url = "https://qlpmqnbgyofvhqyhxvhi.supabase.co";
-      const redirectUri = devUrls.danUrl; 
+      const redirectUri = devUrls.danUrl;
       const response = await WebBrowser.openAuthSessionAsync(
         `${supabase_url}/auth/v1/authorize?provider=${provider}&redirect_to=${redirectUri}`,
         redirectUri
@@ -75,9 +76,8 @@ export default function Auth() {
     if (sesh) {
       const dbData = await getBySupabaseID(sesh.data.session?.user.id);
       if (dbData) {
-        console.log("Supabase ID", sesh.data.session?.user.id);
-        console.log("DATBASE DATA", dbData);
         setUser(dbData);
+        setKitchens(dbData.kitchens)
       }
     }
     // if (sesh) {
@@ -96,7 +96,7 @@ export default function Auth() {
     //     }
     //   }
     // }
-    
+
     user.kitchens.length > 0 ? navigation.navigate("Kitchen") : navigation.navigate("Account");
     setLoading(false);
   }
