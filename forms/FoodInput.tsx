@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
-import { createFood, getFoodList } from '../utilities/fetchRequests'
+import { createFood } from '../utilities/fetchRequests'
 import { currentKitchenAtom } from '../utilities/store/atoms';
 import { useAtomValue } from 'jotai';
+import { useNavigation } from '@react-navigation/native';
 
 type Props = {
   mode: string, //"Create" or "Edit"
@@ -64,7 +65,7 @@ export default function FoodInput({ mode, initialItemName, kitchenId }: Props) {
     //Need to implement "DELETE" request
   }
 
-  function updateItem(value, index) {
+  function updateItem(value: string, index: number) {
     const newItems = JSON.parse(JSON.stringify(items))
     newItems[index].name = value
     console.log(newItems)
