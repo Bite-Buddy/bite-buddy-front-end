@@ -1,3 +1,13 @@
+
+
+
+/**
+ * This component Used to be imported to 'AddFood' screen. Not used for now (2023 Sept 11)
+ * Please note that no one is updating this feature anymore and importing this in other file might crash the app.
+*/
+
+
+
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
 import { createFood, getFoodList } from '../utilities/fetchRequests'
