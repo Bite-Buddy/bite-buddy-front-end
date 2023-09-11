@@ -12,6 +12,7 @@ import { userAtom } from './utilities/store/atoms'
 import { kitchensAtom } from "./utilities/store/atoms";
 import { IUser } from "./utilities/interfaces";
 import Drawer from "./screens/Drawer";
+import EditFood from "./screens/EditFood";
 
 const Stack = createStackNavigator();
 
@@ -124,6 +125,13 @@ export default function App() {
           })} />
 
           <Stack.Screen name="AddKitchen" component={AddKitchen} options={({ navigation }) => ({
+            headerTitle: () => <Header />,
+            headerStyle: {
+              backgroundColor: '#EFCA46',
+            },
+
+          })} />
+          <Stack.Screen name="Edit Food" component={EditFood} options={({ navigation }) => ({
             headerTitle: () => <Header />,
             headerStyle: {
               backgroundColor: '#EFCA46',
