@@ -1,9 +1,10 @@
 import { StyleSheet, View, ScrollView, Pressable } from "react-native";
 import { Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
-import { useAtomValue } from 'jotai'
-import { currentKitchenAtom, currentFoodListAtom } from "../utilities/store/atoms";
+import { useAtomValue, useAtom } from 'jotai'
+import { currentKitchenAtom, currentFoodListAtom, currentFoodItemAtom } from "../utilities/store/atoms";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 
 
 
@@ -12,7 +13,14 @@ export default function KitchenDetails() {
   const navigation = useNavigation();
   const currentKitchen = useAtomValue(currentKitchenAtom);
   const currentFoodList = useAtomValue(currentFoodListAtom);
+  const [currentFoodItem, setCurrentFoodItem] = useAtom(currentFoodItemAtom)
 
+  function handleFoodSelect(selectedFood) {
+    console.log(selectedFood)
+    setCurrentFoodItem(selectedFood)
+    navigation.navigate('Edit Food')
+  }
+ 
   return (
     <View style={styles.container}>
         <ScrollView>
