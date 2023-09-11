@@ -60,13 +60,16 @@ export default function AddFood() {
                 })
                 setCurrentFoodList(currentFoodList.concat(preparedFoodList));
             })
-            .catch((e) => { setMessage(e.message) })
+            .catch((e) => {
+                console.log(e)
+                setMessage(e.message)
+            })
             .finally(() => navigation.navigate("Kitchen Details")); //Currently not using, but will be implemented
     }
 
-    function updateItem(value: string, index: number) {
+    function updateItem(value: string, index: number, key: string) {
         const newItems = JSON.parse(JSON.stringify(items))
-        newItems[index].name = value
+        newItems[index][key] = value
         console.log(newItems)
         setItems(newItems)
     }
@@ -78,10 +81,11 @@ export default function AddFood() {
                 return (
                     <View style={styles.formBox} key={`addFoodItem${index}`}>
                         <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
-                        <TextInput style={styles.userInput} placeholder="Type the name of item" value={item.name} onChangeText={(value) => updateItem(value, index)} />
+                        <TextInput style={styles.userInput} placeholder="Type the name of item" value={item.name} onChangeText={(value) => updateItem(value, index, "name")} />
                         <Text style={styles.verticallySpaced}>Bought on</Text>
                         <TextInput
                             style={styles.userInput}
+                            onChangeText={(value) => updateItem(value, index, "boughtOn")}
                             value={item.boughtOn.toLocaleString()} //Need to change it to calender input instead of text
                         />
                     </View>)
