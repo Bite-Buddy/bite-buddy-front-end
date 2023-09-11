@@ -8,13 +8,12 @@ import { useAtom } from "jotai";
 import { kitchensAtom, currentKitchenAtom, currentFoodListAtom } from "../utilities/store/atoms";
 import { IKitchen } from "../utilities/interfaces";
 
-
 export default function Kitchen() {
   const today = new Date();
   const navigation = useNavigation();
   //Initial state is set as an empty array
   interface IfoodItem { name: string, bought_on: Date, id: string | number }
-  const [foodList, setFoodList] = useState<IfoodItem[] | null>(null);
+  // const [foodList, setFoodList] = useState<IfoodItem[] | null>(null);
   const [kitchens, setKitchens] = useAtom(kitchensAtom)
   const [currentKitchen, setCurrentKitchen] = useAtom(currentKitchenAtom)
   const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom)
@@ -32,7 +31,7 @@ export default function Kitchen() {
       try {
         let kitchenInfo = await getKitchenByID(currentKitchen.id);
         let modList = await kitchenInfo.food_list.map(item => { return { ...item, "bought_on": new Date(item.bought_on)} })
-        setFoodList(modList)
+        // setFoodList(modList)
         console.log('setting', modList)
         setCurrentFoodList(modList)
       } catch (e) {
