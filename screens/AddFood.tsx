@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, TextInput, Button } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { StyleSheet, View, Text, ScrollView, TextInput, Button, Pressable } from 'react-native';
+import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
 import { useAtom, useAtomValue } from 'jotai';
 import { currentFoodListAtom, currentKitchenAtom } from '../utilities/store/atoms';
@@ -8,18 +9,33 @@ import { createFood } from '../utilities/fetchRequests';
 type Items = {
     name: string,
     boughtOn: Date,
-    error: string
+    error: string,
+    showCalendar: boolean
 }[]
 
 export default function AddFood() {
     const navigation = useNavigation();
     const today = new Date();
-    const blankItem = { name: "", boughtOn: today, error: "" }
+    const blankItem = { name: "", boughtOn: today, error: "", showCalendar: false }
     const currentKitchen = useAtomValue(currentKitchenAtom)
     const [items, setItems] = useState<Items>([blankItem]);
     const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom)
     const [message, setMessage] = useState<string>("") //Currently not using, but will be implemented
+    const INITIAL_DATE = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+    const [selectedDate, setSelectedDate] = useState<string>("");
 
+    const marked = useMemo(() => {
+        if (selectedDate !== "") {
+            return {
+                [selectedDate]: {
+                    selected: true,
+                    disableTouchEvent: true,
+                    selectedColor: 'orange',
+                    selectedTextColor: 'red',
+                }
+            }
+        }
+    }, [selectedDate]);
 
     //Check if all items name are not blank
     function isValid(): boolean {
@@ -31,7 +47,8 @@ export default function AddFood() {
                     return {
                         name: item.name,
                         boughtOn: item.boughtOn,
-                        error: item.name === "" ? "*required" : ""
+                        error: item.name === "" ? "*required" : "",
+                        showCalendar: false
                     }
                 });
             //Update items array state
@@ -67,9 +84,16 @@ export default function AddFood() {
             .finally(() => navigation.navigate("Kitchen Details")); //Currently not using, but will be implemented
     }
 
-    function updateItem(value: string, index: number, key: string) {
-        const newItems = JSON.parse(JSON.stringify(items))
-        newItems[index][key] = value
+    function updateItem(value: string | boolean, index: number, key: string) {
+        const newItems = JSON.parse(JSON.stringify(items));
+        if (key === "boughtOn" && typeof value === "string") {
+            newItems[index][key] = new Date(value);
+            newItems[index].showCalendar = false;
+        }
+        else {
+            newItems[index][key] = value;
+            if (key === "showCalendar") { setSelectedDate(INITIAL_DATE) }
+        }
         console.log(newItems)
         setItems(newItems)
     }
@@ -81,13 +105,25 @@ export default function AddFood() {
                 return (
                     <View style={styles.formBox} key={`addFoodItem${index}`}>
                         <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
-                        <TextInput style={styles.userInput} placeholder="Type the name of item" value={item.name} onChangeText={(value) => updateItem(value, index, "name")} />
+                        <TextInput style={styles.userInput}
+                            placeholder="Type the name of item"
+                            value={item.name}
+                            onChangeText={(value) => updateItem(value, index, "name")} />
                         <Text style={styles.verticallySpaced}>Bought on</Text>
-                        <TextInput
-                            style={styles.userInput}
-                            onChangeText={(value) => updateItem(value, index, "boughtOn")}
-                            value={item.boughtOn.toLocaleString()} //Need to change it to calender input instead of text
-                        />
+                        <Pressable style={styles.userInput}
+                            onPress={() => updateItem(true, index, "showCalendar")}>
+                            <Text >{item.boughtOn.toLocaleString()}</Text>
+                        </Pressable >
+                        {item.showCalendar && <Calendar
+                            enableSwipeMonths
+                            current={INITIAL_DATE}
+                            style={styles.calendar}
+                            onDayPress={(day) => {
+                                setSelectedDate(day.dateString);
+                                updateItem(selectedDate, index, "boughtOn")
+                            }}
+                            markedDates={marked}
+                        />}
                     </View>)
             })}
 
@@ -140,6 +176,15 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-evenly"
+    },
+    calendar: {
+        marginBottom: 10,
+    },
+    text: {
+        textAlign: 'center',
+        padding: 10,
+        backgroundColor: 'lightgrey',
+        fontSize: 16,
     }
     /**Copied below from the other component, not sure the intention */
     // mt20: {
