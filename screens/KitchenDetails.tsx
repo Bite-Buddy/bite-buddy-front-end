@@ -23,7 +23,7 @@ export default function KitchenDetails() {
                 //Calculate the day offset of te bought day from today
                 const dayOffSet = Math.floor((today.getTime() - foodItem.bought_on.getTime()) / (24 * 60 * 60 * 1000))
                 return (
-                  <Pressable style={styles.list} key={`foodItem${foodItem.id}`}>
+                  <Pressable style={styles.list} key={`foodItem${foodItem.id}`} onPress={() => { handleFoodSelect(foodItem) }} >
                     <Text style={styles.name}>{foodItem.name}</Text>
                     <Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
                   </Pressable>
