@@ -119,19 +119,16 @@ export default function AddFood() {
                             current={INITIAL_DATE}
                             style={styles.calendar}
                             onDayPress={(day) => {
-                                setSelectedDate(day.dateString);
-                                updateItem(selectedDate, index, "boughtOn")
+                                updateItem(day.dateString, index, "boughtOn")
                             }}
                             markedDates={marked}
                         />}
                     </View>)
             })}
-
             <View style={styles.more}>
                 <Button
                     title="more+"
-                    onPress={() => { setItems([...items, { name: "", boughtOn: today, error: "" }]) }} /></View>
-
+                    onPress={() => { setItems([...items, { name: "", boughtOn: today, error: "", showCalendar: false }]) }} /></View>
             <View style={styles.buttons}>
                 <Button title="Create" onPress={handleSubmit} />
                 <Button title="Cancel" onPress={() => navigation.navigate("Kitchen Details")} />
