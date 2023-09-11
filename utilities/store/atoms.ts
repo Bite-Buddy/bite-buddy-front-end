@@ -10,3 +10,4 @@ export const userAtom = atom<IUser>({
 export const kitchensAtom = atom<IKitchen[]>([])
 export const currentKitchenAtom = atom<IKitchen | null>(null)
 export const currentFoodListAtom = atom<IFood[]>([])
+export const currentFoodItemAtom = atom<IFood | null>(null)
