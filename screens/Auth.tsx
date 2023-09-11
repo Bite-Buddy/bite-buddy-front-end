@@ -49,7 +49,7 @@ export default function Auth() {
     setLoading(true);
     try {
       const supabase_url = "https://qlpmqnbgyofvhqyhxvhi.supabase.co";
-      const redirectUri = devUrls.danUrl;
+      const redirectUri = devUrls.parkUrl; 
       const response = await WebBrowser.openAuthSessionAsync(
         `${supabase_url}/auth/v1/authorize?provider=${provider}&redirect_to=${redirectUri}`,
         redirectUri
@@ -74,29 +74,35 @@ export default function Auth() {
     }
     const sesh = await supabase.auth.getSession();
     if (sesh) {
-      const dbData = await getBySupabaseID(sesh.data.session?.user.id);
-      if (dbData) {
-        setUser(dbData);
-        setKitchens(dbData.kitchens)
+      const supabaseId = sesh.data.session?.user.id;
+
+      const dbData = await getBySupabaseID(supabaseId);
+      if (dbData.failed) {
+        console.log("Supabase ID", sesh.data.session?.user.id);
+        console.log("DATBASE DATA", dbData);
+        try {
+          const newUser = await createUser(supabaseId, sesh.data.session?.user.email);
+          if (newUser) {
+            setUser(newUser);
+            setKitchens(newUser.kitchens);
+            console.log("THE NEW USER", newUser);
+          }
+        }
+        catch (error) {
+          console.error(error);
+          throw error;
+        }
+      }
+      else {
+        try {
+          setUser(dbData);
+        }
+        catch (error) {
+          console.log(error);
+          throw error;
+        }
       }
     }
-    // if (sesh) {
-    //   const dbData = await getBySupabaseID(sesh.data.session?.user.id);
-    //   const parsedData = await JSON.parse(dbData);
-    //   if (!parsedData) {
-    //     // const user = await createUser(sesh.data.session?.user.id, sesh.data.session?.user.email);
-    //     if (user) {
-    //       setUser(user);
-    //     }
-    //   }
-    //   else {
-    //     // const user = await getBySupabaseID(sesh.data.session?.user.id);
-    //     if (user) {
-    //       setUser(user);
-    //     }
-    //   }
-    // }
-
     user.kitchens.length > 0 ? navigation.navigate("Kitchen") : navigation.navigate("Account");
     setLoading(false);
   }
