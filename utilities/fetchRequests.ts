@@ -190,7 +190,7 @@ export async function getFoodByID(id: string): Promise<IFood> {
   }
 }
 
-export async function updateFoodById(foodId: string, food: IFood): Promise<IFood> {
+export async function updateFoodById(foodId: string, food: IFoodRequest): Promise<{message: string, foodResponse: IFood}> {
   try {
     const response = await fetch(`${DOMAIN}/foods/${foodId}`, {
       method: "PATCH",
@@ -234,7 +234,7 @@ export async function updateKitchenById(kitchenId: number, name: string): Promis
   }
 }
 
-export async function deleteFoodByID(foodId: string): Promise<IFood> {
+export async function deleteFoodById(foodId: string): Promise<IFood> {
   try {
     const response = await fetch(`${DOMAIN}/foods/${foodId}`, {
       method: "DELETE",
