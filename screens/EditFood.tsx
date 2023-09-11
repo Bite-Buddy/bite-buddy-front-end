@@ -48,14 +48,18 @@ async function updateFoodItem() {
 }
 
 async function deleteFoodItem() {
-  // setLoading(true)
-  // if (!currentFoodItem) return;
-  // const response = await deleteFoodById(currentFoodItem.id);
-  // setCurrentKitchen(null)
-  // const kitchensClone: IKitchen[] = JSON.parse(JSON.stringify(kitchens))
-  // setKitchens(kitchensClone.filter(kitchen => kitchen.id !== response.kitchenResponse.id))
-  // setLoading(false)
-  // navigation.navigate('Kitchen')
+  setLoading(true)
+  if (!currentFoodItem) return;
+  const response = await deleteFoodById(currentFoodItem.id);
+  setCurrentFoodItem(null)
+  let foodListClone: IFood[] = JSON.parse(JSON.stringify(currentFoodList))
+  foodListClone = foodListClone.map(food => {
+    return  {...food, bought_on: new Date(food.bought_on), updated_on: new Date(food.updated_on)}
+  })
+  setCurrentFoodList(foodListClone.filter(food => food.id !== response.foodResponse.id)
+  )
+  setLoading(false)
+  navigation.navigate('Kitchen Details')
 }
 
   return (
