@@ -1,6 +1,8 @@
 //configure your .env.local file with the server domain link
 //REMOVE THE TRAILING SLASH (/) FROM THE URL IN YOUR .env.local FILE
 const DOMAIN = process.env.DOMAIN;
+const SPOONACULAR_APIKEY = process.env.SPOONACULAR_APIKEY;
+const SPOONACULAR_URL = process.env.SPOONACULAR_URL!;
 
 // use http and ip address instead of localhost
 // const DOMAIN = "http://192.168.1.226:8080"; //park local server
@@ -270,4 +272,21 @@ export async function deleteKitchenById(kitchenId: number): Promise<{message: st
   catch (error) {
     throw error;
   }
+}
+
+
+//This is the fetch request to spoonacular with barcode UPC code
+
+const query = {apiKey: SPOONACULAR_APIKEY!}
+const params = new URLSearchParams(query)
+
+export async function searchByBarcode(barcode: number) {
+    try {
+        const response = await fetch(SPOONACULAR_URL + barcode + `?${params}`)
+        return response.json()
+        }
+    catch (error) {
+        console.error(error);
+        return false;
+    }
 }
