@@ -3,6 +3,11 @@
 DEVURI=exp://<your local IPv4 address>:8081/
  * replace <your local IPv4 address> to your acrtual IP address.
 */
+/**Please make sure you add DEVURI in your .env.local file.
+ * It should look like this:
+DEVURI=exp://<your local IPv4 address>:8081/
+ * replace <your local IPv4 address> to your acrtual IP address.
+*/
 import React, { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { Button, Input } from "react-native-elements";
@@ -52,7 +57,7 @@ export default function Auth() {
   async function authenticate(provider: Provider) {
     try {
       const supabase_url = "https://qlpmqnbgyofvhqyhxvhi.supabase.co";
-      const redirectUri = process.env.DEVURI;
+      const redirectUri = devUrls.danUrl; 
       const response = await WebBrowser.openAuthSessionAsync(
         `${supabase_url}/auth/v1/authorize?provider=${provider}&redirect_to=${redirectUri}`,
         redirectUri
