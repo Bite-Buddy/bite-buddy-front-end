@@ -1,3 +1,8 @@
+/**Please make sure you add DEVURI in your .env.local file.
+ * It should look like this:
+DEVURI=exp://<your local IPv4 address>:8081/
+ * replace <your local IPv4 address> to your acrtual IP address.
+*/
 import React, { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { Button, Input } from "react-native-elements";
@@ -6,7 +11,6 @@ import { Provider, Session } from "@supabase/supabase-js";
 import * as WebBrowser from "expo-web-browser";
 import { useNavigation } from "@react-navigation/native";
 // import * as Linking from "expo-linking";
-import { devUrls } from "../utilities/developmentUrls";
 import { createUser, getBySupabaseID } from "../utilities/fetchRequests";
 import { userAtom, kitchensAtom } from "../utilities/store/atoms";
 import { useAtom } from "jotai";
@@ -48,7 +52,7 @@ export default function Auth() {
   async function authenticate(provider: Provider) {
     try {
       const supabase_url = "https://qlpmqnbgyofvhqyhxvhi.supabase.co";
-      const redirectUri = devUrls.danUrl; 
+      const redirectUri = process.env.DEVURI; 
       const response = await WebBrowser.openAuthSessionAsync(
         `${supabase_url}/auth/v1/authorize?provider=${provider}&redirect_to=${redirectUri}`,
         redirectUri
