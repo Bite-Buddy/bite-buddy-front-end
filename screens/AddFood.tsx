@@ -49,7 +49,11 @@ export default function AddFood() {
         console.log(`Data: ${data}`);
         const barcodedata = await searchByBarcode(data);
         const name = barcodedata.title;
+        const itemsClone = JSON.parse(JSON.stringify(items))
+        itemsClone[0].name = name
         console.log("name,", name)
+        console.log(itemsClone)
+        setItems(itemsClone)
     };
 
     const marked = useMemo(() => {
@@ -129,6 +133,22 @@ export default function AddFood() {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.headline}>Add New Item</Text>
+            {useScanner && hasPermission && (
+                <View style={styles.scanner}>
+                    <BarCodeScanner
+                        style={styles.scanner}
+                        onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
+                    />
+                    {scanData
+                        && <Button title='Scan next?' onPress={() => {
+                            setScanData(undefined)
+                            setItems([{ name: "", boughtOn: today, error: "", showCalendar: false }, ...items])
+                        }} />}
+                </View>)}
+            {!hasPermission && (<View>
+                <Text>Please grant camera permissions to Bite Buddy.</Text>
+                <StatusBar style="auto" />
+            </View>)}
             {items.map((item, index) => {
                 return (
                     <View style={styles.formBox} key={`addFoodItem${index}`}>
@@ -162,19 +182,6 @@ export default function AddFood() {
                 <Button title="Cancel" onPress={() => navigation.navigate("Kitchen Details")} />
                 <Button title="Scan" onPress={() => setUseScanner(true)} />
             </View>
-            {useScanner && hasPermission && (
-                <View style={styles.scanner}>
-                    <BarCodeScanner
-                        style={styles.scanner}
-                        onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
-                    />
-                    {scanData
-                        && <Button title='Scan Again?' onPress={() => setScanData(undefined)} />}
-                </View>)}
-            {!hasPermission && (<View>
-                <Text>Please grant camera permissions to Bite Buddy.</Text>
-                <StatusBar style="auto" />
-            </View>)}
         </ScrollView >
     );
 }
@@ -218,7 +225,8 @@ const styles = StyleSheet.create({
         justifyContent: "space-evenly"
     },
     scanner: {
-        flex: 2, width: '100%'
+        flex: 1,
+        width: '100%'
     },
     calendar: {
         marginBottom: 10,
