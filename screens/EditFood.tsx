@@ -110,8 +110,11 @@ export default function EditFood() {
         />}
         <Button title="Update" disabled={loading} onPress={() => updateFoodItem()} />
       </View>
-      <View>
+      <View style={styles.verticallySpaced}>
         <Button title="Delete Food Item" disabled={loading} onPress={() => deleteFoodItem()} />
+      </View>
+      <View style={styles.verticallySpaced}>
+        <Button title="Cancel" disabled={loading} onPress={() => navigation.navigate("Kitchen Details")} />
       </View>
     </View>
   )
