@@ -46,6 +46,7 @@ export default function Auth() {
   //this long ass mess is a workaround for supabase.auth.signInWithOauth
   // which doesn't seem to want to store the session tokens etc
   async function logInWithThirdParty(provider: Provider) {
+    console.log('fuck')
     setLoading(true);
     // try {
     //   const supabase_url = "https://qlpmqnbgyofvhqyhxvhi.supabase.co";
@@ -75,8 +76,9 @@ export default function Auth() {
     // const sesh = await supabase.auth.getSession();
     if (true) {
       // const supabaseId = sesh.data.session?.user.id;
-
+      console.log('wtf')
       const dbData = await getBySupabaseID("5777eeba-1c47-48e6-aae8-c45a44fhd54");
+      console.log(dbData)
       // if (dbData.failed) {
       //   // console.log("Supabase ID", sesh.data.session?.user.id);
       //   console.log("DATBASE DATA", dbData);
