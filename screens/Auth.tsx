@@ -84,7 +84,7 @@ export default function Auth() {
     const supabaseUser = await (await supabase.auth.getUser()).data.user;
     const dbData = await getBySupabaseID(supabaseUser.id);
     if (dbData.failed) {
-      let newUser = await createUser(supabaseUser?.id, supabaseUser?.email);
+      const newUser = await createUser(supabaseUser?.id, supabaseUser?.email);
       if (newUser) {
         newUser.kitchens = []
         setUser(newUser);
