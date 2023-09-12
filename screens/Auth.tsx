@@ -1,12 +1,21 @@
+/**Please make sure you add DEVURI in your .env.local file.
+ * It should look like this:
+DEVURI=exp://<your local IPv4 address>:8081/
+ * replace <your local IPv4 address> to your acrtual IP address.
+*/
+/**Please make sure you add DEVURI in your .env.local file.
+ * It should look like this:
+DEVURI=exp://<your local IPv4 address>:8081/
+ * replace <your local IPv4 address> to your acrtual IP address.
+*/
 import React, { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { Button, Input } from "react-native-elements";
 import { supabase } from "../supabaseService";
-import { Provider } from "@supabase/supabase-js";
+import { Provider, Session } from "@supabase/supabase-js";
 import * as WebBrowser from "expo-web-browser";
 import { useNavigation } from "@react-navigation/native";
 // import * as Linking from "expo-linking";
-import { devUrls } from "../utilities/developmentUrls";
 import { createUser, getBySupabaseID } from "../utilities/fetchRequests";
 import { userAtom, kitchensAtom } from "../utilities/store/atoms";
 import { useAtom } from "jotai";
@@ -45,11 +54,11 @@ export default function Auth() {
 
   //this long ass mess is a workaround for supabase.auth.signInWithOauth
   // which doesn't seem to want to store the session tokens etc
-  async function logInWithThirdParty(provider: Provider) {
-    setLoading(true);
+  async function authenticate(provider: Provider) {
     try {
       const supabase_url = "https://qlpmqnbgyofvhqyhxvhi.supabase.co";
       const redirectUri = process.env.KINGSHUK_URL; 
+      const redirectUri = devUrls.danUrl; 
       const response = await WebBrowser.openAuthSessionAsync(
         `${supabase_url}/auth/v1/authorize?provider=${provider}&redirect_to=${redirectUri}`,
         redirectUri
@@ -70,41 +79,77 @@ export default function Auth() {
     } catch (error) {
       console.log(error);
     } finally {
-      WebBrowser.maybeCompleteAuthSession();
+      console.log("FINISHED AUTHENTICATION");
     }
-    const sesh = await supabase.auth.getSession();
-    if (sesh) {
-      const supabaseId = sesh.data.session?.user.id;
+  }
+  async function logInWithThirdParty(provider: Provider) {
+    setLoading(true);
+    await authenticate(provider);
 
-      const dbData = await getBySupabaseID(supabaseId);
-      if (dbData.failed) {
-        console.log("Supabase ID", sesh.data.session?.user.id);
-        console.log("DATBASE DATA", dbData);
-        try {
-          const newUser = await createUser(supabaseId, sesh.data.session?.user.email);
-          if (newUser) {
-            setUser(newUser);
-            setKitchens(newUser.kitchens);
-            console.log("THE NEW USER", newUser);
-          }
+    const session = (await supabase.auth.getSession()).data.session;
+    const supabaseUser = await (await supabase.auth.getUser()).data.user;
+    const dbData = await getBySupabaseID(supabaseUser.id);
+    if (dbData.failed) {
+      const newUser = await createUser(supabaseUser?.id, supabaseUser?.email);
+      if (newUser) {
+        newUser.kitchens = []
+        setUser(newUser);
+        setKitchens(newUser.kitchens);
+        setLoading(false);
+        if (user.kitchens.length > 0) {
+          navigation.navigate("Kitchen");
         }
-        catch (error) {
-          console.error(error);
-          throw error;
+        else {
+          navigation.navigate("Account");
         }
+      }
+    }
+    else {
+      setUser(dbData);
+      setKitchens(dbData.kitchens);
+      setLoading(false);
+      if (user.kitchens.length > 0) {
+        navigation.navigate("Kitchen");
       }
       else {
-        try {
-          setUser(dbData);
-        }
-        catch (error) {
-          console.log(error);
-          throw error;
-        }
+        navigation.navigate("Account")
       }
     }
-    user.kitchens.length > 0 ? navigation.navigate("Kitchen") : navigation.navigate("Account");
-    setLoading(false);
+    // if (user.id > 0) navigation.navigate("Account");
+
+    // if (dbData.failed) {
+    //   console.log("Supabase ID", supabaseUser.id);
+    //   console.log("DATBASE DATA", dbData);
+    //   try {
+    //     const newUser = await createUser(supabaseId, session.user.email);
+    //     if (newUser) {
+    //       setUser(newUser);
+    //       setKitchens(newUser.kitchens);
+    //       console.log("THE NEW USER", newUser);
+    //     }
+    //   }
+    //   catch (error) {
+    //     console.error(error);
+    //     throw error;
+    //   }
+    // }
+    // else {
+    //   try {
+    //     setUser(dbData);
+    //     console.log(dbData);
+    //     console.log(user);
+    //   }
+    //   catch (error) {
+    //     console.log(error);
+    //     throw error;
+    //   }
+    //   finally {
+    //     console.log("final user", user);
+    //   }
+    // }
+    // if (user.id > 0) navigation.navigate("Account");
+    // setLoading(false);
+
   }
 
   return (

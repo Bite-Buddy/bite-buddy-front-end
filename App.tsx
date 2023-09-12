@@ -16,36 +16,40 @@ import EditFood from "./screens/EditFood";
 
 const Stack = createStackNavigator();
 
+// const { error } = await supabase.auth.signOut() storing this for later
+
 export default function App() {
   const [sessionChecked, setSessionChecked] = useState(false);
   const [kitchens, setKitchens] = useAtom(kitchensAtom);
   const [user, setUser] = useAtom(userAtom);
-  const [users, setUsers] = useState<IUser[]>();
   const [session, setSession] = useState<Session | null>(null);
   // useEffect(() => {
   //   (async () => {
-  //     const session = await supabase.auth.getSession();
-
-  //     if (session && user.email === session) {
+  //     const session = (await supabase.auth.getSession()).data.session;
+  //     if (session) {
+  //       setSession(session);
   //       const sessionUser = await getSessionUser();
-  //       const fetchedUsers = await fetchUsers();
-  //       if (sessionUser && fetchedUsers) {
+  //       if (sessionUser) {
   //         setUser(sessionUser);
-  //         setUsers(fetchedUsers);
+  //         setKitchens(user.kitchens);
   //       }
   //     }
-      
-  //     // const createdUser = await fetchAndCreateUser();
-      
   //     setSessionChecked(true);
+
+  //     // supabase.auth.onAuthStateChange((event, session) => {
+  //     //   if (event == 'SIGNED_IN') console.log('SIGNED_IN', session)
+  //     // })
+  //     // supabase.auth.onAuthStateChange((event, session) => {
+  //     //   if (event == 'SIGNED_OUT') console.log('SIGNED_OUT', session)
+  //     // })
+
   //   })()
   // }, [])
   // useEffect(() => {
-  //   if (user.email.length > 0 && sessionChecked && users) {
+  //   if (user.id > 0 && sessionChecked) {
   //     console.log("THE USER", user);
-  //     console.log("THE USERS", users);
   //   }
-  // }, [user, users, sessionChecked])
+  // }, [user, sessionChecked])
 
   // async function getSessionUser() {
   //   try {
@@ -56,16 +60,7 @@ export default function App() {
   //     throw error;
   //   }
   // }
-  // async function fetchUsers() {
-  //   try {
-  //     const users = await getUsers();
-  //     return users;
-  //   }
-  //   catch (error) {
-  //     throw error;
-  //   }
-  // }
-
+ 
   // if (!sessionChecked) {
   //   // Render a loading screen while authentication check is in progress
   //   // it's normally too quick to see anyway
@@ -80,7 +75,7 @@ export default function App() {
 
   return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName={session ? "Account" : "Auth"}>
+        <Stack.Navigator initialRouteName="Auth">
           <Stack.Screen name="Kitchen Settings" component={Drawer} options={({ navigation }) => ({
             headerTitle: () => <Header />,
             headerStyle: {
