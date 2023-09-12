@@ -127,7 +127,7 @@ export default function AddFood() {
     }
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.headline}>Add New Item</Text>
             {items.map((item, index) => {
                 return (
@@ -161,26 +161,27 @@ export default function AddFood() {
                 <Button title="Create" onPress={handleSubmit} />
                 <Button title="Cancel" onPress={() => navigation.navigate("Kitchen Details")} />
                 <Button title="Scan" onPress={() => setUseScanner(true)} />
-                {useScanner && hasPermission && (
-                    <View style={styles.scanner}>
-                        <BarCodeScanner
-                            style={{ flex: 1 }}
-                            onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
-                        />
-                        {scanData
-                            && <Button title='Scan Again?' onPress={() => setScanData(undefined)} />}
-                    </View>)}
-                {!hasPermission && (<View>
-                    <Text>Please grant camera permissions to Bite Buddy.</Text>
-                    <StatusBar style="auto" />
-                </View>)}
             </View>
+            {useScanner && hasPermission && (
+                <View style={styles.scanner}>
+                    <BarCodeScanner
+                        style={styles.scanner}
+                        onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
+                    />
+                    {scanData
+                        && <Button title='Scan Again?' onPress={() => setScanData(undefined)} />}
+                </View>)}
+            {!hasPermission && (<View>
+                <Text>Please grant camera permissions to Bite Buddy.</Text>
+                <StatusBar style="auto" />
+            </View>)}
         </ScrollView >
     );
 }
 
 const styles = StyleSheet.create({
     container: {
+        flexGrow: 1,
         marginTop: 40,
         padding: 12,
     },
