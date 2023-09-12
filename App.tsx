@@ -4,7 +4,7 @@ import { supabase } from "./supabaseService";
 import { Session } from "@supabase/supabase-js";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Auth, Account, Kitchen, Profile, List, AddFood, AddKitchen } from "./screens/screens";
+import { Auth, Account, Kitchen, Profile, List, AddFood, AddKitchen, BarcodeScan } from "./screens/screens";
 import Header from "./header/Header";
 import { createUser, getBySupabaseID, getUsers } from "./utilities/fetchRequests";
 import { useAtom } from 'jotai'
@@ -132,6 +132,13 @@ export default function App() {
 
           })} />
           <Stack.Screen name="Edit Food" component={EditFood} options={({ navigation }) => ({
+            headerTitle: () => <Header />,
+            headerStyle: {
+              backgroundColor: '#EFCA46',
+            },
+
+          })} />
+          <Stack.Screen name="Barcode Scan" component={BarcodeScan} options={({ navigation }) => ({
             headerTitle: () => <Header />,
             headerStyle: {
               backgroundColor: '#EFCA46',
