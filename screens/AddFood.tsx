@@ -132,6 +132,7 @@ export default function AddFood() {
             <View style={styles.buttons}>
                 <Button title="Create" onPress={handleSubmit} />
                 <Button title="Cancel" onPress={() => navigation.navigate("Kitchen Details")} />
+                <Button title="Scan" onPress={() => navigation.navigate("Barcode Scan")}/>
             </View>
         </ScrollView>
     );
