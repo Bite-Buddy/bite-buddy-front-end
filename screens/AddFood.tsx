@@ -86,12 +86,14 @@ export default function AddFood() {
             //Update items array state
             setItems(currItems)
         }
-        return someEmpty;
+        console.log("There is an empty field", someEmpty);
+        console.log("Sooooo, is it valid?", !someEmpty);
+        return !someEmpty;
     }
 
     const handleSubmit = (): void => {
         //Checks validation. If not validate, gets out from this block.
-        if (!isValid) return
+        if (!isValid()) return
         if (!currentKitchen) {
             setMessage("Kitchen is not selected.");
             return;
@@ -142,7 +144,7 @@ export default function AddFood() {
                     {scanData
                         && <Button title='Scan next?' onPress={() => {
                             setScanData(undefined)
-                            setItems([{ name: "", boughtOn: today, error: "", showCalendar: false }, ...items])
+                            isValid() && setItems([{ name: "", boughtOn: today, error: "", showCalendar: false }, ...items])
                         }} />}
                 </View>)}
             {!hasPermission && (<View>
@@ -154,7 +156,7 @@ export default function AddFood() {
                     <View style={styles.formBox} key={`addFoodItem${index}`}>
                         <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
                         <TextInput style={styles.userInput}
-                            placeholder="Type the name of item"
+                            placeholder="Type here or press Scan to read barcode."
                             value={item.name}
                             onChangeText={(value) => updateItem(value, index, "name")} />
                         <Text style={styles.verticallySpaced}>Bought on</Text>
