@@ -13,6 +13,7 @@ import { kitchensAtom } from "./utilities/store/atoms";
 import { IUser } from "./utilities/interfaces";
 import Drawer from "./screens/Drawer";
 import EditFood from "./screens/EditFood";
+import { StyleSheet } from 'react-native'
 
 const Stack = createStackNavigator();
 
@@ -82,7 +83,13 @@ export default function App() {
               backgroundColor: '#EFCA46',
             },
           })}  />
-          <Stack.Screen name="Auth" component={Auth} />
+          <Stack.Screen name="Auth" component={Auth} options={({ navigation }) => ({
+            headerTitle: () => <Text style={styles.auth}>BiteBuddy</Text>,
+            headerStyle: {
+              backgroundColor: '#EFCA46',
+            },
+
+          })} />
           <Stack.Screen name="Account" component={Account} options={({ navigation }) => ({
             headerTitle: () => <Header />,
             headerStyle: {
@@ -138,3 +145,11 @@ export default function App() {
       </NavigationContainer>
   )
 }
+
+const styles = StyleSheet.create({
+  auth: {
+    fontSize: 26,
+    fontWeight: "bold",
+
+  }
+})

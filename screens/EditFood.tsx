@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Text, Input, Button } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { useAtom } from 'jotai'
@@ -65,7 +65,7 @@ async function deleteFoodItem() {
   return (
     <View style={styles.container}>
     <View style={styles.verticallySpaced}>
-      <Text>Edit Food Item</Text>
+      <Text style={styles.headline}>Edit Food</Text>
       <Input
             label="Name"
             onChangeText={(text) => setName(text)}
@@ -78,10 +78,10 @@ async function deleteFoodItem() {
             value={boughtOn.toLocaleString()}
             autoCapitalize={'none'}
           />
-          <Button title="Update" disabled={loading} onPress={() => updateFoodItem()} />
+      <Pressable style={styles.button} disabled={loading} onPress={() => updateFoodItem()} ><Text style={styles.buttonText}>Update Food</Text></Pressable>
     </View>
     <View>
-    <Button title="Delete Food Item" disabled={loading} onPress={() => deleteFoodItem()} />
+      <Pressable style={styles.button} disabled={loading} onPress={() => deleteFoodItem()} ><Text style={styles.buttonText}>Delete Food</Text></Pressable>
     </View>
   </View>
   )
@@ -99,5 +99,22 @@ const styles = StyleSheet.create({
   },
   mt20: {
     marginTop: 20,
+  },
+  headline: {
+    margin: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  button: {
+    backgroundColor: '#EFCA46',
+    height: 40,
+    borderRadius: 4,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonText: {
+    fontWeight: "bold"
   },
 })

@@ -54,8 +54,8 @@ export default function Kitchen() {
             <View>
               {kitchens.map(kitchen => {
               return (
-                <Pressable key={`selectableKitchen${kitchen.id}`} style={styles.button} onPress={() => selectKitchen(kitchen)}>
-                  <Text style={styles.text}>
+                <Pressable key={`selectableKitchen${kitchen.id}`} style={styles.list} onPress={() => selectKitchen(kitchen)}>
+                  <Text style={styles.kitchen}>
                     {kitchen.name}
                   </Text>
                 </Pressable>
@@ -67,7 +67,7 @@ export default function Kitchen() {
       </View>
       <View>
         <Pressable style={styles.button} onPress={() => navigation.navigate('AddKitchen')}>
-          <Text style={styles.text}><MaterialCommunityIcons name="plus" size={30} color="black" /></Text>
+          <Text style={styles.text}><MaterialCommunityIcons style={styles.icon} name="plus" size={30} color="black" /></Text>
         </Pressable>
       </View>
     </View>
@@ -78,14 +78,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    backgroundColor: '#696666',
+    backgroundColor: '#F8E8AF',
     padding: 20,
     margin: 0,
 
   },
   verticallySpaced: {
     flex: 1,
-    backgroundColor: '#EFCA46',
     borderWidth: 0,
     borderRadius: 20,
     marginBottom: 20,
@@ -93,8 +92,12 @@ const styles = StyleSheet.create({
   mt20: {
     marginTop: 20,
   },
+  kitchen: {
+    fontSize: 18,
+    fontWeight: "bold"
+  },
   heading: {
-    fontSize: 15,
+    fontSize: 20,
     marginTop: 10,
     marginBottom: 0,
     flex: 1,
@@ -118,22 +121,31 @@ const styles = StyleSheet.create({
   },
   list: {
     flexDirection: "row",
-    backgroundColor: 'white',
+    backgroundColor: '#EFCA46',
     borderWidth: 0,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    alignItems: "center",
     marginTop: 5,
     marginLeft: 10,
     marginRight: 10,
-    height: 50,
+    height: 60,
     borderTopLeftRadius: 7,
     borderTopRightRadius: 7,
     borderBottomLeftRadius: 7,
     borderBottomRightRadius: 7,
   },
   button: {
-    color: 'black',
     display: 'flex',
     alignItems: 'center',
+    alignSelf: 'center',
+    backgroundColor: '#4dd377',
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    borderRadius: 50,
+    marginTop: 20
   },
-  text: {}
+  icon: {
+    fontSize: 36
+  }
 })

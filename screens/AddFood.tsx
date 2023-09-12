@@ -126,12 +126,13 @@ export default function AddFood() {
                     </View>)
             })}
             <View style={styles.more}>
-                <Button
-                    title="more+"
-                    onPress={() => { setItems([...items, { name: "", boughtOn: today, error: "", showCalendar: false }]) }} /></View>
+                <Pressable
+                    style={styles.button}
+                    onPress={() => { setItems([...items, { name: "", boughtOn: today, error: "", showCalendar: false }]) }} ><Text style={styles.buttonText}>more+</Text></Pressable>
+            </View>
             <View style={styles.buttons}>
-                <Button title="Create" onPress={handleSubmit} />
-                <Button title="Cancel" onPress={() => navigation.navigate("Kitchen Details")} />
+                <Pressable style={styles.button} onPress={handleSubmit} ><Text style={styles.buttonText}>Create</Text></Pressable>
+                <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen Details")} ><Text style={styles.buttonText}>Cancel</Text></Pressable>
             </View>
         </ScrollView>
     );
@@ -141,6 +142,7 @@ const styles = StyleSheet.create({
     container: {
         marginTop: 40,
         padding: 12,
+        marginBottom: 20
     },
     headline: {
         margin: 10,
@@ -172,7 +174,9 @@ const styles = StyleSheet.create({
     buttons: {
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-evenly"
+        justifyContent: "space-evenly",
+        height: 60,
+        paddingBottom: 20
     },
     calendar: {
         marginBottom: 10,
@@ -182,7 +186,20 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: 'lightgrey',
         fontSize: 16,
-    }
+    },
+    button: {
+      backgroundColor: '#EFCA46',
+      height: 40,
+      borderRadius: 4,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingLeft: 15,
+      paddingRight: 15,
+    },
+    buttonText: {
+      fontWeight: "bold"
+    },
     /**Copied below from the other component, not sure the intention */
     // mt20: {
     //   marginTop: 20,
