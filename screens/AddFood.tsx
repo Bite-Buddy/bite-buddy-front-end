@@ -5,6 +5,9 @@ import { useNavigation } from '@react-navigation/native';
 import { useAtom, useAtomValue } from 'jotai';
 import { currentFoodListAtom, currentKitchenAtom } from '../utilities/store/atoms';
 import { createFood } from '../utilities/fetchRequests';
+import { StatusBar } from 'expo-status-bar';
+import { BarCodeScanner } from "expo-barcode-scanner";
+import { searchByBarcode } from '../utilities/fetchRequests';
 
 type Items = {
     name: string,
@@ -23,6 +26,31 @@ export default function AddFood() {
     const [message, setMessage] = useState<string>("") //Currently not using, but will be implemented
     const INITIAL_DATE = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
     const [selectedDate, setSelectedDate] = useState<string>("");
+    const [hasPermission, setHasPermission] = useState<boolean>(false);
+    const [scanData, setScanData] = useState();
+    const [useScanner, setUseScanner] = useState<boolean>(false);
+
+    useEffect(() => {
+        (async function getCameraPermission() {
+            const { status, canAskAgain } = await BarCodeScanner.requestPermissionsAsync();
+            console.log(status)
+            if (status === "granted") { setHasPermission(status === "granted"); }
+            else if (canAskAgain) {
+                console.log("Permission denied... Ask again.")
+            }
+            else {
+                console.log("Permission denied forever... Can't ask again.")
+            }
+        })()
+    }, []);
+
+    async function handleBarCodeScanned({ type, data }) {
+        setScanData(data);
+        console.log(`Data: ${data}`);
+        const barcodedata = await searchByBarcode(data);
+        const name = barcodedata.title;
+        console.log("name,", name)
+    };
 
     const marked = useMemo(() => {
         if (selectedDate !== "") {
@@ -132,9 +160,22 @@ export default function AddFood() {
             <View style={styles.buttons}>
                 <Button title="Create" onPress={handleSubmit} />
                 <Button title="Cancel" onPress={() => navigation.navigate("Kitchen Details")} />
-                <Button title="Scan" onPress={() => navigation.navigate("Barcode Scan")}/>
+                <Button title="Scan" onPress={() => setUseScanner(true)} />
+                {useScanner && hasPermission && (
+                    <View style={styles.scanner}>
+                        <BarCodeScanner
+                            style={{ flex: 1 }}
+                            onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
+                        />
+                        {scanData
+                            && <Button title='Scan Again?' onPress={() => setScanData(undefined)} />}
+                    </View>)}
+                {!hasPermission && (<View>
+                    <Text>Please grant camera permissions to Bite Buddy.</Text>
+                    <StatusBar style="auto" />
+                </View>)}
             </View>
-        </ScrollView>
+        </ScrollView >
     );
 }
 
@@ -174,6 +215,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-evenly"
+    },
+    scanner: {
+        flex: 2, width: '100%'
     },
     calendar: {
         marginBottom: 10,
