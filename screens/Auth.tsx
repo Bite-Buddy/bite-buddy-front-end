@@ -3,6 +3,11 @@
 DEVURI=exp://<your local IPv4 address>:8081/
  * replace <your local IPv4 address> to your acrtual IP address.
 */
+/**Please make sure you add DEVURI in your .env.local file.
+ * It should look like this:
+DEVURI=exp://<your local IPv4 address>:8081/
+ * replace <your local IPv4 address> to your acrtual IP address.
+*/
 import React, { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { Button, Input } from "react-native-elements";
@@ -52,7 +57,7 @@ export default function Auth() {
   async function authenticate(provider: Provider) {
     try {
       const supabase_url = "https://qlpmqnbgyofvhqyhxvhi.supabase.co";
-      const redirectUri = process.env.DEVURI; 
+      const redirectUri = devUrls.danUrl; 
       const response = await WebBrowser.openAuthSessionAsync(
         `${supabase_url}/auth/v1/authorize?provider=${provider}&redirect_to=${redirectUri}`,
         redirectUri
@@ -86,12 +91,13 @@ export default function Auth() {
     if (dbData.failed) {
       const newUser = await createUser(supabaseUser?.id, supabaseUser?.email);
       if (newUser) {
+        newUser.kitchens = []
         setUser(newUser);
         setKitchens(newUser.kitchens);
         setLoading(false);
         if (user.kitchens.length > 0) {
           navigation.navigate("Kitchen");
-        } 
+        }
         else {
           navigation.navigate("Account");
         }
@@ -103,46 +109,46 @@ export default function Auth() {
       setLoading(false);
       if (user.kitchens.length > 0) {
         navigation.navigate("Kitchen");
-      } 
+      }
       else {
         navigation.navigate("Account")
       }
     }
     // if (user.id > 0) navigation.navigate("Account");
-      
-      // if (dbData.failed) {
-      //   console.log("Supabase ID", supabaseUser.id);
-      //   console.log("DATBASE DATA", dbData);
-      //   try {
-      //     const newUser = await createUser(supabaseId, session.user.email);
-      //     if (newUser) {
-      //       setUser(newUser);
-      //       setKitchens(newUser.kitchens);
-      //       console.log("THE NEW USER", newUser);
-      //     }
-      //   }
-      //   catch (error) {
-      //     console.error(error);
-      //     throw error;
-      //   }
-      // }
-      // else {
-      //   try {
-      //     setUser(dbData);
-      //     console.log(dbData);
-      //     console.log(user);
-      //   }
-      //   catch (error) {
-      //     console.log(error);
-      //     throw error;
-      //   }
-      //   finally {
-      //     console.log("final user", user);
-      //   }
-      // }
-      // if (user.id > 0) navigation.navigate("Account");
-      // setLoading(false);
-    
+
+    // if (dbData.failed) {
+    //   console.log("Supabase ID", supabaseUser.id);
+    //   console.log("DATBASE DATA", dbData);
+    //   try {
+    //     const newUser = await createUser(supabaseId, session.user.email);
+    //     if (newUser) {
+    //       setUser(newUser);
+    //       setKitchens(newUser.kitchens);
+    //       console.log("THE NEW USER", newUser);
+    //     }
+    //   }
+    //   catch (error) {
+    //     console.error(error);
+    //     throw error;
+    //   }
+    // }
+    // else {
+    //   try {
+    //     setUser(dbData);
+    //     console.log(dbData);
+    //     console.log(user);
+    //   }
+    //   catch (error) {
+    //     console.log(error);
+    //     throw error;
+    //   }
+    //   finally {
+    //     console.log("final user", user);
+    //   }
+    // }
+    // if (user.id > 0) navigation.navigate("Account");
+    // setLoading(false);
+
   }
 
   return (
