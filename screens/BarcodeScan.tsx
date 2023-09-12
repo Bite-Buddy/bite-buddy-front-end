@@ -1,17 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { searchByBarcode } from '../utilities/fetchRequests';
 import { useNavigation } from "@react-navigation/native";
 
 export default function BarcodeScan() {
-  const [hasPermission, setHasPermission] = useState(false);
+  const [hasPermission, setHasPermission] = useState<boolean>(false);
   const [scanData, setScanData] = useState();
+  const [useCamera, setUseCamera] = useState<boolean>(false);
 
   useEffect(() => {
-    (async() => {
-      const {status} = await BarCodeScanner.requestPermissionsAsync();
+    (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
       setHasPermission(status === "granted");
     })();
   }, []);
@@ -24,7 +25,7 @@ export default function BarcodeScan() {
     );
   }
 
-  async function handleBarCodeScanned({type, data}) {
+  async function handleBarCodeScanned({ type, data }) {
     setScanData(data);
     console.log(`Data: ${data}`);
     const barcodedata = await searchByBarcode(data);
@@ -34,10 +35,10 @@ export default function BarcodeScan() {
 
   return (
     <View style={styles.container}>
-      <BarCodeScanner 
+      <BarCodeScanner
         style={StyleSheet.absoluteFillObject}
         onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
-        />
+      />
       {scanData && <Button title='Scan Again?' onPress={() => setScanData(undefined)} />}
       <StatusBar style="auto" />
     </View>
