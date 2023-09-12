@@ -90,12 +90,6 @@ export default function EditFood() {
           value={name}
           autoCapitalize={'none'}
         />
-        <Input
-          label="Bought on"
-          onChangeText={(text) => setBoughtOn(new Date(text))}
-          value={boughtOn.toLocaleString()}
-          autoCapitalize={'none'}
-        />
         <Text style={styles.verticallySpaced}>Bought on</Text>
         <Pressable style={styles.userInput}
           onPress={() => {
