@@ -5,6 +5,9 @@ import { useNavigation } from '@react-navigation/native';
 import { useAtom, useAtomValue } from 'jotai';
 import { currentFoodListAtom, currentKitchenAtom } from '../utilities/store/atoms';
 import { createFood } from '../utilities/fetchRequests';
+import { StatusBar } from 'expo-status-bar';
+import { BarCodeScanner } from "expo-barcode-scanner";
+import { searchByBarcode } from '../utilities/fetchRequests';
 
 type Items = {
     name: string,
@@ -23,6 +26,35 @@ export default function AddFood() {
     const [message, setMessage] = useState<string>("") //Currently not using, but will be implemented
     const INITIAL_DATE = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
     const [selectedDate, setSelectedDate] = useState<string>("");
+    const [hasPermission, setHasPermission] = useState<boolean>(false);
+    const [scanData, setScanData] = useState();
+    const [useScanner, setUseScanner] = useState<boolean>(false);
+
+    useEffect(() => {
+        (async function getCameraPermission() {
+            const { status, canAskAgain } = await BarCodeScanner.requestPermissionsAsync();
+            console.log(status)
+            if (status === "granted") { setHasPermission(status === "granted"); }
+            else if (canAskAgain) {
+                console.log("Permission denied... Ask again.")
+            }
+            else {
+                console.log("Permission denied forever... Can't ask again.")
+            }
+        })()
+    }, []);
+
+    async function handleBarCodeScanned({ type, data }) {
+        setScanData(data);
+        console.log(`Data: ${data}`);
+        const barcodedata = await searchByBarcode(data);
+        const name = barcodedata.title;
+        const itemsClone = JSON.parse(JSON.stringify(items))
+        itemsClone[0].name = name
+        console.log("name,", name)
+        console.log(itemsClone)
+        setItems(itemsClone)
+    };
 
     const marked = useMemo(() => {
         if (selectedDate !== "") {
@@ -54,12 +86,14 @@ export default function AddFood() {
             //Update items array state
             setItems(currItems)
         }
-        return someEmpty;
+        console.log("There is an empty field", someEmpty);
+        console.log("Sooooo, is it valid?", !someEmpty);
+        return !someEmpty;
     }
 
     const handleSubmit = (): void => {
         //Checks validation. If not validate, gets out from this block.
-        if (!isValid) return
+        if (!isValid()) return
         if (!currentKitchen) {
             setMessage("Kitchen is not selected.");
             return;
@@ -99,14 +133,30 @@ export default function AddFood() {
     }
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.headline}>Add New Item</Text>
+            {useScanner && hasPermission && (
+                <View style={styles.scanner}>
+                    <BarCodeScanner
+                        style={styles.scanner}
+                        onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
+                    />
+                    {scanData
+                        && <Pressable title='Scan next?' onPress={() => {
+                            setScanData(undefined)
+                            isValid() && setItems([{ name: "", boughtOn: today, error: "", showCalendar: false }, ...items])
+                        }} />}
+                </View>)}
+            {!hasPermission && (<View>
+                <Text>Please grant camera permissions to Bite Buddy.</Text>
+                <StatusBar style="auto" />
+            </View>)}
             {items.map((item, index) => {
                 return (
                     <View style={styles.formBox} key={`addFoodItem${index}`}>
                         <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
                         <TextInput style={styles.userInput}
-                            placeholder="Type the name of item"
+                            placeholder="Type here or press Scan to read barcode."
                             value={item.name}
                             onChangeText={(value) => updateItem(value, index, "name")} />
                         <Text style={styles.verticallySpaced}>Bought on</Text>
@@ -133,13 +183,15 @@ export default function AddFood() {
             <View style={styles.buttons}>
                 <Pressable style={styles.button} onPress={handleSubmit} ><Text style={styles.buttonText}>Create</Text></Pressable>
                 <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen Details")} ><Text style={styles.buttonText}>Cancel</Text></Pressable>
+                <Pressable style={styles.button} onPress={() => setUseScanner(true)} ><Text style={styles.buttonText}>Scan</Text></Pressable>
             </View>
-        </ScrollView>
+        </ScrollView >
     );
 }
 
 const styles = StyleSheet.create({
     container: {
+        flexGrow: 1,
         marginTop: 40,
         padding: 12,
         marginBottom: 20
@@ -174,9 +226,7 @@ const styles = StyleSheet.create({
     buttons: {
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-evenly",
-        height: 60,
-        paddingBottom: 20
+        justifyContent: "space-evenly"
     },
     calendar: {
         marginBottom: 10,
@@ -188,17 +238,21 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     button: {
-      backgroundColor: '#EFCA46',
-      height: 40,
-      borderRadius: 4,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      paddingLeft: 15,
-      paddingRight: 15,
+        backgroundColor: '#EFCA46',
+        height: 40,
+        borderRadius: 4,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingLeft: 15,
+        paddingRight: 15,
     },
     buttonText: {
-      fontWeight: "bold"
+        fontWeight: "bold"
+    },
+    scanner: {
+        flex: 1,
+        width: '100%'
     },
     /**Copied below from the other component, not sure the intention */
     // mt20: {

@@ -272,3 +272,20 @@ export async function deleteKitchenById(kitchenId: number): Promise<{message: st
     throw error;
   }
 }
+
+
+//This is the fetch request to spoonacular with barcode UPC code
+
+const query = {apiKey: SPOONACULAR_APIKEY!}
+const params = new URLSearchParams(query)
+
+export async function searchByBarcode(barcode: number) {
+    try {
+        const response = await fetch(SPOONACULAR_URL + barcode + `?${params}`)
+        return response.json()
+        }
+    catch (error) {
+        console.error(error);
+        return false;
+    }
+}
