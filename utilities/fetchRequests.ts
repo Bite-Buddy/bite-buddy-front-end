@@ -3,7 +3,7 @@
 // const DOMAIN = process.env.DOMAIN;
 
 // use http and ip address instead of localhost
-const DOMAIN = "http://192.168.1.226:8000"; //park local server
+const DOMAIN = "https://f97f-240d-1b-53-500-358e-1c16-8dd8-1f02.ngrok-free.app"; //park local server
 import { supabase } from "../supabaseService";
 import { IKitchen, IUser, IFood, IFoodRequest } from "./interfaces";
 // const DOMAIN = "http://localhost:8080";
@@ -276,12 +276,12 @@ export async function deleteKitchenById(kitchenId: number): Promise<{message: st
 
 //This is the fetch request to spoonacular with barcode UPC code
 
-const query = {apiKey: SPOONACULAR_APIKEY!}
+const query = {apiKey: process.env.SPOONACULAR_APIKEY!}
 const params = new URLSearchParams(query)
 
 export async function searchByBarcode(barcode: number) {
     try {
-        const response = await fetch(SPOONACULAR_URL + barcode + `?${params}`)
+        const response = await fetch(process.env.SPOONACULAR_URL! + barcode + `?${params}`)
         return response.json()
         }
     catch (error) {
