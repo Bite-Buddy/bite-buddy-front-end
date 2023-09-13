@@ -29,6 +29,7 @@ export default function AddFood() {
     const [hasPermission, setHasPermission] = useState<boolean>(false);
     const [scanData, setScanData] = useState();
     const [useScanner, setUseScanner] = useState<boolean>(false);
+    const [listBlockHeight, setListBlockHeight] = useState<number>(200)
 
     useEffect(() => {
         (async function getCameraPermission() {
@@ -133,77 +134,113 @@ export default function AddFood() {
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.headline}>Add New Item</Text>
-            {useScanner && hasPermission && (
-                <View style={styles.scanner}>
-                    <BarCodeScanner
-                        style={styles.scanner}
-                        onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
-                    />
-                    {scanData
-                        && <Pressable title='Scan next?' onPress={() => {
-                            setScanData(undefined)
-                            isValid() && setItems([{ name: "", boughtOn: today, error: "", showCalendar: false }, ...items])
-                        }} />}
-                </View>)}
-            {!hasPermission && (<View>
-                <Text>Please grant camera permissions to Bite Buddy.</Text>
-                <StatusBar style="auto" />
-            </View>)}
-            {items.map((item, index) => {
-                return (
-                    <View style={styles.formBox} key={`addFoodItem${index}`}>
-                        <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
-                        <TextInput style={styles.userInput}
-                            placeholder="Type here or press Scan to read barcode."
-                            value={item.name}
-                            onChangeText={(value) => updateItem(value, index, "name")} />
-                        <Text style={styles.verticallySpaced}>Bought on</Text>
-                        <Pressable style={styles.userInput}
-                            onPress={() => updateItem(true, index, "showCalendar")}>
-                            <Text >{item.boughtOn.toLocaleString()}</Text>
-                        </Pressable >
-                        {item.showCalendar && <Calendar
-                            enableSwipeMonths
-                            current={INITIAL_DATE}
-                            style={styles.calendar}
-                            onDayPress={(day) => {
-                                updateItem(day.dateString, index, "boughtOn")
-                            }}
-                            markedDates={marked}
-                        />}
+        <View style={styles.root}>
+            <ScrollView contentContainerStyle={styles.container}>
+                {/**Block 1 */}
+                <View style={styles.block1_headline}><Text>Add New Item</Text></View>
+                {/**Block 2 */}
+                {useScanner && hasPermission && (
+                    <View style={styles.block2_scanner}>
+                        <BarCodeScanner
+                            style={styles.block2_scanner}
+                            onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
+                        />
+                        {scanData &&
+                            <Pressable onPress={() => {
+                                setScanData(undefined)
+                                isValid() && setItems([{ name: "", boughtOn: today, error: "", showCalendar: false }, ...items])
+                            }} ><Text>Scan next?</Text></Pressable>}
+                    </View>)}
+                {!hasPermission && (
+                    <View>
+                        <Text>Please grant camera permissions to Bite Buddy.</Text>
+                        <StatusBar style="auto" />
                     </View>)
-            })}
-            <View style={styles.more}>
-                <Pressable
-                    style={styles.button}
-                    onPress={() => { setItems([...items, { name: "", boughtOn: today, error: "", showCalendar: false }]) }} ><Text style={styles.buttonText}>more+</Text></Pressable>
-            </View>
-            <View style={styles.buttons}>
-                <Pressable style={styles.button} onPress={handleSubmit} ><Text style={styles.buttonText}>Create</Text></Pressable>
-                <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen Details")} ><Text style={styles.buttonText}>Cancel</Text></Pressable>
-                <Pressable style={styles.button} onPress={() => setUseScanner(true)} ><Text style={styles.buttonText}>Scan</Text></Pressable>
-            </View>
-        </ScrollView >
+                }
+                {/**Block 3 */}
+                <View style={[styles.block3_listContainer, { height: listBlockHeight }]}>
+                    {items.map((item, index) => {
+                        return (
+                            <View style={styles.formBox} key={`addFoodItem${index}`}>
+                                <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
+                                <TextInput style={styles.userInput}
+                                    placeholder="Type here or press Scan to read barcode."
+                                    value={item.name}
+                                    onChangeText={(value) => updateItem(value, index, "name")} />
+                                <Text style={styles.verticallySpaced}>Bought on</Text>
+                                <Pressable style={styles.userInput}
+                                    onPress={() => updateItem(true, index, "showCalendar")}>
+                                    <Text >{item.boughtOn.toLocaleString()}</Text>
+                                </Pressable >
+                                {item.showCalendar && <Calendar
+                                    enableSwipeMonths
+                                    current={INITIAL_DATE}
+                                    style={styles.calendar}
+                                    onDayPress={(day) => {
+                                        updateItem(day.dateString, index, "boughtOn")
+                                    }}
+                                    markedDates={marked}
+                                />}
+                            </View>)
+                    })}
+                </View>
+                {/**block 4*/}
+                <View style={styles.block4_buttonBlock}>
+                    <View style={styles.more}>
+                        <Pressable
+                            style={styles.button}
+                            onPress={() => {
+                                setItems([...items, { name: "", boughtOn: today, error: "", showCalendar: false }])
+                                setListBlockHeight(listBlockHeight + 200)
+                            }} ><Text style={styles.buttonText}>more+</Text></Pressable>
+                    </View>
+                    <View style={styles.buttons}>
+                        <Pressable style={styles.button} onPress={handleSubmit} ><Text style={styles.buttonText}>Create</Text></Pressable>
+                        <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen Details")} ><Text style={styles.buttonText}>Cancel</Text></Pressable>
+                        <Pressable style={styles.button} onPress={() => {
+                            setUseScanner(!useScanner)
+                            console.log(useScanner)
+                        }} ><Text style={styles.buttonText}>Scan</Text></Pressable>
+                    </View>
+                </View>
+            </ScrollView >
+        </View >
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flexGrow: 1,
-        marginTop: 40,
-        padding: 12,
-        marginBottom: 20
+    root: {
+        flex: 1,
+        flexDirection: 'column',
     },
-    headline: {
+    container: {
+        flexGrow: 2,
+        //backgroundColor:'red',
+        marginTop: 0, //might not need this
+        padding: 10,//might not need this
+        marginBottom: 0,//might not need this
+    },
+    block1_headline: {
         margin: 10,
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
     },
+    block2_scanner: {
+        height: 300,
+        //backgroundColor: 'pink',
+    },
+    block3_listContainer: {
+        // backgroundColor: 'blue'
+    },
+    block4_buttonBlock: {
+
+    },
     verticallySpaced: {
         alignSelf: "stretch",
+    },
+    scanner: {
+        width: '100%'
     },
     formBox: {
         margin: 10,
@@ -223,11 +260,6 @@ const styles = StyleSheet.create({
     more: {
         margin: 10
     },
-    buttons: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-evenly"
-    },
     calendar: {
         marginBottom: 10,
     },
@@ -236,6 +268,11 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: 'lightgrey',
         fontSize: 16,
+    },
+    buttons: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-evenly"
     },
     button: {
         backgroundColor: '#EFCA46',
@@ -250,10 +287,7 @@ const styles = StyleSheet.create({
     buttonText: {
         fontWeight: "bold"
     },
-    scanner: {
-        flex: 1,
-        width: '100%'
-    },
+
     /**Copied below from the other component, not sure the intention */
     // mt20: {
     //   marginTop: 20,
