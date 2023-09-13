@@ -4,4 +4,5 @@
 export const devUrls = {
   parkUrl: "exp://192.168.10.108:8081/",
   danUrl: "exp://192.168.1.226:8081/",
+  izaUrl: "exp://192.168.10.105:8081/"
 }

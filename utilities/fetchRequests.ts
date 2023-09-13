@@ -1,11 +1,10 @@
 //configure your .env.local file with the server domain link
 //REMOVE THE TRAILING SLASH (/) FROM THE URL IN YOUR .env.local FILE
-const DOMAIN = process.env.DOMAIN;
-const SPOONACULAR_APIKEY = process.env.SPOONACULAR_APIKEY;
-const SPOONACULAR_URL = process.env.SPOONACULAR_URL!;
+// const DOMAIN = process.env.DOMAIN;
 
 // use http and ip address instead of localhost
-// const DOMAIN = "http://192.168.1.226:8080"; //park local server
+const DOMAIN = "http://192.168.1.226:8000"; //park local server
+import { supabase } from "../supabaseService";
 import { IKitchen, IUser, IFood, IFoodRequest } from "./interfaces";
 // const DOMAIN = "http://localhost:8080";
 
@@ -80,7 +79,7 @@ export async function getByDatabaseID(id: string): Promise<IUser> {
  * This function will likely do both operations at the same time
  * in the future.
  */
-export async function deleteUserFromDatabase(id: string): Promise<IUser> {
+export async function deleteUserFromDatabase(id: number): Promise<IUser> {
   try {
     const response = await fetch(`${DOMAIN}/users/${id}`, {
       method: "DELETE",

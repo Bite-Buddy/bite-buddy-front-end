@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, TextInput, Button } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TextInput, Button, Pressable } from 'react-native';
 import { Input } from "react-native-elements";
 // import { useStateValue } from '../store/State'
 import { userAtom, kitchensAtom } from '../utilities/store/atoms'
@@ -34,7 +34,7 @@ export default function AddKitchen() {
               placeholder="My Kitchen"
               autoCapitalize={'none'}
             />
-            <Button title="Submit" disabled={loading} onPress={() => submitKitchen()} />
+            <Pressable style={styles.button} disabled={loading} onPress={() => submitKitchen()} ><Text style={styles.buttonText}>Create Kitchen</Text></Pressable>
         </ScrollView>
     );
 }
@@ -49,5 +49,16 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
-    }
+    },
+    button: {
+      backgroundColor: '#EFCA46',
+      height: 40,
+      borderRadius: 4,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    buttonText: {
+      fontWeight: "bold"
+    },
 })
