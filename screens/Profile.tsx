@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { Linking, Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { supabase } from "../supabaseService";
@@ -17,10 +17,23 @@ async function deleteHandler() {
   await deleteUserFromDatabase(user.id, user.supabase_id);
   navigation.navigate("Auth");
 }
+
   return (
     <View style={styles.container}>
       <View style={styles.verticallySpaced}>
         <Text style={styles.header}>Profile</Text>
+        <Pressable style = {styles.button} onPressIn={() => Linking.openURL("https://sites.google.com/view/bitebuddyprivacy/help")}>
+          <Text style={styles.buttonText}>Help Page</Text>
+        </Pressable>
+        <Pressable style = {styles.button} onPressIn={() => Linking.openURL("https://sites.google.com/view/bitebuddyprivacy/privacy")}>
+          <Text style={styles.buttonText}>Privacy Policy</Text>
+        </Pressable>
+        <Pressable style = {styles.button} onPressIn={() => Linking.openURL("https://sites.google.com/view/bitebuddyprivacy/service")}>
+          <Text style={styles.buttonText}>Terms of Service</Text>
+        </Pressable>
+        <Pressable style = {styles.button} onPressIn={() => Linking.openURL("https://sites.google.com/view/bitebuddyprivacy/contact")}>
+          <Text style={styles.buttonText}>Contact</Text>
+        </Pressable>
         <Pressable style={styles.button} onPressIn={() => signOutHandler()}>
           <Text style={styles.buttonText}>Sign Out</Text>
         </Pressable>
