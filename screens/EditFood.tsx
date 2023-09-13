@@ -82,15 +82,15 @@ export default function EditFood() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.verticallySpaced}>
-        <Text>Edit Food Item</Text>
-        <Input
-          label="Name"
-          onChangeText={(text) => setName(text)}
-          value={name}
-          autoCapitalize={'none'}
-        />
-        <Text style={styles.verticallySpaced}>Bought on</Text>
+    <View style={styles.verticallySpaced}>
+      <Text style={styles.headline}>Edit Food</Text>
+      <Input
+            label="Name"
+            onChangeText={(text) => setName(text)}
+            value={name}
+            autoCapitalize={'none'}
+          />
+      <Text style={styles.verticallySpaced}>Bought on</Text>
         <Pressable style={styles.userInput}
           onPress={() => {
             setShowCalendar(true)
@@ -108,15 +108,12 @@ export default function EditFood() {
           }}
           markedDates={marked}
         />}
-        <Button title="Update" disabled={loading} onPress={() => updateFoodItem()} />
-      </View>
-      <View style={styles.verticallySpaced}>
-        <Button title="Delete Food Item" disabled={loading} onPress={() => deleteFoodItem()} />
-      </View>
-      <View style={styles.verticallySpaced}>
-        <Button title="Cancel" disabled={loading} onPress={() => navigation.navigate("Kitchen Details")} />
-      </View>
+      <Pressable style={styles.button} disabled={loading} onPress={() => updateFoodItem()} ><Text style={styles.buttonText}>Update Food</Text></Pressable>
     </View>
+    <View>
+      <Pressable style={styles.button} disabled={loading} onPress={() => deleteFoodItem()} ><Text style={styles.buttonText}>Delete Food</Text></Pressable>
+    </View>
+  </View>
   )
 }
 
@@ -132,6 +129,23 @@ const styles = StyleSheet.create({
   },
   mt20: {
     marginTop: 20,
+  },
+  headline: {
+    margin: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  button: {
+    backgroundColor: '#EFCA46',
+    height: 40,
+    borderRadius: 4,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonText: {
+    fontWeight: "bold"
   },
   calendar: {
     marginBottom: 10,

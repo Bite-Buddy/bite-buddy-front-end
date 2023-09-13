@@ -20,12 +20,12 @@ async function deleteHandler() {
   return (
     <View style={styles.container}>
       <View style={styles.verticallySpaced}>
-        <Text>Profile</Text>
-        <Pressable onPressIn={() => signOutHandler()}>
-          <Text>Sign Out</Text>
+        <Text style={styles.header}>Profile</Text>
+        <Pressable style={styles.button} onPressIn={() => signOutHandler()}>
+          <Text style={styles.buttonText}>Sign Out</Text>
         </Pressable>
-        <Pressable onPressIn={() => deleteHandler()}>
-          <Text>Delete Account</Text>
+        <Pressable style={styles.button} onPressIn={() => deleteHandler()}>
+          <Text style={styles.buttonText}>Delete Account</Text>
         </Pressable>
       </View>
     </View>
@@ -37,6 +37,9 @@ const styles = StyleSheet.create({
     marginTop: 40,
     padding: 12,
   },
+  header: {
+    fontSize: 30
+  },
   verticallySpaced: {
     paddingTop: 4,
     paddingBottom: 4,
@@ -44,5 +47,17 @@ const styles = StyleSheet.create({
   },
   mt20: {
     marginTop: 20,
+  },
+  button: {
+    backgroundColor: '#EFCA46',
+    height: 40,
+    borderRadius: 4,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10
+  },
+  buttonText: {
+    fontWeight: "bold"
   },
 })
