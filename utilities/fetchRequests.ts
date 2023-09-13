@@ -1,9 +1,9 @@
 //configure your .env.local file with the server domain link
 //REMOVE THE TRAILING SLASH (/) FROM THE URL IN YOUR .env.local FILE
-// const DOMAIN = process.env.DOMAIN;
+const DOMAIN = process.env.BACKEND_URL;
 
 // use http and ip address instead of localhost
-const DOMAIN = "http://192.168.1.226:8000"; //park local server
+//const DOMAIN = "http://192.168.1.226:8000"; //park local server
 import { supabase } from "../supabaseService";
 import { IKitchen, IUser, IFood, IFoodRequest } from "./interfaces";
 // const DOMAIN = "http://localhost:8080";
