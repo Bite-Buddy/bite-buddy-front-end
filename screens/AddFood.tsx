@@ -10,20 +10,24 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { searchByBarcode } from '../utilities/fetchRequests';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-
 type Items = {
     name: string,
     boughtOn: Date,
     error: string,
-    showCalendar: boolean
+    showCalendar: boolean,
+    focus: boolean
 }[]
 
 export default function AddFood() {
-    function dateFormatter(date: Date) { return `${date.getFullYear()}-${date.getMonth() - 1}-${date.getDate}` }
+    function dateFormatter(date: Date) {
+        const datestr = `${date.getFullYear()}-${date.getMonth() - 1}-${date.getDate()}`;
+        console.log(datestr)
+        return datestr
+    }
     const navigation = useNavigation();
     const today = new Date();
     const INITIAL_DATE = dateFormatter(today);
-    const blankItem = { name: "", boughtOn: today, error: "", showCalendar: false }
+    const blankItem = { name: "", boughtOn: today, error: "", showCalendar: false, focus: true }
     const currentKitchen = useAtomValue(currentKitchenAtom);
     const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom);
     const [items, setItems] = useState<Items>([blankItem]);
@@ -32,7 +36,7 @@ export default function AddFood() {
     const [useScanner, setUseScanner] = useState<boolean>(false);
     const [scanData, setScanData] = useState<string>();
     const [listBlockMargin, setListBlockMargin] = useState<number>(0);
-    const [inputIndex, setInputIndex] = useState<number | null>(null);
+    const [focusIndex, setFocusIndex] = useState<number>(0);
 
     useEffect(() => {
         (async function getCameraPermission() {
@@ -43,14 +47,13 @@ export default function AddFood() {
         })()
     }, []);
 
-
     async function handleBarCodeScanned({ data }: { data: string }) {
         setScanData(data);
         console.log(`Data: ${data}`);
         const barcodedata = await searchByBarcode(parseInt(data));
         const name = barcodedata.title;
         const itemsClone = JSON.parse(JSON.stringify(items))
-        itemsClone[0].name = name
+        itemsClone[focusIndex].name = name
         console.log("name,", name)
         console.log(itemsClone)
         setItems(itemsClone)
@@ -76,13 +79,12 @@ export default function AddFood() {
         //Update error message if there is any empty input
         if (someEmpty) {
             const currItems = [...items]
-                .map(item => {
-                    return {
-                        name: item.name,
-                        boughtOn: item.boughtOn,
-                        error: item.name === "" ? "*required" : "",
-                        showCalendar: false
+                .map((item, index) => {
+                    if (item.name === "") {
+                        setFocusIndex(index)
+                        item.error = "required"
                     }
+                    return item
                 });
             //Update items array state
             setItems(currItems)
@@ -141,7 +143,7 @@ export default function AddFood() {
                         {scanData &&
                             <Pressable style={styles.buttonScanNext} onPress={() => {
                                 setScanData(undefined)
-                                isValid() && setItems([{ name: "", boughtOn: today, error: "", showCalendar: false }, ...items])
+                                isValid() && setItems([blankItem, ...items])
                             }} ><Text style={styles.buttonText}>Scan next?</Text></Pressable>}
                     </View>)}
                 {!cameraGranted && (
@@ -153,25 +155,33 @@ export default function AddFood() {
                 <View style={styles.more}>
                     <Pressable
                         style={styles.button}
-                        onPress={() => {
-                            setItems([{ name: "", boughtOn: today, error: "", showCalendar: false }, ...items])
-                        }} ><Text style={styles.buttonText}>
-                            <MaterialCommunityIcons name="form-textbox" size={15} color="black" /> Insert another entry</Text></Pressable>
+                        onPress={() => { setItems([blankItem, ...items]) }} >
+                        <Text style={styles.buttonText}>
+                            <MaterialCommunityIcons name="form-textbox" size={15} color="black" />
+                            Insert another entry</Text>
+                    </Pressable>
                 </View>
-                <View style={{ marginTop: listBlockMargin /**Need this here to change it dynamically */}}>
+                <View style={{ marginTop: listBlockMargin /**Need this here to change it dynamically */ }}>
                     {items.map((item, index) => {
                         return (
-                            <View style={styles.formBox} key={`addFoodItem${index}`}>
+                            <View style={[styles.formBox, { borderWidth: item.focus ? 5 : 1 }]} key={`addFoodItem${index}`}>
                                 <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
-                                <TextInput style={styles.userInput}
-                                    placeholder={"Type here"}
-                                    value={item.name}
-                                    onChangeText={(value) => formatItems(value, index, "name")} />
-                                <Text>or scan barcode?</Text>
+                                <View style={styles.namefield}>
+                                    <TextInput style={styles.userInput}
+                                        placeholder={"Type here"}
+                                        value={item.name}
+                                        onChangeText={(value) => formatItems(value, index, "name")} />
+                                    <View style={{ marginHorizontal: 20, paddingLeft: 10 }}>
+                                        <Pressable style={{ alignItems: 'center' }} onPress={() => setUseScanner(!useScanner)}>
+                                            <Text><MaterialCommunityIcons name='barcode-scan' size={25} /></Text>
+                                            <Text>scan</Text>
+                                        </Pressable>
+                                    </View>
+                                </View>
                                 <Text style={styles.verticallySpaced}>Bought on</Text>
                                 <Pressable style={styles.userInput}
                                     onPress={() => formatItems(true, index, "showCalendar")}>
-                                    <Text >{item.boughtOn.toLocaleString()}</Text>
+                                    <Text >{dateFormatter(item.boughtOn)}</Text>
                                 </Pressable >
                                 {item.showCalendar && <Calendar
                                     enableSwipeMonths
@@ -188,10 +198,6 @@ export default function AddFood() {
                     <View style={styles.buttons}>
                         <Pressable style={styles.button} onPress={handleSubmit} ><Text style={styles.buttonText}>Add to {currentKitchen?.name}</Text></Pressable>
                         <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen Details")} ><Text style={styles.buttonText}>Cancel</Text></Pressable>
-                        <Pressable style={styles.button} onPress={() => {
-                            setUseScanner(!useScanner)
-                            console.log(useScanner)
-                        }} ><Text style={styles.buttonText}>Scan</Text></Pressable>
                     </View>
                 </View>
             </ScrollView >
@@ -238,11 +244,15 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     userInput: {
+        flex: 1,
         height: 40,
         marginBottom: 15,
         padding: 5,
         borderColor: "lightgray",
         borderWidth: 1,
+    },
+    namefield: {
+        flexDirection: 'row',
     },
     more: {
         margin: 10
