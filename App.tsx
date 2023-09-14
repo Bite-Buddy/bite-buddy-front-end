@@ -1,27 +1,162 @@
-// import 'react-native-url-polyfill/auto'
-import { useState, useEffect } from 'react'
-import { supabase } from './supabaseService'
-import Auth from './components/Auth'
-import Account from './components/Account'
-import { View } from 'react-native'
-import { Session } from '@supabase/supabase-js'
+import { useState, useEffect } from "react";
+import { View, Text } from "react-native";
+import { supabase } from "./supabaseService";
+import { Session } from "@supabase/supabase-js";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { Auth, Account, Kitchen, Profile, List, AddFood, AddKitchen, BarcodeScan } from "./screens/screens";
+import Header from "./header/Header";
+import { createUser, getBySupabaseID, getUsers } from "./utilities/fetchRequests";
+import { useAtom } from 'jotai'
+import { userAtom } from './utilities/store/atoms'
+import { kitchensAtom } from "./utilities/store/atoms";
+import { IUser } from "./utilities/interfaces";
+import Drawer from "./screens/Drawer";
+import EditFood from "./screens/EditFood";
+import { StyleSheet } from 'react-native'
+
+const Stack = createStackNavigator();
+
+// const { error } = await supabase.auth.signOut() storing this for later
 
 export default function App() {
-  const [session, setSession] = useState<Session | null>(null)
+  const [sessionChecked, setSessionChecked] = useState(false);
+  const [kitchens, setKitchens] = useAtom(kitchensAtom);
+  const [user, setUser] = useAtom(userAtom);
+  const [session, setSession] = useState<Session | null>(null);
+  // useEffect(() => {
+  //   (async () => {
+  //     const session = (await supabase.auth.getSession()).data.session;
+  //     if (session) {
+  //       setSession(session);
+  //       const sessionUser = await getSessionUser();
+  //       if (sessionUser) {
+  //         setUser(sessionUser);
+  //         setKitchens(user.kitchens);
+  //       }
+  //     }
+  //     setSessionChecked(true);
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
+  //     // supabase.auth.onAuthStateChange((event, session) => {
+  //     //   if (event == 'SIGNED_IN') console.log('SIGNED_IN', session)
+  //     // })
+  //     // supabase.auth.onAuthStateChange((event, session) => {
+  //     //   if (event == 'SIGNED_OUT') console.log('SIGNED_OUT', session)
+  //     // })
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-  }, [])
+  //   })()
+  // }, [])
+  // useEffect(() => {
+  //   if (user.id > 0 && sessionChecked) {
+  //     console.log("THE USER", user);
+  //   }
+  // }, [user, sessionChecked])
+
+  // async function getSessionUser() {
+  //   try {
+  //     const user = await getBySupabaseID(session?.user.id);
+  //     return user;
+  //   }
+  //   catch (error) {
+  //     throw error;
+  //   }
+  // }
+ 
+  // if (!sessionChecked) {
+  //   // Render a loading screen while authentication check is in progress
+  //   // it's normally too quick to see anyway
+  //   return (
+  //     <NavigationContainer>
+  //       <View>
+  //         <Text>Loading</Text>
+  //       </View>
+  //     </NavigationContainer>
+  //   );
+  // }
 
   return (
-    <View>
-      {session && session.user ? <Account key={session.user.id} session={session} /> : <Auth />}
-    </View>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Auth">
+          <Stack.Screen name="Kitchen Settings" component={Drawer} options={({ navigation }) => ({
+            headerTitle: () => <Header />,
+            headerStyle: {
+              backgroundColor: '#EFCA46',
+            },
+          })}  />
+          <Stack.Screen name="Auth" component={Auth} options={({ navigation }) => ({
+            headerTitle: () => <Text style={styles.auth}>BiteBuddy</Text>,
+            headerStyle: {
+              backgroundColor: '#EFCA46',
+            },
+
+          })} />
+          <Stack.Screen name="Account" component={Account} options={({ navigation }) => ({
+            headerTitle: () => <Header />,
+            headerStyle: {
+              backgroundColor: '#EFCA46',
+            },
+
+          })} />
+          <Stack.Screen name="Kitchen" component={Kitchen} options={({ navigation }) => ({
+            headerTitle: () => <Header />,
+            headerStyle: {
+              backgroundColor: '#EFCA46',
+            },
+
+          })} />
+          <Stack.Screen name="Profile" component={Profile} options={({ navigation }) => ({
+            headerTitle: () => <Header />,
+            headerStyle: {
+              backgroundColor: '#EFCA46',
+            },
+
+          })} />
+          <Stack.Screen name="List" component={List} options={({ navigation }) => ({
+            headerTitle: () => <Header />,
+            headerStyle: {
+              backgroundColor: '#EFCA46',
+            },
+
+          })} />
+          <Stack.Screen name="AddFood" component={AddFood} options={({ navigation }) => ({
+            headerTitle: () => <Header />,
+            headerStyle: {
+              backgroundColor: '#EFCA46',
+            },
+
+          })} />
+
+          <Stack.Screen name="AddKitchen" component={AddKitchen} options={({ navigation }) => ({
+            headerTitle: () => <Header />,
+            headerStyle: {
+              backgroundColor: '#EFCA46',
+            },
+
+          })} />
+          <Stack.Screen name="Edit Food" component={EditFood} options={({ navigation }) => ({
+            headerTitle: () => <Header />,
+            headerStyle: {
+              backgroundColor: '#EFCA46',
+            },
+
+          })} />
+          <Stack.Screen name="Barcode Scan" component={BarcodeScan} options={({ navigation }) => ({
+            headerTitle: () => <Header />,
+            headerStyle: {
+              backgroundColor: '#EFCA46',
+            },
+
+          })} />
+          {/* Add more screens as needed */}
+        </Stack.Navigator>
+      </NavigationContainer>
   )
 }
+
+const styles = StyleSheet.create({
+  auth: {
+    fontSize: 26,
+    fontWeight: "bold",
+
+  }
+})
