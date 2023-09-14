@@ -7,6 +7,7 @@ import { currentFoodItemAtom, currentFoodListAtom } from "../utilities/store/ato
 import { deleteFoodById, updateFoodById } from "../utilities/fetchRequests"
 import { IFood } from "../utilities/interfaces";
 import { AntDesign } from '@expo/vector-icons'; 
+import { ListItem } from "@rneui/themed";
 
 
 
@@ -44,12 +45,25 @@ export default function List() {
             {!currentFoodList.filter(food => food.inStock === false).length ? <Text style={styles.noItem}>The shopping list is empty</Text>
               : currentFoodList.filter((foodItem) => foodItem.inStock === false).map((foodItem) => {
                 return (
-                  <Pressable style={styles.list} key={`foodItem${foodItem.id}`} >
-                    <Text style={styles.name}>{foodItem.name}</Text>
-                    <Pressable style={styles.button} onPress={() => handleAddToKitchen(foodItem)}>
-                      <Text style={styles.text}><AntDesign name="checksquare" size={24} color="#4dd377" /></Text>
+                  <ListItem.Swipeable 
+                    // style={styles.list}
+                    key={`shoppingListItem${foodItem.id}`}
+                    rightContent={(reset) => (
+                      <Text>Add to Kitchen</Text>
+                    )}
+
+                    onSwipeEnd={() => handleAddToKitchen(foodItem)}
+                  >
+                    <ListItem.Content>
+                      <Pressable key={`foodItem${foodItem.id}`} >
+                      <Text style={styles.name}>{foodItem.name}</Text>
                     </Pressable>
-                  </Pressable>
+                      
+                    </ListItem.Content>
+                    
+                  </ListItem.Swipeable>
+                  
+                 
                 );
               })}              
           </View>
@@ -103,6 +117,7 @@ export default function List() {
     fontWeight: "bold",
     marginTop: 5,
     marginLeft: 10,
+    color: 'black',
   },
   date: {
     padding: 0,
@@ -112,10 +127,10 @@ export default function List() {
     marginRight: 10
   },
   list: {
-    flexDirection: "row",
+    // flexDirection: "row",
     backgroundColor: 'white',
     borderWidth: 0,
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     marginTop: 5,
     marginLeft: 10,
     marginRight: 10,

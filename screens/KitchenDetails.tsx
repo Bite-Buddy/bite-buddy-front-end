@@ -1,15 +1,15 @@
 import { StyleSheet, View, ScrollView, Pressable } from "react-native";
-import { Text } from "react-native-elements";
+import { Button, Icon, Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { useAtomValue, useAtom } from 'jotai'
 import { currentKitchenAtom, currentFoodListAtom, currentFoodItemAtom } from "../utilities/store/atoms";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { updateFoodById } from "../utilities/fetchRequests";
-import { AntDesign } from '@expo/vector-icons'; 
-
-
+import { AntDesign } from '@expo/vector-icons';
+import { ListItem } from '@rneui/themed';
+import { IFood } from "../utilities/interfaces";
 
 export default function KitchenDetails() {
   const today = new Date();
@@ -21,13 +21,13 @@ export default function KitchenDetails() {
   const [inStock, setinStock] = useState(true)
 
 
-  function handleFoodSelect(selectedFood) {
+  function handleFoodSelect(selectedFood: IFood) {
     console.log(selectedFood)
     setCurrentFoodItem(selectedFood)
     navigation.navigate('Edit Food')
   }
 
-  async function handleAddToShopping(selectedFood) {
+  async function handleAddToShopping(selectedFood: IFood) {
     if (!selectedFood) return;
     const response = await updateFoodById(selectedFood.id, {inStock: false})
     let foodListClone: IFood[] = JSON.parse(JSON.stringify(currentFoodList))
@@ -46,12 +46,16 @@ export default function KitchenDetails() {
     
   }
 
-
+  async function handleSwipe(item: IFood) {
+    await handleAddToShopping(item)
+  }
 
   return (
     <View style={styles.container}>
       <ScrollView>
         <View>
+          <View>
+          </View>
           <View style={styles.verticallySpaced}>
             {!currentFoodList.length ? <Text style={styles.noItem}>No items in stock</Text>
             //calculate the day offset of the bought item
@@ -59,14 +63,26 @@ export default function KitchenDetails() {
                 //Calculate the day offset of te bought day from today
                 const dayOffSet = Math.floor((today.getTime() - foodItem.bought_on.getTime()) / (24 * 60 * 60 * 1000))
                 return (
-                  <Pressable style={styles.list} key={`foodItem${foodItem.id}`} onPress={() => { handleFoodSelect(foodItem) }} >
-                    <Text style={styles.name}>{foodItem.name}</Text>
-                    <Text style={styles.name}>{foodItem.inStock}</Text>
-                    <Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
-                    <Pressable style={styles.button} onPress={() => handleAddToShopping(foodItem)}>
-                       <Text style={styles.text}><AntDesign name="minuscircleo" size={20} color="black" /></Text>
-                    </Pressable>
-                  </Pressable>
+                  <ListItem.Swipeable 
+                    key={`foodItem${foodItem.id}`}
+                    leftContent={(reset) => (
+                      <Text>Add to Shopping List</Text>
+                    )}
+
+                    onSwipeEnd={() => handleSwipe(foodItem)}
+                  >
+                    <ListItem.Content>
+                      <Pressable style={styles.list}  onPress={() => { handleFoodSelect(foodItem) }} >
+                        <Text style={styles.name}>{foodItem.name}</Text>
+                        <Text style={styles.name}>{foodItem.inStock}</Text>
+                        <Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
+                      </Pressable>
+                    </ListItem.Content>
+                    <ListItem.Chevron />
+                  </ListItem.Swipeable>
+
+
+                 
                   
                 );
               })}
