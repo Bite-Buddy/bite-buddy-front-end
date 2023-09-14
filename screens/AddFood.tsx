@@ -8,6 +8,8 @@ import { createFood } from '../utilities/fetchRequests';
 import { StatusBar } from 'expo-status-bar';
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { searchByBarcode } from '../utilities/fetchRequests';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 
 type Items = {
     name: string,
@@ -24,18 +26,18 @@ export default function AddFood() {
     const currentKitchen = useAtomValue(currentKitchenAtom)
     const [items, setItems] = useState<Items>([blankItem]);
     const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom)
-    const [message, setMessage] = useState<string>("") //Currently not using, but will be implemented
     const [selectedDate, setSelectedDate] = useState<string>("");
-    const [hasPermission, setHasPermission] = useState<boolean>(false);
+    const [cameraGranted, setCameraGranted] = useState<boolean>(false);
     const [scanData, setScanData] = useState<string>();
     const [useScanner, setUseScanner] = useState<boolean>(false);
     const [listBlockMargin, setListBlockMargin] = useState<number>(0);
+    const [inputIndex, setInputIndex] = useState<number | null>(null);
 
     useEffect(() => {
         (async function getCameraPermission() {
             const { status, canAskAgain } = await BarCodeScanner.requestPermissionsAsync();
             console.log(status)
-            if (status === "granted") { setHasPermission(status === "granted"); }
+            if (status === "granted") { setCameraGranted(status === "granted"); }
             else if (canAskAgain) {
                 console.log("Permission denied... Ask again.")
             }
@@ -61,8 +63,6 @@ export default function AddFood() {
         setItems(itemsClone)
         setListBlockMargin(50)
     };
-
-
 
     const marked = useMemo(() => {
         if (selectedDate !== "") {
@@ -101,15 +101,11 @@ export default function AddFood() {
 
     const handleSubmit = (): void => {
         //Checks validation. If not validate, gets out from this block.
-        if (!isValid()) return
-        if (!currentKitchen) {
-            setMessage("Kitchen is not selected.");
-            return;
-        }
+        if (!isValid() || !currentKitchen) return
+
         //POST request to add all items to the server.
         Promise.all(items.map(item => createFood(currentKitchen.id, { name: item.name, bought_on: item.boughtOn })))
             .then((res) => {
-                setMessage("Kitchen updated!"); //Currently not using, but will be implemented
                 const preparedFoodList = res.map(response => {
                     return {
                         ...response.food,
@@ -119,14 +115,11 @@ export default function AddFood() {
                 })
                 setCurrentFoodList(currentFoodList.concat(preparedFoodList));
             })
-            .catch((e) => {
-                console.log(e)
-                setMessage(e.message)
-            })
+            .catch((e) => { console.error(e) })
             .finally(() => navigation.navigate("Kitchen Details")); //Currently not using, but will be implemented
     }
 
-    function updateItem(value: string | boolean, index: number, key: string) {
+    function formatItems(value: string | boolean, index: number, key: string) {
         const newItems = JSON.parse(JSON.stringify(items));
         if (key === "boughtOn" && typeof value === "string") {
             newItems[index][key] = new Date(value);
@@ -146,7 +139,7 @@ export default function AddFood() {
                 {/**Block 1 */}
                 <View style={styles.block1_headline}><Text>Add New Item</Text></View>
                 {/**Block 2 */}
-                {useScanner && hasPermission && (
+                {useScanner && cameraGranted && (
                     <View style={styles.block2_scanner}>
                         <BarCodeScanner
                             style={styles.block2_scanner}
@@ -158,14 +151,21 @@ export default function AddFood() {
                                 isValid() && setItems([{ name: "", boughtOn: today, error: "", showCalendar: false }, ...items])
                             }} ><Text style={styles.buttonText}>Scan next?</Text></Pressable>}
                     </View>)}
-                {!hasPermission && (
+                {!cameraGranted && (
                     <View>
                         <Text>Please grant camera permissions to Bite Buddy.</Text>
                         <StatusBar style="auto" />
                     </View>)
                 }
-                {/**Block 3 */}
-                <View style={[styles.block3_listContainer, { marginTop: listBlockMargin }]}>
+                <View style={styles.more}>
+                    <Pressable
+                        style={styles.button}
+                        onPress={() => {
+                            setItems([{ name: "", boughtOn: today, error: "", showCalendar: false }, ...items])
+                        }} ><Text style={styles.buttonText}>
+                            <MaterialCommunityIcons name="form-textbox" size={15} color="black" /> Insert another entry</Text></Pressable>
+                </View>
+                <View style={{ marginTop: listBlockMargin }}>
                     {items.map((item, index) => {
                         return (
                             <View style={styles.formBox} key={`addFoodItem${index}`}>
@@ -173,18 +173,18 @@ export default function AddFood() {
                                 <TextInput style={styles.userInput}
                                     placeholder={"Type here"}
                                     value={item.name}
-                                    onChangeText={(value) => updateItem(value, index, "name")} />
+                                    onChangeText={(value) => formatItems(value, index, "name")} />
                                 <Text>or scan barcode?</Text>
                                 <Text style={styles.verticallySpaced}>Bought on</Text>
                                 <Pressable style={styles.userInput}
-                                    onPress={() => updateItem(true, index, "showCalendar")}>
+                                    onPress={() => formatItems(true, index, "showCalendar")}>
                                     <Text >{item.boughtOn.toLocaleString()}</Text>
                                 </Pressable >
                                 {item.showCalendar && <Calendar
                                     enableSwipeMonths
                                     current={INITIAL_DATE}
                                     style={styles.calendar}
-                                    onDayPress={(day) => { updateItem(day.dateString, index, "boughtOn") }}
+                                    onDayPress={(day) => { formatItems(day.dateString, index, "boughtOn") }}
                                     markedDates={marked}
                                 />}
                             </View>)
@@ -192,15 +192,8 @@ export default function AddFood() {
                 </View>
                 {/**block 4*/}
                 <View style={styles.block4_buttonBlock}>
-                    <View style={styles.more}>
-                        <Pressable
-                            style={styles.button}
-                            onPress={() => {
-                                setItems([...items, { name: "", boughtOn: today, error: "", showCalendar: false }])
-                            }} ><Text style={styles.buttonText}>more+</Text></Pressable>
-                    </View>
                     <View style={styles.buttons}>
-                        <Pressable style={styles.button} onPress={handleSubmit} ><Text style={styles.buttonText}>Create</Text></Pressable>
+                        <Pressable style={styles.button} onPress={handleSubmit} ><Text style={styles.buttonText}>Add to {currentKitchen?.name}</Text></Pressable>
                         <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen Details")} ><Text style={styles.buttonText}>Cancel</Text></Pressable>
                         <Pressable style={styles.button} onPress={() => {
                             setUseScanner(!useScanner)
@@ -234,10 +227,8 @@ const styles = StyleSheet.create({
         height: 250,
     },
     block3_listContainer: {
-        // backgroundColor: 'blue'
     },
     block4_buttonBlock: {
-
     },
     verticallySpaced: {
         alignSelf: "stretch",
@@ -298,7 +289,8 @@ const styles = StyleSheet.create({
         paddingRight: 15,
     },
     buttonText: {
-        fontWeight: "bold"
+        fontWeight: "bold",
+        textAlignVertical: "center"
     },
 
     /**Copied below from the other component, not sure the intention */
