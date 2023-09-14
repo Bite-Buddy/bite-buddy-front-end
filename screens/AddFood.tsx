@@ -19,37 +19,30 @@ type Items = {
 }[]
 
 export default function AddFood() {
+    function dateFormatter(date: Date) { return `${date.getFullYear()}-${date.getMonth() - 1}-${date.getDate}` }
     const navigation = useNavigation();
     const today = new Date();
     const INITIAL_DATE = dateFormatter(today);
     const blankItem = { name: "", boughtOn: today, error: "", showCalendar: false }
-    const currentKitchen = useAtomValue(currentKitchenAtom)
+    const currentKitchen = useAtomValue(currentKitchenAtom);
+    const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom);
     const [items, setItems] = useState<Items>([blankItem]);
-    const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom)
     const [selectedDate, setSelectedDate] = useState<string>("");
     const [cameraGranted, setCameraGranted] = useState<boolean>(false);
-    const [scanData, setScanData] = useState<string>();
     const [useScanner, setUseScanner] = useState<boolean>(false);
+    const [scanData, setScanData] = useState<string>();
     const [listBlockMargin, setListBlockMargin] = useState<number>(0);
     const [inputIndex, setInputIndex] = useState<number | null>(null);
 
     useEffect(() => {
         (async function getCameraPermission() {
             const { status, canAskAgain } = await BarCodeScanner.requestPermissionsAsync();
-            console.log(status)
             if (status === "granted") { setCameraGranted(status === "granted"); }
-            else if (canAskAgain) {
-                console.log("Permission denied... Ask again.")
-            }
-            else {
-                console.log("Permission denied forever... Can't ask again.")
-            }
+            else if (canAskAgain) { console.log("Permission denied... Ask again.") }
+            else { console.log("Permission denied forever... Can't ask again.") }
         })()
     }, []);
 
-    function dateFormatter(date: Date) {
-        return `${date.getFullYear()}-${date.getMonth() - 1}-${date.getDate}`
-    }
 
     async function handleBarCodeScanned({ data }: { data: string }) {
         setScanData(data);
@@ -165,7 +158,7 @@ export default function AddFood() {
                         }} ><Text style={styles.buttonText}>
                             <MaterialCommunityIcons name="form-textbox" size={15} color="black" /> Insert another entry</Text></Pressable>
                 </View>
-                <View style={{ marginTop: listBlockMargin }}>
+                <View style={{ marginTop: listBlockMargin /**Need this here to change it dynamically */}}>
                     {items.map((item, index) => {
                         return (
                             <View style={styles.formBox} key={`addFoodItem${index}`}>
