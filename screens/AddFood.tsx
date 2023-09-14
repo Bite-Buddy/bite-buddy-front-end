@@ -19,17 +19,16 @@ type Items = {
 export default function AddFood() {
     const navigation = useNavigation();
     const today = new Date();
+    const INITIAL_DATE = dateFormatter(today);
     const blankItem = { name: "", boughtOn: today, error: "", showCalendar: false }
     const currentKitchen = useAtomValue(currentKitchenAtom)
     const [items, setItems] = useState<Items>([blankItem]);
     const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom)
     const [message, setMessage] = useState<string>("") //Currently not using, but will be implemented
-    const INITIAL_DATE = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
     const [selectedDate, setSelectedDate] = useState<string>("");
     const [hasPermission, setHasPermission] = useState<boolean>(false);
-    const [scanData, setScanData] = useState();
+    const [scanData, setScanData] = useState<string>();
     const [useScanner, setUseScanner] = useState<boolean>(false);
-    const [listBlockHeight, setListBlockHeight] = useState<number>(0)
     const [listBlockMargin, setListBlockMargin] = useState<number>(0);
 
     useEffect(() => {
@@ -46,10 +45,14 @@ export default function AddFood() {
         })()
     }, []);
 
-    async function handleBarCodeScanned({ type, data }) {
+    function dateFormatter(date: Date) {
+        return `${date.getFullYear()}-${date.getMonth() - 1}-${date.getDate}`
+    }
+
+    async function handleBarCodeScanned({ data }: { data: string }) {
         setScanData(data);
         console.log(`Data: ${data}`);
-        const barcodedata = await searchByBarcode(data);
+        const barcodedata = await searchByBarcode(parseInt(data));
         const name = barcodedata.title;
         const itemsClone = JSON.parse(JSON.stringify(items))
         itemsClone[0].name = name
@@ -58,6 +61,8 @@ export default function AddFood() {
         setItems(itemsClone)
         setListBlockMargin(50)
     };
+
+
 
     const marked = useMemo(() => {
         if (selectedDate !== "") {
@@ -131,7 +136,6 @@ export default function AddFood() {
             newItems[index][key] = value;
             if (key === "showCalendar") { setSelectedDate(INITIAL_DATE) }
         }
-        setListBlockHeight(0)
         console.log(newItems)
         setItems(newItems)
     }
@@ -161,52 +165,49 @@ export default function AddFood() {
                     </View>)
                 }
                 {/**Block 3 */}
-                <View style={[styles.block3_listContainer, { marginTop:listBlockMargin}]}>
-                {items.map((item, index) => {
-                    return (
-                        <View style={styles.formBox} key={`addFoodItem${index}`}>
-                            <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
-                            <TextInput style={styles.userInput}
-                                placeholder="Type here or press Scan to read barcode."
-                                value={item.name}
-                                onChangeText={(value) => updateItem(value, index, "name")} />
-                            <Text style={styles.verticallySpaced}>Bought on</Text>
-                            <Pressable style={styles.userInput}
-                                onPress={() => updateItem(true, index, "showCalendar")}>
-                                <Text >{item.boughtOn.toLocaleString()}</Text>
-                            </Pressable >
-                            {item.showCalendar && <Calendar
-                                enableSwipeMonths
-                                current={INITIAL_DATE}
-                                style={styles.calendar}
-                                onDayPress={(day) => {
-                                    updateItem(day.dateString, index, "boughtOn")
-                                    setListBlockHeight(0)
-                                }}
-                                markedDates={marked}
-                            />}
-                        </View>)
-                })}
-        </View>
-                {/**block 4*/ }
-    <View style={[styles.block4_buttonBlock, { marginTop: listBlockHeight }]}>
-        <View style={styles.more}>
-            <Pressable
-                style={styles.button}
-                onPress={() => {
-                    setItems([...items, { name: "", boughtOn: today, error: "", showCalendar: false }])
-                    items.length > 1 && setListBlockHeight(listBlockHeight + 200)
-                }} ><Text style={styles.buttonText}>more+</Text></Pressable>
-        </View>
-        <View style={styles.buttons}>
-            <Pressable style={styles.button} onPress={handleSubmit} ><Text style={styles.buttonText}>Create</Text></Pressable>
-            <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen Details")} ><Text style={styles.buttonText}>Cancel</Text></Pressable>
-            <Pressable style={styles.button} onPress={() => {
-                setUseScanner(!useScanner)
-                console.log(useScanner)
-            }} ><Text style={styles.buttonText}>Scan</Text></Pressable>
-        </View>
-    </View>
+                <View style={[styles.block3_listContainer, { marginTop: listBlockMargin }]}>
+                    {items.map((item, index) => {
+                        return (
+                            <View style={styles.formBox} key={`addFoodItem${index}`}>
+                                <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
+                                <TextInput style={styles.userInput}
+                                    placeholder={"Type here"}
+                                    value={item.name}
+                                    onChangeText={(value) => updateItem(value, index, "name")} />
+                                <Text>or scan barcode?</Text>
+                                <Text style={styles.verticallySpaced}>Bought on</Text>
+                                <Pressable style={styles.userInput}
+                                    onPress={() => updateItem(true, index, "showCalendar")}>
+                                    <Text >{item.boughtOn.toLocaleString()}</Text>
+                                </Pressable >
+                                {item.showCalendar && <Calendar
+                                    enableSwipeMonths
+                                    current={INITIAL_DATE}
+                                    style={styles.calendar}
+                                    onDayPress={(day) => { updateItem(day.dateString, index, "boughtOn") }}
+                                    markedDates={marked}
+                                />}
+                            </View>)
+                    })}
+                </View>
+                {/**block 4*/}
+                <View style={styles.block4_buttonBlock}>
+                    <View style={styles.more}>
+                        <Pressable
+                            style={styles.button}
+                            onPress={() => {
+                                setItems([...items, { name: "", boughtOn: today, error: "", showCalendar: false }])
+                            }} ><Text style={styles.buttonText}>more+</Text></Pressable>
+                    </View>
+                    <View style={styles.buttons}>
+                        <Pressable style={styles.button} onPress={handleSubmit} ><Text style={styles.buttonText}>Create</Text></Pressable>
+                        <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen Details")} ><Text style={styles.buttonText}>Cancel</Text></Pressable>
+                        <Pressable style={styles.button} onPress={() => {
+                            setUseScanner(!useScanner)
+                            console.log(useScanner)
+                        }} ><Text style={styles.buttonText}>Scan</Text></Pressable>
+                    </View>
+                </View>
             </ScrollView >
         </View >
     );
@@ -219,7 +220,6 @@ const styles = StyleSheet.create({
     },
     container: {
         flexGrow: 2,
-        //backgroundColor:'red',
         marginTop: 0, //might not need this
         padding: 10,//might not need this
         marginBottom: 0,//might not need this
