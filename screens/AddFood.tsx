@@ -168,7 +168,7 @@ export default function AddFood() {
                                 <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
                                 <View style={styles.namefield}>
                                     <TextInput style={styles.userInput}
-                                        placeholder={"Type here"}
+                                        placeholder={"Type here, or scan barcode."}
                                         value={item.name}
                                         onChangeText={(value) => formatItems(value, index, "name")} />
                                     <View style={{ marginHorizontal: 20, paddingLeft: 10 }}>
@@ -196,8 +196,12 @@ export default function AddFood() {
                 {/**block 4*/}
                 <View style={styles.block4_buttonBlock}>
                     <View style={styles.buttons}>
-                        <Pressable style={styles.button} onPress={handleSubmit} ><Text style={styles.buttonText}>Add to {currentKitchen?.name}</Text></Pressable>
-                        <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen Details")} ><Text style={styles.buttonText}>Cancel</Text></Pressable>
+                        <Pressable style={styles.button} onPress={handleSubmit} >
+                            <Text style={[styles.buttonText,{maxWidth:200}]} ellipsizeMode="tail" numberOfLines={1}>Add to {currentKitchen?.name}</Text>
+                        </Pressable>
+                        <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen Details")} >
+                            <Text style={styles.buttonText}>Cancel</Text>
+                        </Pressable>
                     </View>
                 </View>
             </ScrollView >
@@ -293,7 +297,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         fontWeight: "bold",
-        textAlignVertical: "center"
+        textAlignVertical: "center",
     },
 
     /**Copied below from the other component, not sure the intention */
