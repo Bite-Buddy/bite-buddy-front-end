@@ -3,12 +3,12 @@
 // const DOMAIN = process.env.DOMAIN;
 
 // use http and ip address instead of localhost
-const DOMAIN = "https://f97f-240d-1b-53-500-358e-1c16-8dd8-1f02.ngrok-free.app"; //park local server
+const DOMAIN = process.env.DOMAIN
 import { supabase } from "../supabaseService";
 import { IKitchen, IUser, IFood, IFoodRequest } from "./interfaces";
 // const DOMAIN = "http://localhost:8080";
 
-export async function createUser(supabase_id: string, email: string):Promise<IUser> {
+export async function createUser(supabase_id: string, email: string): Promise<IUser> {
   try {
     const response = await fetch(`${DOMAIN}/users`, {
       method: "POST",
@@ -92,7 +92,7 @@ export async function deleteUserFromDatabase(id: number): Promise<IUser> {
   }
 }
 
-export async function createKitchen(id: number, name: string): Promise<{message: string, kitchen: IKitchen}> {
+export async function createKitchen(id: number, name: string): Promise<{ message: string, kitchen: IKitchen }> {
   try {
     console.log('calling with arugments', id, name, `${DOMAIN}/kitchens/users/${id}`)
     const response = await fetch(`${DOMAIN}/kitchens/users/${id}`, {
@@ -138,7 +138,7 @@ export async function getKitchenByID(kitchenId: number): Promise<IKitchen> {
   }
 }
 
-export async function createFood(kitchenId: number, food: IFoodRequest): Promise<{message: string, food: IFood}> {
+export async function createFood(kitchenId: number, food: IFoodRequest): Promise<{ message: string, food: IFood }> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}/foods`, {
       method: "POST",
@@ -191,7 +191,7 @@ export async function getFoodByID(id: string): Promise<IFood> {
   }
 }
 
-export async function updateFoodById(foodId: string, food: IFoodRequest): Promise<{message: string, foodResponse: IFood}> {
+export async function updateFoodById(foodId: string, food: IFoodRequest): Promise<{ message: string, foodResponse: IFood }> {
   try {
     const response = await fetch(`${DOMAIN}/foods/${foodId}`, {
       method: "PATCH",
@@ -213,7 +213,7 @@ export async function updateFoodById(foodId: string, food: IFoodRequest): Promis
   }
 }
 
-export async function updateKitchenById(kitchenId: number, name: string): Promise<{message: string, kitchenResponse: IKitchen}> {
+export async function updateKitchenById(kitchenId: number, name: string): Promise<{ message: string, kitchenResponse: IKitchen }> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}`, {
       method: "PATCH",
@@ -254,7 +254,7 @@ export async function deleteFoodById(foodId: string): Promise<{message: string, 
   }
 }
 
-export async function deleteKitchenById(kitchenId: number): Promise<{message: string, kitchenResponse: IKitchen}> {
+export async function deleteKitchenById(kitchenId: number): Promise<{ message: string, kitchenResponse: IKitchen }> {
   try {
     const response = await fetch(`${DOMAIN}/kitchens/${kitchenId}`, {
       method: "DELETE",
