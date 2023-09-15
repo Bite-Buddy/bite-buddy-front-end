@@ -90,6 +90,29 @@ export async function getByEmail(email: string): Promise<IUser> {
   }
 }
 
+export async function addKitchenRelationship(id: number, kitchen_id: number): Promise<IUser> {
+  try {
+    const response = await fetch(`${DOMAIN}/users/kitchens`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        id: id,
+        kitchen_id: kitchen_id,
+      }),
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  }
+  catch (error) {
+    throw error;
+  }
+}
+
 /**
  * When we delete a user from our database we will probably want 
  * to delete them from supabase user store as well.
