@@ -5,7 +5,7 @@
 // use http and ip address instead of localhost
 const DOMAIN = process.env.DOMAIN
 import { supabase } from "../supabaseService";
-import { IKitchen, IUser, IFood, IFoodRequest } from "./interfaces";
+import { IKitchen, IUser, IFood, IFoodRequest, IInvite } from "./interfaces";
 // const DOMAIN = "http://localhost:8080";
 
 //
@@ -278,6 +278,72 @@ export async function getFoodByID(id: string): Promise<IFood> {
     const response = await fetch(`${DOMAIN}/foods/${id}`, {
       method: "GET",
     });
+    return response.json();
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+//
+//Invite fetch requests
+//
+
+export async function createInvite(kitchenId: number, recipientEmail: string): Promise<{message: string, invite: IInvite}> {
+  try {
+    const response = await fetch(`${DOMAIN}/invites/users`, {
+      method: "POST",
+      body: JSON.stringify({
+        kitchenId: kitchenId,
+        recipientEmail: recipientEmail
+      }),
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    return response.json();
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+
+export async function deleteInvite(inviteId: number): Promise<{message: string, inviteResponse: IInvite}> {
+  try {
+    const response = await fetch(`${DOMAIN}/invites/users/reject`, {
+      method: "DELETE",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function acceptInvite(inviteId: number): Promise<{message: string, inviteResponse: IInvite}> {
+  try {
+    const response = await fetch(`${DOMAIN}/invites/users/accept`, {
+      method: "DELETE",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
     return response.json();
   }
   catch (error) {
