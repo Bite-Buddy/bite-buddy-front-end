@@ -224,6 +224,19 @@ export async function updateKitchenById(kitchenId: number, name: string): Promis
   }
 }
 
+export async function getUsersByKitchen(id: number): Promise<IKitchen> {
+  try {
+    const response = await fetch(`${DOMAIN}/kitchens/users/${id}`, {
+      method: "GET",
+    });
+    return response.json();
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 //
 //Food fetch requests
 //
