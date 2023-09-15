@@ -18,25 +18,25 @@ type Items = {
     focus: boolean
 }[]
 
+function dateToSrting(date: Date) {
+    const datestr = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+    return datestr
+}
+
 export default function AddFood() {
-    function dateFormatter(date: Date) {
-        const datestr = `${date.getFullYear()}-${date.getMonth() - 1}-${date.getDate()}`;
-        console.log(datestr)
-        return datestr
-    }
     const navigation = useNavigation();
     const today = new Date();
-    const INITIAL_DATE = dateFormatter(today);
+    const initialDateStr = dateToSrting(today);
     const blankItem = { name: "", boughtOn: today, error: "", showCalendar: false, focus: true }
     const currentKitchen = useAtomValue(currentKitchenAtom);
     const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom);
     const [items, setItems] = useState<Items>([blankItem]);
-    const [selectedDate, setSelectedDate] = useState<string>("");
+    const [selectedDateStr, setSelectedDateStr] = useState<string>("");
     const [cameraGranted, setCameraGranted] = useState<boolean>(false);
     const [useScanner, setUseScanner] = useState<boolean>(false);
     const [scanData, setScanData] = useState<string>();
     const [listBlockMargin, setListBlockMargin] = useState<number>(0);
-    const [focusIndex, setFocusIndex] = useState<number>(0);
+    const [focusIndex, setFocusIndex] = useState<number | null>(0);
 
     useEffect(() => {
         (async function getCameraPermission() {
@@ -48,12 +48,13 @@ export default function AddFood() {
     }, []);
 
     async function handleBarCodeScanned({ data }: { data: string }) {
+        console.log('Hanldling scan')
         setScanData(data);
         console.log(`Data: ${data}`);
         const barcodedata = await searchByBarcode(parseInt(data));
         const name = barcodedata.title;
         const itemsClone = JSON.parse(JSON.stringify(items))
-        itemsClone[focusIndex].name = name
+        if (focusIndex) itemsClone[focusIndex].name = name
         console.log("name,", name)
         console.log(itemsClone)
         setItems(itemsClone)
@@ -61,9 +62,9 @@ export default function AddFood() {
     };
 
     const marked = useMemo(() => {
-        if (selectedDate !== "") {
+        if (selectedDateStr !== "") {
             return {
-                [selectedDate]: {
+                [selectedDateStr]: {
                     selected: true,
                     disableTouchEvent: true,
                     selectedColor: 'orange',
@@ -71,10 +72,11 @@ export default function AddFood() {
                 }
             }
         }
-    }, [selectedDate]);
+    }, [selectedDateStr]);
 
     //Check if all items name are not blank
     function isValid(): boolean {
+        console.log("Checking validation.---")
         const someEmpty = items.some(item => item.name === "");
         //Update error message if there is any empty input
         if (someEmpty) {
@@ -95,6 +97,7 @@ export default function AddFood() {
     }
 
     const handleSubmit = (): void => {
+        console.log("Handling submit")
         //Checks validation. If not validate, gets out from this block.
         if (!isValid() || !currentKitchen) return
 
@@ -115,14 +118,18 @@ export default function AddFood() {
     }
 
     function formatItems(value: string | boolean, index: number, key: string) {
-        const newItems = JSON.parse(JSON.stringify(items));
+        console.log("Formatting items");
+        console.log(`value: ${value}, index: ${index}, key: ${key}`);
+        let newItems = JSON.parse(JSON.stringify(items));
         if (key === "boughtOn" && typeof value === "string") {
+            /**This is probably causing a problem with the boughtOn date formating in the Calendar component.
+             * Currently it is patched with alternative not ideal operation.*/
             newItems[index][key] = new Date(value);
             newItems[index].showCalendar = false;
         }
         else {
             newItems[index][key] = value;
-            if (key === "showCalendar") { setSelectedDate(INITIAL_DATE) }
+            if (key === "showCalendar") { setSelectedDateStr(initialDateStr) }
         }
         console.log(newItems)
         setItems(newItems)
@@ -132,19 +139,23 @@ export default function AddFood() {
         <View style={styles.root}>
             <ScrollView contentContainerStyle={styles.container}>
                 {/**Block 1 */}
-                <View style={styles.block1_headline}><Text>Add New Item</Text></View>
+                <View style={styles.block1_headline}>
+                    <Text style={styles.headlineText}>Add New Item</Text>
+                    <Text style={[styles.headlineText, { marginVertical: 10, color: "green" }]}>Press <MaterialCommunityIcons name='barcode-scan' size={15} /> button to scan barcode </Text>
+                </View>
                 {/**Block 2 */}
+                {scanData &&
+                    <Pressable style={styles.buttonScanNext} onPress={() => {
+                        setScanData(undefined)
+                        isValid() && setItems([blankItem, ...items])
+                    }} ><Text style={styles.buttonText}>Scan next?</Text></Pressable>}
                 {useScanner && cameraGranted && (
                     <View style={styles.block2_scanner}>
                         <BarCodeScanner
                             style={styles.block2_scanner}
                             onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
                         />
-                        {scanData &&
-                            <Pressable style={styles.buttonScanNext} onPress={() => {
-                                setScanData(undefined)
-                                isValid() && setItems([blankItem, ...items])
-                            }} ><Text style={styles.buttonText}>Scan next?</Text></Pressable>}
+
                     </View>)}
                 {!cameraGranted && (
                     <View>
@@ -152,22 +163,20 @@ export default function AddFood() {
                         <StatusBar style="auto" />
                     </View>)
                 }
-                <View style={styles.more}>
-                    <Pressable
-                        style={styles.button}
-                        onPress={() => { setItems([blankItem, ...items]) }} >
-                        <Text style={styles.buttonText}>
-                            <MaterialCommunityIcons name="form-textbox" size={15} color="black" />
-                            Insert another entry</Text>
-                    </Pressable>
-                </View>
+                <Pressable
+                    style={styles.button}
+                    onPress={() => { setItems([blankItem, ...items]) }} >
+                    <Text style={styles.buttonText}>
+                        <MaterialCommunityIcons name="form-textbox" size={15} color="black" /> Insert Another Entry</Text>
+                </Pressable>
                 <View style={{ marginTop: listBlockMargin /**Need this here to change it dynamically */ }}>
                     {items.map((item, index) => {
                         return (
-                            <View style={[styles.formBox, { borderWidth: item.focus ? 5 : 1 }]} key={`addFoodItem${index}`}>
+                            <View style={[styles.formBox, { borderWidth: index === focusIndex ? 5 : 1 }]} key={`addFoodItem${index}`}>
                                 <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
                                 <View style={styles.namefield}>
                                     <TextInput style={styles.userInput}
+                                        onFocus={() => setFocusIndex(index)}
                                         placeholder={"Type here, or scan barcode."}
                                         value={item.name}
                                         onChangeText={(value) => formatItems(value, index, "name")} />
@@ -180,24 +189,29 @@ export default function AddFood() {
                                 </View>
                                 <Text style={styles.verticallySpaced}>Bought on</Text>
                                 <Pressable style={styles.userInput}
-                                    onPress={() => formatItems(true, index, "showCalendar")}>
-                                    <Text >{dateFormatter(item.boughtOn)}</Text>
+                                    onPress={() => {
+                                        formatItems(true, index, "showCalendar");
+                                        setFocusIndex(index);
+                                    }}
+                                    onBlur={() => { formatItems(false, index, "showCalendar") }}>
+                                    <Text >{dateToSrting(new Date(item.boughtOn))/**This is a temporary solution */}</Text>
                                 </Pressable >
                                 {item.showCalendar && <Calendar
                                     enableSwipeMonths
-                                    current={INITIAL_DATE}
+                                    current={initialDateStr}
                                     style={styles.calendar}
                                     onDayPress={(day) => { formatItems(day.dateString, index, "boughtOn") }}
                                     markedDates={marked}
                                 />}
-                            </View>)
+                            </View>
+                        )
                     })}
                 </View>
                 {/**block 4*/}
                 <View style={styles.block4_buttonBlock}>
                     <View style={styles.buttons}>
                         <Pressable style={styles.button} onPress={handleSubmit} >
-                            <Text style={[styles.buttonText,{maxWidth:200}]} ellipsizeMode="tail" numberOfLines={1}>Add to {currentKitchen?.name}</Text>
+                            <Text style={[styles.buttonText, { maxWidth: 200 }]} ellipsizeMode="tail" numberOfLines={1}>Add to {currentKitchen?.name}</Text>
                         </Pressable>
                         <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen Details")} >
                             <Text style={styles.buttonText}>Cancel</Text>
@@ -221,7 +235,14 @@ const styles = StyleSheet.create({
         marginBottom: 0,//might not need this
     },
     block1_headline: {
+        flex: 1,
         margin: 10,
+        fontSize: 18,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        textAlignVertical: 'center',
+    },
+    headlineText: {
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
