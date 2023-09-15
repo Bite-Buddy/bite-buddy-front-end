@@ -77,6 +77,19 @@ export async function getByDatabaseID(id: string): Promise<IUser> {
   }
 }
 
+export async function getByEmail(email: string): Promise<IUser> {
+  try {
+    const response = await fetch(`${DOMAIN}/users/email/${email}`, {
+      method: "GET",
+    })
+    return response.json();
+  }
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 /**
  * When we delete a user from our database we will probably want 
  * to delete them from supabase user store as well.
