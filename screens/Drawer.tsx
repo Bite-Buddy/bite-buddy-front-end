@@ -6,6 +6,7 @@ import Kitchen  from './Kitchen';
 import KitchenManagement from './KitchenManagement';
 import KitchenDetails from './KitchenDetails';
 import KitchenMembers from './KitchenMembers';
+import KitchenInvite from './KitchenInvite';
 import { useAtomValue } from 'jotai'
 import { currentKitchenAtom } from '../utilities/store/atoms'
 
@@ -35,6 +36,12 @@ const Drawer = () => {
         },
       })} />
     <Drawer.Screen name="Manage" component={KitchenManagement} options={({ navigation }) => ({
+        headerTitle: () => <Text>{`Manage ${currentKitchen ? currentKitchen.name : ""}`}</Text>,
+        headerStyle: {
+          backgroundColor: '#EFCA46',
+        },
+      })} />
+      <Drawer.Screen name="Invite" component={KitchenInvite} options={({ navigation }) => ({
         headerTitle: () => <Text>{`Manage ${currentKitchen ? currentKitchen.name : ""}`}</Text>,
         headerStyle: {
           backgroundColor: '#EFCA46',
