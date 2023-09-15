@@ -170,7 +170,6 @@ export default function AddFood() {
                                 <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
                                 <View style={styles.namefield}>
                                     <TextInput style={styles.userInput}
-                                        autoFocus={item.name === "" ? true : false}
                                         onFocus={() => setFocusIndex(index)}
                                         placeholder={"Type here, or scan barcode."}
                                         value={item.name}
