@@ -163,6 +163,12 @@ export default function AddFood() {
                         <StatusBar style="auto" />
                     </View>)
                 }
+                <Pressable
+                    style={styles.button}
+                    onPress={() => { setItems([blankItem, ...items]) }} >
+                    <Text style={styles.buttonText}>
+                        <MaterialCommunityIcons name="form-textbox" size={15} color="black" /> Insert Another Entry</Text>
+                </Pressable>
                 <View style={{ marginTop: listBlockMargin /**Need this here to change it dynamically */ }}>
                     {items.map((item, index) => {
                         return (
@@ -197,14 +203,6 @@ export default function AddFood() {
                                     onDayPress={(day) => { formatItems(day.dateString, index, "boughtOn") }}
                                     markedDates={marked}
                                 />}
-                                {index === 0 && (<View style={styles.more}>
-                                    <Pressable
-                                        style={styles.button}
-                                        onPress={() => { setItems([blankItem, ...items]) }} >
-                                        <Text style={styles.buttonText}>
-                                            <MaterialCommunityIcons name="form-textbox" size={15} color="black" /> Insert Another Entry</Text>
-                                    </Pressable>
-                                </View>)}
                             </View>
                         )
                     })}
