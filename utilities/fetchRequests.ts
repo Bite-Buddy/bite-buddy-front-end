@@ -237,6 +237,30 @@ export async function getUsersByKitchen(id: number): Promise<IKitchen> {
   }
 }
 
+export async function addUserRelationship(id: number, user_id: number): Promise<IKitchen> {
+  try {
+    const response = await fetch(`${DOMAIN}/kitchens/users`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        id: id,
+        user_id: user_id,
+      }),
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  }
+  catch (error) {
+    throw error;
+  }
+
+}
+
 //
 //Food fetch requests
 //
