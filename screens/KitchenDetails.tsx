@@ -7,7 +7,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import React, { useState } from "react";
 import { updateFoodById } from "../utilities/fetchRequests";
-import { AntDesign } from '@expo/vector-icons'; 
+import { AntDesign } from '@expo/vector-icons';
+import { IFood } from "../utilities/interfaces";
 
 
 
@@ -29,21 +30,21 @@ export default function KitchenDetails() {
 
   async function handleAddToShopping(selectedFood) {
     if (!selectedFood) return;
-    const response = await updateFoodById(selectedFood.id, {inStock: false})
+    const response = await updateFoodById(selectedFood.id, { inStock: false })
     let foodListClone: IFood[] = JSON.parse(JSON.stringify(currentFoodList))
     foodListClone = foodListClone.map(food => {
-      return  {...food, inStock: food.inStock, bought_on: new Date(food.bought_on), updated_on: new Date(food.updated_on)}
+      return { ...food, inStock: food.inStock, bought_on: new Date(food.bought_on), updated_on: new Date(food.updated_on) }
     })
     let target = foodListClone.find(food => food.id === selectedFood.id)
     if (target) {
       target.inStock = response.foodResponse.inStock
       target.name = response.foodResponse.name
       target.bought_on = new Date(response.foodResponse.bought_on)
-    } 
+    }
     console.log('clone', foodListClone)
     setCurrentFoodList(foodListClone)
     setCurrentFoodItem(null)
-    
+
   }
 
 
@@ -54,20 +55,19 @@ export default function KitchenDetails() {
         <View>
           <View style={styles.verticallySpaced}>
             {!currentFoodList.length ? <Text style={styles.noItem}>No items in stock</Text>
-            //calculate the day offset of the bought item
+              //calculate the day offset of the bought item
               : currentFoodList.filter((foodItem) => foodItem.inStock === true).map((foodItem) => {
                 //Calculate the day offset of te bought day from today
                 const dayOffSet = Math.floor((today.getTime() - foodItem.bought_on.getTime()) / (24 * 60 * 60 * 1000))
                 return (
                   <Pressable style={styles.list} key={`foodItem${foodItem.id}`} onPress={() => { handleFoodSelect(foodItem) }} >
-                    <Text style={styles.name}>{foodItem.name}</Text>
-                    <Text style={styles.name}>{foodItem.inStock}</Text>
+                    <Text style={[styles.name]} ellipsizeMode={"tail"} numberOfLines={1}>{foodItem.name}</Text>
                     <Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
                     <Pressable style={styles.button} onPress={() => handleAddToShopping(foodItem)}>
-                       <Text style={styles.text}><AntDesign name="minuscircleo" size={20} color="black" /></Text>
+                      <Text style={styles.text}><AntDesign name="minuscircleo" size={20} color="black" /></Text>
                     </Pressable>
                   </Pressable>
-                  
+
                 );
               })}
           </View>
@@ -117,6 +117,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 5,
     marginLeft: 10,
+    width: 150,
   },
   noItem: {
     fontSize: 24,
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 8,
-    
+
   },
   button2: {
     display: 'flex',
