@@ -15,7 +15,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow $(Bite Buddy) to access camera.",
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +27,10 @@
         "backgroundColor": "#ffffff",
         "googleServicesFile": "./google-services.json"
       },
-      "package": "com.bite-buddy.bite-buddy"
+      "package": "com.kingshukr.bitebuddyfrontend",
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -36,6 +43,14 @@
           "cameraPermission": "Allow $(Bite Buddy) to access camera."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "3d529996-d37b-491b-ad2d-cfddc366a64f"
+      }
+    }
   }
 }
