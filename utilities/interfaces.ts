@@ -28,3 +28,9 @@ export interface IFood {
   updated_on: Date,
   inStock: boolean,
 }
+
+export interface IInvite {
+  id: number,
+  kitchen_id: number,
+  recipient_id: number
+}
