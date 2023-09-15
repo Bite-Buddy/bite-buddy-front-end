@@ -18,20 +18,23 @@ type Items = {
     focus: boolean
 }[]
 
+function dateToSrting(date: Date) {
+    console.log('Formatting date', date, "...is Date?", Object.prototype.toString.call(date))
+    const datestr = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
+    console.log('Formated:', datestr)
+    return datestr
+}
+
 export default function AddFood() {
-    function dateFormatter(date: Date) {
-        const datestr = `${date.getFullYear()}-${date.getMonth() - 1}-${date.getDate()}`;
-        console.log(datestr)
-        return datestr
-    }
     const navigation = useNavigation();
     const today = new Date();
-    const INITIAL_DATE = dateFormatter(today);
+    console.log('Today: ',today);
+    const initialDateStr = dateToSrting(today);
     const blankItem = { name: "", boughtOn: today, error: "", showCalendar: false, focus: true }
     const currentKitchen = useAtomValue(currentKitchenAtom);
     const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom);
     const [items, setItems] = useState<Items>([blankItem]);
-    const [selectedDate, setSelectedDate] = useState<string>("");
+    const [selectedDateStr, setSelectedDateStr] = useState<string>("");
     const [cameraGranted, setCameraGranted] = useState<boolean>(false);
     const [useScanner, setUseScanner] = useState<boolean>(false);
     const [scanData, setScanData] = useState<string>();
@@ -48,6 +51,7 @@ export default function AddFood() {
     }, []);
 
     async function handleBarCodeScanned({ data }: { data: string }) {
+        console.log('Hanldling scan')
         setScanData(data);
         console.log(`Data: ${data}`);
         const barcodedata = await searchByBarcode(parseInt(data));
@@ -61,9 +65,9 @@ export default function AddFood() {
     };
 
     const marked = useMemo(() => {
-        if (selectedDate !== "") {
+        if (selectedDateStr !== "") {
             return {
-                [selectedDate]: {
+                [selectedDateStr]: {
                     selected: true,
                     disableTouchEvent: true,
                     selectedColor: 'orange',
@@ -71,10 +75,11 @@ export default function AddFood() {
                 }
             }
         }
-    }, [selectedDate]);
+    }, [selectedDateStr]);
 
     //Check if all items name are not blank
     function isValid(): boolean {
+        console.log("Checking validation.---")
         const someEmpty = items.some(item => item.name === "");
         //Update error message if there is any empty input
         if (someEmpty) {
@@ -95,6 +100,7 @@ export default function AddFood() {
     }
 
     const handleSubmit = (): void => {
+        console.log("Handling submit")
         //Checks validation. If not validate, gets out from this block.
         if (!isValid() || !currentKitchen) return
 
@@ -115,6 +121,8 @@ export default function AddFood() {
     }
 
     function formatItems(value: string | boolean, index: number, key: string) {
+        console.log("Formatting items");
+        console.log(`Value: ${value}-- index: ${index}-- key: ${key}`);
         const newItems = JSON.parse(JSON.stringify(items));
         if (key === "boughtOn" && typeof value === "string") {
             newItems[index][key] = new Date(value);
@@ -122,7 +130,7 @@ export default function AddFood() {
         }
         else {
             newItems[index][key] = value;
-            if (key === "showCalendar") { setSelectedDate(INITIAL_DATE) }
+            if (key === "showCalendar") { setSelectedDateStr(initialDateStr) }
         }
         console.log(newItems)
         setItems(newItems)
@@ -157,8 +165,7 @@ export default function AddFood() {
                         style={styles.button}
                         onPress={() => { setItems([blankItem, ...items]) }} >
                         <Text style={styles.buttonText}>
-                            <MaterialCommunityIcons name="form-textbox" size={15} color="black" />
-                            Insert another entry</Text>
+                            <MaterialCommunityIcons name="form-textbox" size={15} color="black" /> Insert Another Entry</Text>
                     </Pressable>
                 </View>
                 <View style={{ marginTop: listBlockMargin /**Need this here to change it dynamically */ }}>
@@ -181,11 +188,11 @@ export default function AddFood() {
                                 <Text style={styles.verticallySpaced}>Bought on</Text>
                                 <Pressable style={styles.userInput}
                                     onPress={() => formatItems(true, index, "showCalendar")}>
-                                    <Text >{dateFormatter(item.boughtOn)}</Text>
+                                    <Text >{dateToSrting(new Date(item.boughtOn))/**This is a temporary solution */}</Text>
                                 </Pressable >
                                 {item.showCalendar && <Calendar
                                     enableSwipeMonths
-                                    current={INITIAL_DATE}
+                                    current={initialDateStr}
                                     style={styles.calendar}
                                     onDayPress={(day) => { formatItems(day.dateString, index, "boughtOn") }}
                                     markedDates={marked}
@@ -197,7 +204,7 @@ export default function AddFood() {
                 <View style={styles.block4_buttonBlock}>
                     <View style={styles.buttons}>
                         <Pressable style={styles.button} onPress={handleSubmit} >
-                            <Text style={[styles.buttonText,{maxWidth:200}]} ellipsizeMode="tail" numberOfLines={1}>Add to {currentKitchen?.name}</Text>
+                            <Text style={[styles.buttonText, { maxWidth: 200 }]} ellipsizeMode="tail" numberOfLines={1}>Add to {currentKitchen?.name}</Text>
                         </Pressable>
                         <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen Details")} >
                             <Text style={styles.buttonText}>Cancel</Text>
