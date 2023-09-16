@@ -3,12 +3,13 @@ import { Text, Input } from "react-native-elements";
 import React from 'react'
 import { Formik} from 'formik';
 import { IInviteForm } from "../utilities/interfaces";
-import { currentKitchenAtom } from "../utilities/store/atoms";
+import { currentKitchenAtom, userAtom } from "../utilities/store/atoms";
 import { useAtom } from 'jotai'
 import { getByEmail, createInvite } from "../utilities/fetchRequests";
 
 export default function KitchenInvite() {
     const [currentKitchen, setCurrentKitchen] = useAtom(currentKitchenAtom)
+    const [user, setUser] = useAtom(userAtom);
     return (
         <Formik
             initialValues={{
@@ -16,7 +17,10 @@ export default function KitchenInvite() {
             }}
             onSubmit={async (values: IInviteForm) => {
                 if (!values.recipient_email) {
-                    alert("Error: Please enter an email");
+                    alert("Error: Please enter an email.");
+                }
+                else if (values.recipient_email === user.email) {
+                    alert("Error: Cannot send invitations to yourself. But you can invite yourself to go and get a glass of water - remember to stay hydrated.")
                 }
                 else {
                     const valid = await getByEmail(values.recipient_email);
