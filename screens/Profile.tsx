@@ -18,10 +18,17 @@ async function deleteHandler() {
   navigation.navigate("Auth");
 }
 
+async function invitesHandler() {
+  navigation.navigate("ReceivedInvites")
+}
+
   return (
     <View style={styles.container}>
       <View style={styles.verticallySpaced}>
         <Text style={styles.header}>Profile</Text>
+        <Pressable style={styles.button} onPressIn={() => invitesHandler()}>
+          <Text style={styles.buttonText}>Received Invites</Text>
+        </Pressable>
         <Pressable style = {styles.button} onPressIn={() => Linking.openURL("https://sites.google.com/view/bitebuddyprivacy/help")}>
           <Text style={styles.buttonText}>Help Page</Text>
         </Pressable>
