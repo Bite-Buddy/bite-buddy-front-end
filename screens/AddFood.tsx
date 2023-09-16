@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TextInput, Pressable, Modal } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
@@ -27,6 +27,7 @@ export default function AddFood() {
     const today = new Date();
     const initialDateStr = dateToSrting(today);
     const blankItem = { name: "", boughtOn: today, error: "", showCalendar: false, focus: true }
+    const scanNextMessage = useRef<string>("");
     const currentKitchen = useAtomValue(currentKitchenAtom);
     const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom);
     const [items, setItems] = useState<Items>([blankItem]);
@@ -34,8 +35,6 @@ export default function AddFood() {
     const [useScanner, setUseScanner] = useState<boolean>(false);
     const [scanData, setScanData] = useState<string>();
     const [focusIndex, setFocusIndex] = useState<number | null>(0);
-    const [scanNextStr, setScanNextStr] = useState<string>("")
-    const [showScanNextModal, setShowScanNextModal] = useState<boolean>(false);
 
     useEffect(() => {
         (async function getCameraPermission() {
@@ -50,20 +49,21 @@ export default function AddFood() {
         console.log('Hanldling scan')
         setScanData(data);//Scanned raw serial number
         const barcodedata = await searchByBarcode(data.toString());//Get fetch request to the barcode database API
-        const name = barcodedata.title;//Product's name | undefined
-        if (name) {
+        const productName = barcodedata.title;//Product's name | undefined
+        if (productName) {
             const itemsClone = JSON.parse(JSON.stringify(items))
-            if (focusIndex !== null) { }
-            console.log("name,", name)
+            if (focusIndex !== null) { itemsClone[focusIndex].name = productName }
+            console.log("name,", productName)
             setItems(itemsClone)
+            scanNextMessage.current = `Scanned "${productName}". \nPress here to insert another one.`
         }
-        else { }
+
         // setListBlockMargin(50)
     };
 
     function handleScanNext() {
-        setScanData(undefined)
         isValid() && setItems([blankItem, ...items])
+        setScanData(undefined)
     }
 
     //Check if all items name are not blank
@@ -121,6 +121,9 @@ export default function AddFood() {
         }
         else {
             newItems[index][key] = value;
+            if (key === "name" && value !== "") {
+                newItems[index].error = ""
+            }
         }
         console.log(newItems)
         setItems(newItems)
@@ -131,37 +134,19 @@ export default function AddFood() {
             {/**Block 1 */}
             <View style={[styles.block1_headline, { backgroundColor: "pink", }]}>
                 <Text style={styles.headlineText}>Add New Item</Text>
-                <Text style={[styles.headlineText, { marginVertical: 10, color: "green" }]}>
-                    Press <MaterialCommunityIcons name='barcode-scan' size={15} /> button to scan barcode
-                </Text>
             </View>
             {/**Block 2 */}
-            <Modal
-                animationType="none"
-                transparent={true}
-                visible={showScanNextModal}
-                onRequestClose={() => setShowScanNextModal(false)}>
-                <View style={styles.modalWindow}>
-                    <View style={styles.modalView}>
-                        <Text style={styles.headlineText}>{scanNextStr}</Text>
-                        <View style={styles.buttons}>
-                            <Pressable style={[styles.button, { backgroundColor: "yellow" }]}>
-                                <Text style={[styles.buttonText, { color: "white" }]}>
-                                    Yes<MaterialCommunityIcons name="delete-alert-outline" size={20} /></Text></Pressable>
-                            <Pressable style={[styles.button, { backgroundColor: "gray" }]} onPress={() => { setShowScanNextModal(false) }}>
-                                <Text style={[styles.buttonText, { color: "white" }]}>
-                                    Cancel</Text></Pressable>
-
-                        </View>
-                    </View>
-                </View>
-            </Modal >
+            {scanData &&
+                <Pressable style={styles.buttonScanNext} onPress={() => {
+                    setScanData(undefined)
+                    handleScanNext()
+                }} ><Text style={styles.buttonText}>Scan next?</Text>
+                </Pressable>}
+            {!useScanner && <Text style={[styles.headlineText, { marginVertical: 10, color: "green" }]}>
+                Press <MaterialCommunityIcons name='barcode-scan' size={15} /> button to scan barcode
+            </Text>}
             {useScanner && cameraGranted && (
                 <View style={styles.block2_scanner}>
-                    {scanData &&
-                        <Pressable style={styles.buttonScanNext} onPress={() => handleScanNext} >
-                            <Text style={styles.buttonText}>Scan next?</Text>
-                        </Pressable>}
                     <BarCodeScanner
                         style={styles.scanner}
                         onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
@@ -189,12 +174,13 @@ export default function AddFood() {
                                 { borderWidth: index === focusIndex ? 5 : 1 },
                                 { borderColor: index === focusIndex ? "darkred" : "darkgray" }]}
                                 key={`addFoodItem${index}`}>
-                                <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
+                                <Text style={[styles.verticallySpaced, { color: item.error ? "red" : "black" }]}>{`Name ${item.error && item.error}`}</Text>
                                 <View style={styles.namefield}>
                                     <TextInput style={styles.userInput}
                                         onFocus={() => {
                                             setFocusIndex(index)
                                             setUseScanner(false)
+                                            setScanData(undefined)
                                         }}
                                         placeholder={"Type here, or scan barcode."}
                                         value={item.name}
@@ -203,7 +189,7 @@ export default function AddFood() {
                                         <Pressable style={{ alignItems: 'center' }}
                                             onPress={() => {
                                                 setFocusIndex(index)
-                                                setUseScanner(true)
+                                                setUseScanner(index === focusIndex ? !useScanner : true)
                                             }}>
                                             <Text><MaterialCommunityIcons name='barcode-scan' size={25} /></Text>
                                             <Text>scan</Text>
@@ -272,7 +258,7 @@ const styles = StyleSheet.create({
     },
     scanner: {
         width: '100%',
-        height: 200
+        height: 150
     },
     modalWindow: {
         flex: 1,
