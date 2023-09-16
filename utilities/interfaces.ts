@@ -36,6 +36,5 @@ export interface IInvite {
 }
 
 export interface IInviteForm {
-  selected_kitchen: string,
   recipient_email: string
 }
