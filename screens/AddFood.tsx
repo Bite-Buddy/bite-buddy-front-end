@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, TextInput, Button, Pressable } from 'react-native';
+import { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, ScrollView, TextInput, Pressable, Modal } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
 import { useAtom, useAtomValue } from 'jotai';
@@ -30,11 +30,12 @@ export default function AddFood() {
     const currentKitchen = useAtomValue(currentKitchenAtom);
     const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom);
     const [items, setItems] = useState<Items>([blankItem]);
-    const [selectedDateStr, setSelectedDateStr] = useState<string>("");
     const [cameraGranted, setCameraGranted] = useState<boolean>(false);
     const [useScanner, setUseScanner] = useState<boolean>(false);
     const [scanData, setScanData] = useState<string>();
     const [focusIndex, setFocusIndex] = useState<number | null>(0);
+    const [scanNextStr, setScanNextStr] = useState<string>("")
+    const [showScanNextModal, setShowScanNextModal] = useState<boolean>(false);
 
     useEffect(() => {
         (async function getCameraPermission() {
@@ -47,16 +48,23 @@ export default function AddFood() {
 
     async function handleBarCodeScanned({ data }: { data: string }) {
         console.log('Hanldling scan')
-        setScanData(data);
-        console.log(`Data: ${data}`);
-        const barcodedata = await searchByBarcode(data.toString());
-        const name = barcodedata.title;
-        const itemsClone = JSON.parse(JSON.stringify(items))
-        if (focusIndex) itemsClone[focusIndex].name = name
-        console.log("name,", name)
-        setItems(itemsClone)
+        setScanData(data);//Scanned raw serial number
+        const barcodedata = await searchByBarcode(data.toString());//Get fetch request to the barcode database API
+        const name = barcodedata.title;//Product's name | undefined
+        if (name) {
+            const itemsClone = JSON.parse(JSON.stringify(items))
+            if (focusIndex !== null) { }
+            console.log("name,", name)
+            setItems(itemsClone)
+        }
+        else { }
         // setListBlockMargin(50)
     };
+
+    function handleScanNext() {
+        setScanData(undefined)
+        isValid() && setItems([blankItem, ...items])
+    }
 
     //Check if all items name are not blank
     function isValid(): boolean {
@@ -113,7 +121,6 @@ export default function AddFood() {
         }
         else {
             newItems[index][key] = value;
-            if (key === "showCalendar") { setSelectedDateStr(initialDateStr) }
         }
         console.log(newItems)
         setItems(newItems)
@@ -129,13 +136,32 @@ export default function AddFood() {
                 </Text>
             </View>
             {/**Block 2 */}
+            <Modal
+                animationType="none"
+                transparent={true}
+                visible={showScanNextModal}
+                onRequestClose={() => setShowScanNextModal(false)}>
+                <View style={styles.modalWindow}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.headlineText}>{scanNextStr}</Text>
+                        <View style={styles.buttons}>
+                            <Pressable style={[styles.button, { backgroundColor: "yellow" }]}>
+                                <Text style={[styles.buttonText, { color: "white" }]}>
+                                    Yes<MaterialCommunityIcons name="delete-alert-outline" size={20} /></Text></Pressable>
+                            <Pressable style={[styles.button, { backgroundColor: "gray" }]} onPress={() => { setShowScanNextModal(false) }}>
+                                <Text style={[styles.buttonText, { color: "white" }]}>
+                                    Cancel</Text></Pressable>
+
+                        </View>
+                    </View>
+                </View>
+            </Modal >
             {useScanner && cameraGranted && (
                 <View style={styles.block2_scanner}>
                     {scanData &&
-                        <Pressable style={styles.buttonScanNext} onPress={() => {
-                            setScanData(undefined)
-                            isValid() && setItems([blankItem, ...items])
-                        }} ><Text style={styles.buttonText}>Scan next?</Text></Pressable>}
+                        <Pressable style={styles.buttonScanNext} onPress={() => handleScanNext} >
+                            <Text style={styles.buttonText}>Scan next?</Text>
+                        </Pressable>}
                     <BarCodeScanner
                         style={styles.scanner}
                         onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
@@ -158,17 +184,27 @@ export default function AddFood() {
                 <View>
                     {items.map((item, index) => {
                         return (
-                            <View style={[styles.formBox, { borderWidth: index === focusIndex ? 5 : 1 }, { borderColor: "darkred" }]}
+                            <View style={[
+                                styles.formBox,
+                                { borderWidth: index === focusIndex ? 5 : 1 },
+                                { borderColor: index === focusIndex ? "darkred" : "darkgray" }]}
                                 key={`addFoodItem${index}`}>
                                 <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
                                 <View style={styles.namefield}>
                                     <TextInput style={styles.userInput}
-                                        onFocus={() => setFocusIndex(index)}
+                                        onFocus={() => {
+                                            setFocusIndex(index)
+                                            setUseScanner(false)
+                                        }}
                                         placeholder={"Type here, or scan barcode."}
                                         value={item.name}
                                         onChangeText={(value) => formatItems(value, index, "name")} />
                                     <View style={{ marginHorizontal: 20, paddingLeft: 10 }}>
-                                        <Pressable style={{ alignItems: 'center' }} onPress={() => setUseScanner(!useScanner)}>
+                                        <Pressable style={{ alignItems: 'center' }}
+                                            onPress={() => {
+                                                setFocusIndex(index)
+                                                setUseScanner(true)
+                                            }}>
                                             <Text><MaterialCommunityIcons name='barcode-scan' size={25} /></Text>
                                             <Text>scan</Text>
                                         </Pressable>
@@ -237,6 +273,30 @@ const styles = StyleSheet.create({
     scanner: {
         width: '100%',
         height: 200
+    },
+    modalWindow: {
+        flex: 1,
+        justifyContent: "center",
+        alignContent: "center",
+        marginTop: 20,
+    },
+    modalView: {
+        margin: 30,
+        backgroundColor: '#ddd',
+        borderRadius: 20,
+        padding: 20,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 1,
+            height: 2,
+        },
+    },
+    modalText: {
+        margin: 10,
+        marginBottom: 20,
+        fontSize: 17,
+        textAlign: "center",
     },
     block3_listContainer: {
     },
