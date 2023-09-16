@@ -278,9 +278,10 @@ export async function deleteKitchenById(kitchenId: number): Promise<{ message: s
 const query = {apiKey: process.env.SPOONACULAR_APIKEY!}
 const params = new URLSearchParams(query)
 
-export async function searchByBarcode(barcode: number) {
+export async function searchByBarcode(barcode: string) {
     try {
         const response = await fetch(process.env.SPOONACULAR_URL! + barcode + `?${params}`)
+        console.log(process.env.SPOONACULAR_URL! + barcode + `?${params}`)
         return response.json()
         }
     catch (error) {

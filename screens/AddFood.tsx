@@ -4,7 +4,7 @@ import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
 import { useAtom, useAtomValue } from 'jotai';
 import { currentFoodListAtom, currentKitchenAtom } from '../utilities/store/atoms';
-import { createFood,searchByBarcode } from '../utilities/fetchRequests';
+import { createFood, searchByBarcode } from '../utilities/fetchRequests';
 import { StatusBar } from 'expo-status-bar';
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -50,14 +50,13 @@ export default function AddFood() {
         console.log('Hanldling scan')
         setScanData(data);
         console.log(`Data: ${data}`);
-        const barcodedata = await searchByBarcode(parseInt(data));
+        const barcodedata = await searchByBarcode(data.toString());
         const name = barcodedata.title;
         const itemsClone = JSON.parse(JSON.stringify(items))
         if (focusIndex) itemsClone[focusIndex].name = name
         console.log("name,", name)
-        console.log(itemsClone)
         setItems(itemsClone)
-        setListBlockMargin(50)
+        // setListBlockMargin(50)
     };
 
     const marked = useMemo(() => {
@@ -138,7 +137,7 @@ export default function AddFood() {
         <View style={styles.root}>
             <ScrollView contentContainerStyle={styles.container}>
                 {/**Block 1 */}
-                <View style={styles.block1_headline}>
+                <View style={[styles.block1_headline, { backgroundColor: "pink", }]}>
                     <Text style={styles.headlineText}>Add New Item</Text>
                     <Text style={[styles.headlineText, { marginVertical: 10, color: "green" }]}>Press <MaterialCommunityIcons name='barcode-scan' size={15} /> button to scan barcode </Text>
                 </View>
@@ -149,10 +148,11 @@ export default function AddFood() {
                         isValid() && setItems([blankItem, ...items])
                     }} ><Text style={styles.buttonText}>Scan next?</Text></Pressable>}
                 {useScanner && cameraGranted && (
-                    <View style={styles.block2_scanner}>
+                    <View>
                         <BarCodeScanner
                             style={styles.block2_scanner}
                             onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
+
                         />
 
                     </View>)}
@@ -162,12 +162,14 @@ export default function AddFood() {
                         <StatusBar style="auto" />
                     </View>)
                 }
-                <Pressable
-                    style={styles.button}
-                    onPress={() => { setItems([blankItem, ...items]) }} >
-                    <Text style={styles.buttonText}>
-                        <MaterialCommunityIcons name="form-textbox" size={15} color="black" /> Insert Another Entry</Text>
-                </Pressable>
+                <View>
+                    <Pressable
+                        style={styles.button}
+                        onPress={() => { setItems([blankItem, ...items]) }} >
+                        <Text style={styles.buttonText}>
+                            <MaterialCommunityIcons name="form-textbox" size={15} color="black" /> Insert Another Entry</Text>
+                    </Pressable>
+                </View>
                 <View style={{ marginTop: listBlockMargin /**Need this here to change it dynamically */ }}>
                     {items.map((item, index) => {
                         return (
@@ -247,11 +249,14 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     block2_scanner: {
+        flex: 1,
         height: 250,
     },
     block3_listContainer: {
+        flex: 1,
     },
     block4_buttonBlock: {
+        flex: 1,
     },
     verticallySpaced: {
         alignSelf: "stretch",
@@ -269,7 +274,6 @@ const styles = StyleSheet.create({
     },
     userInput: {
         flex: 1,
-        height: 40,
         marginBottom: 15,
         padding: 5,
         borderColor: "lightgray",
