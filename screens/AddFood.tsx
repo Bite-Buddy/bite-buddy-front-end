@@ -34,7 +34,6 @@ export default function AddFood() {
     const [cameraGranted, setCameraGranted] = useState<boolean>(false);
     const [useScanner, setUseScanner] = useState<boolean>(false);
     const [scanData, setScanData] = useState<string>();
-    const [listBlockMargin, setListBlockMargin] = useState<number>(0);
     const [focusIndex, setFocusIndex] = useState<number | null>(0);
 
     useEffect(() => {
@@ -58,19 +57,6 @@ export default function AddFood() {
         setItems(itemsClone)
         // setListBlockMargin(50)
     };
-
-    const marked = useMemo(() => {
-        if (selectedDateStr !== "") {
-            return {
-                [selectedDateStr]: {
-                    selected: true,
-                    disableTouchEvent: true,
-                    selectedColor: 'orange',
-                    selectedTextColor: 'red',
-                }
-            }
-        }
-    }, [selectedDateStr]);
 
     //Check if all items name are not blank
     function isValid(): boolean {
@@ -135,45 +121,45 @@ export default function AddFood() {
 
     return (
         <View style={styles.root}>
-            <ScrollView contentContainerStyle={styles.container}>
-                {/**Block 1 */}
-                <View style={[styles.block1_headline, { backgroundColor: "pink", }]}>
-                    <Text style={styles.headlineText}>Add New Item</Text>
-                    <Text style={[styles.headlineText, { marginVertical: 10, color: "green" }]}>Press <MaterialCommunityIcons name='barcode-scan' size={15} /> button to scan barcode </Text>
-                </View>
-                {/**Block 2 */}
-                {scanData &&
-                    <Pressable style={styles.buttonScanNext} onPress={() => {
-                        setScanData(undefined)
-                        isValid() && setItems([blankItem, ...items])
-                    }} ><Text style={styles.buttonText}>Scan next?</Text></Pressable>}
-                {useScanner && cameraGranted && (
-                    <View>
-                        <BarCodeScanner
-                            style={styles.block2_scanner}
-                            onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
-
-                        />
-
-                    </View>)}
-                {!cameraGranted && (
-                    <View>
-                        <Text>Please grant camera permissions to Bite Buddy.</Text>
-                        <StatusBar style="auto" />
-                    </View>)
-                }
+            {/**Block 1 */}
+            <View style={[styles.block1_headline, { backgroundColor: "pink", }]}>
+                <Text style={styles.headlineText}>Add New Item</Text>
+                <Text style={[styles.headlineText, { marginVertical: 10, color: "green" }]}>
+                    Press <MaterialCommunityIcons name='barcode-scan' size={15} /> button to scan barcode
+                </Text>
+            </View>
+            {/**Block 2 */}
+            {useScanner && cameraGranted && (
+                <View style={styles.block2_scanner}>
+                    {scanData &&
+                        <Pressable style={styles.buttonScanNext} onPress={() => {
+                            setScanData(undefined)
+                            isValid() && setItems([blankItem, ...items])
+                        }} ><Text style={styles.buttonText}>Scan next?</Text></Pressable>}
+                    <BarCodeScanner
+                        style={styles.scanner}
+                        onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
+                    />
+                </View>)}
+            {!cameraGranted && (
+                <View style={styles.block2_scanner}>
+                    <Text>Please grant camera permissions to Bite Buddy.</Text>
+                    <StatusBar style="auto" />
+                </View>)}
+            <View>
+                <Pressable
+                    style={[styles.button, { backgroundColor: "gray", borderColor: "gray", borderWidth: 0.5 }]}
+                    onPress={() => { setItems([blankItem, ...items]) }} >
+                    <Text style={[styles.buttonText, { color: "white" }]}>
+                        <MaterialCommunityIcons name="form-textbox" size={15} /> Insert Another Entry</Text>
+                </Pressable>
+            </View>
+            <ScrollView style={styles.scrollBlok}>
                 <View>
-                    <Pressable
-                        style={styles.button}
-                        onPress={() => { setItems([blankItem, ...items]) }} >
-                        <Text style={styles.buttonText}>
-                            <MaterialCommunityIcons name="form-textbox" size={15} color="black" /> Insert Another Entry</Text>
-                    </Pressable>
-                </View>
-                <View style={{ marginTop: listBlockMargin /**Need this here to change it dynamically */ }}>
                     {items.map((item, index) => {
                         return (
-                            <View style={[styles.formBox, { borderWidth: index === focusIndex ? 5 : 1 }]} key={`addFoodItem${index}`}>
+                            <View style={[styles.formBox, { borderWidth: index === focusIndex ? 5 : 1 }, { borderColor: "darkred" }]}
+                                key={`addFoodItem${index}`}>
                                 <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
                                 <View style={styles.namefield}>
                                     <TextInput style={styles.userInput}
@@ -202,24 +188,24 @@ export default function AddFood() {
                                     current={initialDateStr}
                                     style={styles.calendar}
                                     onDayPress={(day) => { formatItems(day.dateString, index, "boughtOn") }}
-                                    markedDates={marked}
                                 />}
                             </View>
                         )
                     })}
                 </View>
-                {/**block 4*/}
-                <View style={styles.block4_buttonBlock}>
-                    <View style={styles.buttons}>
-                        <Pressable style={styles.button} onPress={handleSubmit} >
-                            <Text style={[styles.buttonText, { maxWidth: 200 }]} ellipsizeMode="tail" numberOfLines={1}>Add to {currentKitchen?.name}</Text>
-                        </Pressable>
-                        <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen Details")} >
-                            <Text style={styles.buttonText}>Cancel</Text>
-                        </Pressable>
-                    </View>
-                </View>
             </ScrollView >
+            {/**block 4*/}
+            <View style={styles.block4_buttonBlock}>
+                <View style={styles.buttons}>
+                    <Pressable style={styles.button} onPress={handleSubmit} >
+                        <Text style={[styles.buttonText, { maxWidth: 200 }]} ellipsizeMode="tail" numberOfLines={1}>Add to {currentKitchen?.name}</Text>
+                    </Pressable>
+                    <Pressable style={[styles.button, { backgroundColor: "lightgray" }]}
+                        onPress={() => navigation.navigate("Kitchen Details")} >
+                        <Text style={styles.buttonText}>Cancel</Text>
+                    </Pressable>
+                </View>
+            </View>
         </View >
     );
 }
@@ -229,14 +215,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
     },
-    container: {
-        flexGrow: 2,
-        marginTop: 0, //might not need this
-        padding: 10,//might not need this
-        marginBottom: 0,//might not need this
-    },
     block1_headline: {
-        flex: 1,
         margin: 10,
         fontSize: 18,
         fontWeight: 'bold',
@@ -248,22 +227,29 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
     },
+    scrollBlok: {
+        flexGrow: 1,
+        padding: 10,//might not need this
+    },
     block2_scanner: {
-        flex: 1,
-        height: 250,
+        marginVertical: 10,
+    },
+    scanner: {
+        width: '100%',
+        height: 200
     },
     block3_listContainer: {
-        flex: 1,
     },
     block4_buttonBlock: {
-        flex: 1,
+        margin: 20,
+        verticalAlign: "middle",
+        borderStyle: "dotted",
+        borderTopWidth: 1,
     },
     verticallySpaced: {
         alignSelf: "stretch",
     },
-    scanner: {
-        width: '100%'
-    },
+
     formBox: {
         margin: 10,
         paddingHorizontal: 20,
@@ -281,9 +267,6 @@ const styles = StyleSheet.create({
     },
     namefield: {
         flexDirection: 'row',
-    },
-    more: {
-        margin: 10
     },
     calendar: {
         marginBottom: 10,
