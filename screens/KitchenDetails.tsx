@@ -5,8 +5,8 @@ import { useAtomValue, useAtom } from 'jotai'
 import { currentKitchenAtom, currentFoodListAtom, currentFoodItemAtom } from "../utilities/store/atoms";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
-import React, { useRef, useState } from "react";
-import { updateFoodById } from "../utilities/fetchRequests";
+import React, { useEffect, useState } from "react";
+import { getKitchenByID, updateFoodById } from "../utilities/fetchRequests";
 import { AntDesign } from '@expo/vector-icons';
 import { ListItem } from '@rneui/themed';
 import { IFood } from "../utilities/interfaces";
@@ -21,6 +21,9 @@ export default function KitchenDetails() {
   const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom)
   const [inStock, setinStock] = useState(true)
 
+  useEffect(() => {
+    fetchFoodList();
+  }, [currentKitchen])
 
   function handleFoodSelect(selectedFood: IFood) {
     console.log(selectedFood)
@@ -28,23 +31,38 @@ export default function KitchenDetails() {
     navigation.navigate('Edit Food')
   }
 
+  const fetchFoodList = async () => {
+    console.log('fetching foodlist', currentKitchen)
+    if (currentKitchen) {
+      try {
+        let kitchenInfo = await getKitchenByID(currentKitchen.id);
+        let modList = await kitchenInfo.food_list.map(item => { return { ...item, "bought_on": new Date(item.bought_on)} })
+        // setFoodList(modList)
+        console.log('setting', modList)
+        setCurrentFoodList(modList)
+      } catch (e) {
+        console.error("Error fetching food list: ", e)
+      }
+    }
+  }
+
   async function handleAddToShopping(selectedFood: IFood) {
     if (!selectedFood) return;
-    const response = await updateFoodById(selectedFood.id, {inStock: false})
+    const response = await updateFoodById(selectedFood.id, { inStock: false })
     let foodListClone: IFood[] = JSON.parse(JSON.stringify(currentFoodList))
     foodListClone = foodListClone.map(food => {
-      return  {...food, inStock: food.inStock, bought_on: new Date(food.bought_on), updated_on: new Date(food.updated_on)}
+      return { ...food, inStock: food.inStock, bought_on: new Date(food.bought_on), updated_on: new Date(food.updated_on) }
     })
     let target = foodListClone.find(food => food.id === selectedFood.id)
     if (target) {
       target.inStock = response.foodResponse.inStock
       target.name = response.foodResponse.name
       target.bought_on = new Date(response.foodResponse.bought_on)
-    } 
+    }
     console.log('clone', foodListClone)
     setCurrentFoodList(foodListClone)
     setCurrentFoodItem(null)
-    
+
   }
 //<Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
   async function handleSwipe(item: IFood) {
@@ -59,7 +77,7 @@ export default function KitchenDetails() {
           </View>
           <View style={styles.verticallySpaced}>
             {!currentFoodList.length ? <Text style={styles.noItem}>No items in stock</Text>
-            //calculate the day offset of the bought item
+              //calculate the day offset of the bought item
               : currentFoodList.filter((foodItem) => foodItem.inStock === true).map((foodItem) => {
                 //Calculate the day offset of te bought day from today
                 const dayOffSet = Math.floor((today.getTime() - foodItem.bought_on.getTime()) / (24 * 60 * 60 * 1000))
@@ -71,17 +89,17 @@ export default function KitchenDetails() {
                       <Button
                       title="Adding to shopping list"
                       onPress={() => reset()}
-                      buttonStyle={{ height: 60, backgroundColor: '#4dd377', borderRadius: 7,  marginTop: 5, marginLeft: 10, marginRight: 20, padding: 2 }}
+                      buttonStyle={{ height: 75, backgroundColor: '#4dd377', borderRadius: 7,  marginTop: 5, marginLeft: 10, marginRight: 20, padding: 2 }}
                   />
                     )}
                     onSwipeEnd={() => handleSwipe(foodItem)}
                   >
                     <ListItem.Content>
                       <Pressable  key={`foodItem${foodItem.id}`} onPress={() => { handleFoodSelect(foodItem) }} >
-                      <ListItem.Title><Text style={styles.name}>{foodItem.name}{foodItem.inStock} </Text>{foodItem.inStock} 
-                      <ListItem.Subtitle><Text style={styles.name}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"}</Text></ListItem.Subtitle>
+                      <ListItem.Title><Text style={styles.name} ellipsizeMode={"tail"} numberOfLines={1}>{foodItem.name}</Text>
+                     
                       </ListItem.Title>
-                        
+                      <ListItem.Subtitle><Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text></ListItem.Subtitle>
                         
                       </Pressable>
                     </ListItem.Content>
@@ -137,7 +155,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 5,
     marginRight: 30,
-    
+    marginLeft: 10,
+    width: 150,
   },
   noItem: {
     fontSize: 24,
@@ -164,7 +183,7 @@ const styles = StyleSheet.create({
     padding: 2,
     marginLeft: 10,
     marginRight: 10,
-    height: 60,
+    height: 75,
     borderTopLeftRadius: 7,
     borderTopRightRadius: 7,
     borderBottomLeftRadius: 7,
@@ -177,7 +196,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 8,
-    
+
   },
   button2: {
     display: 'flex',
