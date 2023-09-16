@@ -1,44 +1,41 @@
-import { TextInput, Button, ActivityIndicator, StyleSheet, View } from "react-native";
-import { Text } from "react-native-elements";
-import { useNavigation } from "@react-navigation/native";
+import { Pressable, StyleSheet, View } from "react-native";
+import { Text, Input } from "react-native-elements";
 import React from 'react'
-import { Formik, Form, Field, FormikHelpers} from 'formik';
-import { IKitchen, IInviteForm } from "../utilities/interfaces";
-
-import { userAtom, kitchensAtom } from '../utilities/store/atoms'
+import { Formik} from 'formik';
+import { IInviteForm } from "../utilities/interfaces";
+import { currentKitchenAtom } from "../utilities/store/atoms";
 import { useAtom } from 'jotai'
+import { getByEmail, createInvite } from "../utilities/fetchRequests";
 
 export default function KitchenInvite() {
-
-
-
-    const navigation = useNavigation();
-
-    async function handleSubmit() {
-        console.log("submitted")
-    }
+    const [currentKitchen, setCurrentKitchen] = useAtom(currentKitchenAtom)
     return (
         <Formik
             initialValues={{
-                selected_kitchen: '',
                 recipient_email: '',
             }}
-            onSubmit={(values: IInviteForm) => {
-                console.log(values)
+            onSubmit={async (values: IInviteForm) => {
+                const valid = await getByEmail(values.recipient_email);
+                if (!valid.failed) {
+                    await createInvite(currentKitchen.id, values.recipient_email)
+                    alert("Invite sent!")
+                }
+                else {
+                    alert("Error: There is no user with this email")
+                }
             }}> 
             {({handleChange, handleSubmit, values}) => (
         <View style={styles.container}>
-        <View style={styles.verticallySpaced}>
-            <Text>Select a Kitchen:</Text>
-        </View>
         <View>
             <Text>Enter the email of the user you want to invite:</Text>
-            <TextInput
+            <Input
                 onChangeText={handleChange('recipient_email')}
                 value={values.recipient_email}
                 />
         </View>
-        <Button title = "Submit" />
+        <Pressable style={styles.button} onPressIn={() => handleSubmit()}>
+          <Text style={styles.buttonText}>Submit</Text>
+        </Pressable>
         </View>
             )}
         </Formik>
@@ -57,5 +54,17 @@ export default function KitchenInvite() {
     },
     mt20: {
         marginTop: 20,
-    },
+    },  
+    button: {
+        backgroundColor: '#EFCA46',
+        height: 40,
+        borderRadius: 4,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 10
+      },
+      buttonText: {
+        fontWeight: "bold"
+      },
     })
