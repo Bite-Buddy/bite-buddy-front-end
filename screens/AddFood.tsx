@@ -132,8 +132,8 @@ export default function AddFood() {
     return (
         <View style={styles.root}>
             {/**Block 1 */}
-            <View style={[styles.block1_headline, { backgroundColor: "pink", }]}>
-                <Text style={styles.headlineText}>Add New Item</Text>
+            <View style={[styles.block1_headline]}>
+                <Text style={styles.headlineText}>Add New Food Item</Text>
             </View>
             {/**Block 2 */}
             {scanData &&
