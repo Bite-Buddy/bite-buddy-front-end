@@ -1,11 +1,11 @@
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { Text, Input, Button } from "react-native-elements";
-import { currentInviteListAtom } from "../utilities/store/atoms";
+import { invitesAtom } from "../utilities/store/atoms";
 import { useAtom } from "jotai";
 import { useNavigation } from "@react-navigation/native";
 
 export default function ReceivedInvites() {
-    const [invites, setInvites] = useAtom(currentInviteListAtom)
+    const [invites, setInvites] = useAtom(invitesAtom)
     console.log(invites);
     return (
         <View style={styles.container}>
