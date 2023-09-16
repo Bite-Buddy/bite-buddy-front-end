@@ -72,7 +72,7 @@ export default function FoodInput({ mode, initialItemName, kitchenId }: Props) {
           })
           console.log(preparedFoodList)
           setCurrentFoodList(currentFoodList.concat(preparedFoodList))
-          navigation.navigate("Kitchen Details")
+          navigation.navigate("Kitchen")
          })
         .catch((e) => { setResponse(e.message) });
     }
@@ -120,7 +120,7 @@ export default function FoodInput({ mode, initialItemName, kitchenId }: Props) {
         <Button title={mode} onPress={handleSubmit} />
         {mode === "Edit" ?? <Button title="delete" onPress={isValid ?? handleDelete} />
         }
-        <Button title="Cancel" onPress={() => navigation.navigate("Kitchen Details")} />
+        <Button title="Cancel" onPress={() => navigation.navigate("Kitchen")} />
       </View>
     </>
   );

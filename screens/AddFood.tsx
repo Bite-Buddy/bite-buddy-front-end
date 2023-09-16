@@ -114,7 +114,7 @@ export default function AddFood() {
                 setCurrentFoodList(currentFoodList.concat(preparedFoodList));
             })
             .catch((e) => { console.error(e) })
-            .finally(() => navigation.navigate("Kitchen Details")); //Currently not using, but will be implemented
+            .finally(() => navigation.navigate("Kitchen")); //Currently not using, but will be implemented
     }
 
     function formatItems(value: string | boolean, index: number, key: string) {
@@ -213,7 +213,7 @@ export default function AddFood() {
                         <Pressable style={styles.button} onPress={handleSubmit} >
                             <Text style={[styles.buttonText, { maxWidth: 200 }]} ellipsizeMode="tail" numberOfLines={1}>Add to {currentKitchen?.name}</Text>
                         </Pressable>
-                        <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen Details")} >
+                        <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen")} >
                             <Text style={styles.buttonText}>Cancel</Text>
                         </Pressable>
                     </View>
