@@ -3,7 +3,7 @@
 //const DOMAIN = process.env.BACKEND_URL;
 
 // use http and ip address instead of localhost
-const DOMAIN = process.env.DOMAIN
+const DOMAIN = process.env.DOMAIN2
 import { supabase } from "../supabaseService";
 import { IKitchen, IUser, IFood, IFoodRequest, IInvite } from "./interfaces";
 // const DOMAIN = "http://localhost:8080";
