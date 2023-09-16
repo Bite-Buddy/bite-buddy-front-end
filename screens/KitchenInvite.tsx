@@ -4,17 +4,13 @@ import { useNavigation } from "@react-navigation/native";
 import React from 'react'
 import { Formik, Form, Field, FormikHelpers} from 'formik';
 import { IKitchen, IInviteForm } from "../utilities/interfaces";
-import  RNPickerSelect, { Item }  from "react-native-picker-select"
+
 import { userAtom, kitchensAtom } from '../utilities/store/atoms'
 import { useAtom } from 'jotai'
 
 export default function KitchenInvite() {
-    const [user, setUser] = useAtom(userAtom);
-    const [kitchens, setKitchens] = useAtom(kitchensAtom);
-    const kitchenItems: Item[] = kitchens.map((kitchen) => ({
-        label: kitchen.name,
-        value: kitchen.id
-    }))
+
+
 
     const navigation = useNavigation();
 
@@ -34,11 +30,6 @@ export default function KitchenInvite() {
         <View style={styles.container}>
         <View style={styles.verticallySpaced}>
             <Text>Select a Kitchen:</Text>
-            <RNPickerSelect
-                onValueChange={handleChange('selected_kitchen')}
-                value={values.selected_kitchen}
-                items={kitchenItems}
-                />
         </View>
         <View>
             <Text>Enter the email of the user you want to invite:</Text>
