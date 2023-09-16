@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, TextInput, Pressable, Modal } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TextInput, Pressable } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
-import { useAtom, useAtomValue } from 'jotai';
-import { currentFoodListAtom, currentKitchenAtom } from '../utilities/store/atoms';
-import { createFood, searchByBarcode } from '../utilities/fetchRequests';
 import { StatusBar } from 'expo-status-bar';
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useAtom, useAtomValue } from 'jotai';
+import { currentFoodListAtom, currentKitchenAtom } from '../utilities/store/atoms';
+import { createFood, searchByBarcode } from '../utilities/fetchRequests';
 
 type Items = {
     name: string,
