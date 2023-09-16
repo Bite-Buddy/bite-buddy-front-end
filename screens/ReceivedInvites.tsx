@@ -1,12 +1,16 @@
-import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-elements";
+import { Modal, Pressable, StyleSheet, View } from "react-native";
+import { Text, Input, Button } from "react-native-elements";
+import { currentInviteListAtom } from "../utilities/store/atoms";
+import { useAtom } from "jotai";
 import { useNavigation } from "@react-navigation/native";
 
-export default function receivedInvites() {
+export default function ReceivedInvites() {
+    const [invites, setInvites] = useAtom(currentInviteListAtom)
+    console.log(invites);
     return (
         <View style={styles.container}>
           <View style={styles.verticallySpaced}>
-            <Text>Kitchen Members</Text>
+            <Text>Received Invites</Text>
           </View>
         </View>
       )
@@ -14,15 +18,76 @@ export default function receivedInvites() {
 
 const styles = StyleSheet.create({
     container: {
-      marginTop: 40,
-      padding: 12,
+      flex: 1,
+      justifyContent: 'space-between',
+      backgroundColor: '#F8E8AF',
+      padding: 20,
+      margin: 0,
+  
     },
     verticallySpaced: {
-      paddingTop: 4,
-      paddingBottom: 4,
-      alignSelf: 'stretch',
+      flex: 1,
+      borderWidth: 0,
+      borderRadius: 20,
+      marginBottom: 20,
     },
     mt20: {
       marginTop: 20,
     },
+    kitchen: {
+      fontSize: 18,
+      fontWeight: "bold"
+    },
+    heading: {
+      fontSize: 20,
+      marginTop: 10,
+      marginBottom: 0,
+      flex: 1,
+      fontWeight: 'bold',
+      color: 'black',
+      textAlign: 'center',
+    },
+    name: {
+      padding: 2,
+      fontSize: 15,
+      fontWeight: "bold",
+      marginTop: 5,
+      marginLeft: 10,
+    },
+    date: {
+      padding: 0,
+      fontSize: 15,
+      marginTop: 10,
+      marginLeft: 30,
+      marginRight: 10
+    },
+    list: {
+      flexDirection: "row",
+      backgroundColor: '#EFCA46',
+      borderWidth: 0,
+      justifyContent: 'center',
+      alignItems: "center",
+      marginTop: 5,
+      marginLeft: 10,
+      marginRight: 10,
+      height: 60,
+      borderTopLeftRadius: 7,
+      borderTopRightRadius: 7,
+      borderBottomLeftRadius: 7,
+      borderBottomRightRadius: 7,
+    },
+    button: {
+      display: 'flex',
+      alignItems: 'center',
+      alignSelf: 'center',
+      backgroundColor: '#4dd377',
+      width: 50,
+      height: 50,
+      justifyContent: "center",
+      borderRadius: 50,
+      marginTop: 20
+    },
+    icon: {
+      fontSize: 36
+    }
   })
