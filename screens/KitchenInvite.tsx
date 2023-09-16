@@ -15,13 +15,18 @@ export default function KitchenInvite() {
                 recipient_email: '',
             }}
             onSubmit={async (values: IInviteForm) => {
-                const valid = await getByEmail(values.recipient_email);
-                if (!valid.failed) {
-                    await createInvite(currentKitchen.id, values.recipient_email)
-                    alert("Invite sent!")
+                if (!values.recipient_email) {
+                    alert("Error: Please enter an email");
                 }
                 else {
-                    alert("Error: There is no user with this email")
+                    const valid = await getByEmail(values.recipient_email);
+                    if (!valid.failed) {
+                        await createInvite(currentKitchen.id, values.recipient_email)
+                        alert("Invite sent!")
+                    }
+                    else {
+                        alert("Error: There is no user with this email")
+                    }
                 }
             }}> 
             {({handleChange, handleSubmit, values}) => (
