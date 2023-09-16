@@ -1,13 +1,13 @@
 import { Modal, Pressable, StyleSheet, View } from "react-native";
-import { Text, Input, Button } from "react-native-elements";
+import { Text, Input } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
+import { Calendar } from "react-native-calendars";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAtom } from 'jotai'
 import { useState, useEffect, useMemo } from 'react'
 import { currentFoodItemAtom, currentFoodListAtom } from "../utilities/store/atoms";
 import { deleteFoodById, updateFoodById } from "../utilities/fetchRequests"
 import { IFood } from "../utilities/interfaces";
-import { Calendar } from "react-native-calendars";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function EditFood() {
   const navigation = useNavigation();
