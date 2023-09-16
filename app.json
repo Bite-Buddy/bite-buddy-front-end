@@ -43,14 +43,6 @@
           "cameraPermission": "Allow $(Bite Buddy) to access camera."
         }
       ]
-    ],
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "3d529996-d37b-491b-ad2d-cfddc366a64f"
-      }
-    }
+    ]
   }
 }
