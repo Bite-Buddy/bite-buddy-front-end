@@ -78,12 +78,16 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Auth">
           <Stack.Screen name="Kitchen Settings" component={Drawer} options={({ navigation }) => ({
+            headerBackVisible: false,
+            headerLeft: ()=> null,
             headerTitle: () => <Header />,
             headerStyle: {
               backgroundColor: '#EFCA46',
             },
           })}  />
           <Stack.Screen name="Auth" component={Auth} options={({ navigation }) => ({
+            headerBackVisible: false,
+            headerLeft: ()=> null,
             headerTitle: () => <Text style={styles.auth}>BiteBuddy</Text>,
             headerStyle: {
               backgroundColor: '#EFCA46',
@@ -91,13 +95,8 @@ export default function App() {
 
           })} />
           <Stack.Screen name="Account" component={Account} options={({ navigation }) => ({
-            headerTitle: () => <Header />,
-            headerStyle: {
-              backgroundColor: '#EFCA46',
-            },
-
-          })} />
-          <Stack.Screen name="Kitchen" component={Kitchen} options={({ navigation }) => ({
+            headerBackVisible: false,
+            headerLeft: ()=> null,
             headerTitle: () => <Header />,
             headerStyle: {
               backgroundColor: '#EFCA46',
@@ -105,6 +104,8 @@ export default function App() {
 
           })} />
           <Stack.Screen name="Profile" component={Profile} options={({ navigation }) => ({
+            headerBackVisible: false,
+            headerLeft: ()=> null,
             headerTitle: () => <Header />,
             headerStyle: {
               backgroundColor: '#EFCA46',
@@ -112,6 +113,8 @@ export default function App() {
 
           })} />
           <Stack.Screen name="List" component={List} options={({ navigation }) => ({
+            headerBackVisible: false,
+            headerLeft: ()=> null,
             headerTitle: () => <Header />,
             headerStyle: {
               backgroundColor: '#EFCA46',
@@ -119,6 +122,8 @@ export default function App() {
 
           })} />
           <Stack.Screen name="AddFood" component={AddFood} options={({ navigation }) => ({
+            headerBackVisible: false,
+            headerLeft: ()=> null,
             headerTitle: () => <Header />,
             headerStyle: {
               backgroundColor: '#EFCA46',
@@ -127,6 +132,8 @@ export default function App() {
           })} />
 
           <Stack.Screen name="AddKitchen" component={AddKitchen} options={({ navigation }) => ({
+            headerBackVisible: false,
+            headerLeft: ()=> null,
             headerTitle: () => <Header />,
             headerStyle: {
               backgroundColor: '#EFCA46',
@@ -134,6 +141,8 @@ export default function App() {
 
           })} />
           <Stack.Screen name="Edit Food" component={EditFood} options={({ navigation }) => ({
+            headerBackVisible: false,
+            headerLeft: ()=> null,
             headerTitle: () => <Header />,
             headerStyle: {
               backgroundColor: '#EFCA46',
@@ -141,6 +150,8 @@ export default function App() {
 
           })} />
           <Stack.Screen name="Barcode Scan" component={BarcodeScan} options={({ navigation }) => ({
+            headerBackVisible: false,
+            headerLeft: ()=> null,
             headerTitle: () => <Header />,
             headerStyle: {
               backgroundColor: '#EFCA46',
