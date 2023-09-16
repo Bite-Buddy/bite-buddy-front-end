@@ -4,10 +4,9 @@ import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
 import { useAtom, useAtomValue } from 'jotai';
 import { currentFoodListAtom, currentKitchenAtom } from '../utilities/store/atoms';
-import { createFood } from '../utilities/fetchRequests';
+import { createFood,searchByBarcode } from '../utilities/fetchRequests';
 import { StatusBar } from 'expo-status-bar';
 import { BarCodeScanner } from "expo-barcode-scanner";
-import { searchByBarcode } from '../utilities/fetchRequests';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 type Items = {
