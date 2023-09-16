@@ -3,6 +3,7 @@ export interface IUser {
   supabase_id: string,
   email: string,
   kitchens: IKitchen[],
+  invites: IInvite[],
 }
 
 export interface IKitchen {
