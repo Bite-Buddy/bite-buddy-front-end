@@ -10,6 +10,7 @@ import { updateFoodById } from "../utilities/fetchRequests";
 import { AntDesign } from '@expo/vector-icons';
 import { ListItem } from '@rneui/themed';
 import { IFood } from "../utilities/interfaces";
+import { ScreenWidth } from "react-native-elements/dist/helpers";
 
 export default function KitchenDetails() {
   const today = new Date();
@@ -45,7 +46,7 @@ export default function KitchenDetails() {
     setCurrentFoodItem(null)
     
   }
-
+//<Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
   async function handleSwipe(item: IFood) {
     await handleAddToShopping(item)
   }
@@ -63,26 +64,29 @@ export default function KitchenDetails() {
                 //Calculate the day offset of te bought day from today
                 const dayOffSet = Math.floor((today.getTime() - foodItem.bought_on.getTime()) / (24 * 60 * 60 * 1000))
                 return (
-                  <ListItem.Swipeable 
+                  <ListItem.Swipeable style={styles.list}  
+                    leftWidth={ScreenWidth/2}
                     key={`foodItem${foodItem.id}`}
                     leftContent={(reset) => (
-                      <Text>Add to Shopping List</Text>
+                      <Button
+                      title="Adding to shopping list"
+                      onPress={() => reset()}
+                      buttonStyle={{ height: 60, backgroundColor: '#4dd377', borderRadius: 7,  marginTop: 5, marginLeft: 10, marginRight: 20, padding: 2 }}
+                  />
                     )}
-
                     onSwipeEnd={() => handleSwipe(foodItem)}
                   >
                     <ListItem.Content>
-                      <Pressable style={styles.list}  onPress={() => { handleFoodSelect(foodItem) }} >
-                        <Text style={styles.name}>{foodItem.name}</Text>
-                        <Text style={styles.name}>{foodItem.inStock}</Text>
-                        <Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
+                      <Pressable  key={`foodItem${foodItem.id}`} onPress={() => { handleFoodSelect(foodItem) }} >
+                      <ListItem.Title><Text style={styles.name}>{foodItem.name}{foodItem.inStock} </Text>{foodItem.inStock} 
+                      <ListItem.Subtitle><Text style={styles.name}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"}</Text></ListItem.Subtitle>
+                      </ListItem.Title>
+                        
+                        
                       </Pressable>
                     </ListItem.Content>
-                    <ListItem.Chevron />
                   </ListItem.Swipeable>
 
-
-                 
                   
                 );
               })}
@@ -128,11 +132,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   name: {
-    padding: 2,
+    padding: 10,
     fontSize: 15,
     fontWeight: "bold",
     marginTop: 5,
-    marginLeft: 10,
+    marginRight: 30,
+    
   },
   noItem: {
     fontSize: 24,
@@ -151,18 +156,21 @@ const styles = StyleSheet.create({
     marginRight: 10
   },
   list: {
-    flexDirection: "row",
+    // flexDirection: "row",
     backgroundColor: 'white',
     borderWidth: 0,
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     marginTop: 5,
+    padding: 2,
     marginLeft: 10,
     marginRight: 10,
-    height: 50,
+    height: 60,
     borderTopLeftRadius: 7,
     borderTopRightRadius: 7,
     borderBottomLeftRadius: 7,
     borderBottomRightRadius: 7,
+    fontSize: 15,
+
   },
   button: {
     display: 'flex',

@@ -8,6 +8,7 @@ import { deleteFoodById, updateFoodById } from "../utilities/fetchRequests"
 import { IFood } from "../utilities/interfaces";
 import { AntDesign } from '@expo/vector-icons'; 
 import { ListItem } from "@rneui/themed";
+import { ScreenWidth } from "react-native-elements/dist/helpers";
 
 
 
@@ -45,22 +46,25 @@ export default function List() {
             {!currentFoodList.filter(food => food.inStock === false).length ? <Text style={styles.noItem}>The shopping list is empty</Text>
               : currentFoodList.filter((foodItem) => foodItem.inStock === false).map((foodItem) => {
                 return (
-                  <ListItem.Swipeable 
-                    // style={styles.list}
+                  <ListItem.Swipeable style={styles.list}
+                    rightWidth={ScreenWidth/2}
+                    minSlideWidth={50}
                     key={`shoppingListItem${foodItem.id}`}
                     rightContent={(reset) => (
-                      <Text>Add to Kitchen</Text>
+                      <Button
+                      title="Adding to kitchen"
+                      onPress={() => reset()}
+                      buttonStyle={{ height: 60, backgroundColor: '#4dd377', borderRadius: 7, marginTop: 5, marginLeft: 10, marginRight: 20 }}
+                    />
                     )}
 
                     onSwipeEnd={() => handleAddToKitchen(foodItem)}
                   >
                     <ListItem.Content>
                       <Pressable key={`foodItem${foodItem.id}`} >
-                      <Text style={styles.name}>{foodItem.name}</Text>
+                      <ListItem.Title>{foodItem.name}</ListItem.Title>
                     </Pressable>
-                      
                     </ListItem.Content>
-                    
                   </ListItem.Swipeable>
                   
                  
@@ -129,17 +133,19 @@ export default function List() {
   list: {
     // flexDirection: "row",
     backgroundColor: 'white',
+    
     borderWidth: 0,
     // justifyContent: 'space-between',
     marginTop: 5,
+    padding: 2,
     marginLeft: 10,
     marginRight: 10,
-    height: 50,
+    height: 60,
     borderTopLeftRadius: 7,
     borderTopRightRadius: 7,
     borderBottomLeftRadius: 7,
     borderBottomRightRadius: 7,
-    padding: 2,
+    // padding: 2,
     fontSize: 15,
     fontWeight: "bold",
 
