@@ -7,6 +7,9 @@ import { currentKitchenAtom, userAtom } from "../utilities/store/atoms";
 import { useAtom } from 'jotai'
 import { getByEmail, createInvite } from "../utilities/fetchRequests";
 
+//Some packages I tried but didn't use when trying to implement this feature are yep, react-native-picker, and react-native-hook-forms.
+//They can be deleted down the line as we clean up everything.
+
 export default function KitchenInvite() {
     const [currentKitchen, setCurrentKitchen] = useAtom(currentKitchenAtom)
     const [user, setUser] = useAtom(userAtom);
