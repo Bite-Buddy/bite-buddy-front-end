@@ -12,7 +12,7 @@ import * as WebBrowser from "expo-web-browser";
 import { useNavigation } from "@react-navigation/native";
 // import * as Linking from "expo-linking";
 import { createUser, getBySupabaseID } from "../utilities/fetchRequests";
-import { userAtom, kitchensAtom } from "../utilities/store/atoms";
+import { userAtom, kitchensAtom, invitesAtom } from "../utilities/store/atoms";
 import { useAtom } from "jotai";
 
 export default function Auth() {
@@ -21,6 +21,7 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useAtom(userAtom);
   const [kitchens, setKitchens] = useAtom(kitchensAtom);
+  const [invites, setInvites] = useAtom(invitesAtom);
   const navigation = useNavigation();
 
   // async function signInWithEmail() {
@@ -102,6 +103,7 @@ export default function Auth() {
       setUser(dbData);
       setKitchens(dbData.kitchens);
       setLoading(false);
+      setInvites(dbData.invites);
       if (user.kitchens.length > 0) {
         navigation.navigate("Kitchen");
       }
