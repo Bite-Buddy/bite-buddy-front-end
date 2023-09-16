@@ -34,3 +34,8 @@ export interface IInvite {
   kitchen_id: number,
   recipient_id: number
 }
+
+export interface IInviteForm {
+  selected_kitchen: string,
+  recipient_email: string
+}
