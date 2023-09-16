@@ -34,7 +34,7 @@ export default function AddFood() {
     const [cameraGranted, setCameraGranted] = useState<boolean>(false);
     const [useScanner, setUseScanner] = useState<boolean>(false);
     const [scanData, setScanData] = useState<string>();
-    const [focusIndex, setFocusIndex] = useState<number | null>(0);
+    const [focusIndex, setFocusIndex] = useState<number>(0);
 
     useEffect(() => {
         (async function getCameraPermission() {
@@ -52,10 +52,13 @@ export default function AddFood() {
         const productName = barcodedata.title;//Product's name | undefined
         if (productName) {
             const itemsClone = JSON.parse(JSON.stringify(items))
-            if (focusIndex !== null) { itemsClone[focusIndex].name = productName }
+            itemsClone[focusIndex].name = productName
             console.log("name,", productName)
             setItems(itemsClone)
             scanNextMessage.current = `Scanned "${productName}". \nPress here to insert another one.`
+        }
+        else {
+            formatItems("Scanned code is not in database", focusIndex, "error")
         }
 
         // setListBlockMargin(50)
@@ -136,12 +139,6 @@ export default function AddFood() {
                 <Text style={styles.headlineText}>Add New Food Item</Text>
             </View>
             {/**Block 2 */}
-            {scanData &&
-                <Pressable style={styles.buttonScanNext} onPress={() => {
-                    setScanData(undefined)
-                    handleScanNext()
-                }} ><Text style={styles.buttonText}>Scan next?</Text>
-                </Pressable>}
             {!useScanner && <Text style={[styles.headlineText, { marginVertical: 10, color: "green" }]}>
                 Press <MaterialCommunityIcons name='barcode-scan' size={15} /> button to scan barcode
             </Text>}
@@ -158,12 +155,22 @@ export default function AddFood() {
                     <StatusBar style="auto" />
                 </View>)}
             <View>
-                <Pressable
-                    style={[styles.button, { backgroundColor: "gray", borderColor: "gray", borderWidth: 0.5 }]}
-                    onPress={() => { setItems([blankItem, ...items]) }} >
-                    <Text style={[styles.buttonText, { color: "white" }]}>
-                        <MaterialCommunityIcons name="form-textbox" size={15} /> Insert Another Entry</Text>
-                </Pressable>
+                {scanData && useScanner ?
+                    <Pressable style={[styles.button, { backgroundColor: "#4F7E17", height: 60 }]} onPress={() => {
+                        setScanData(undefined);
+                        formatItems("", focusIndex, "error");
+                        handleScanNext();
+                    }} >
+                        <Text style={[styles.buttonText, { color: "white" }]}>
+                            {items[focusIndex].error !== "required" && `${items[focusIndex].error}...\n`}
+                            <MaterialCommunityIcons name='barcode-scan' size={20} />  Scan Next?</Text>
+                    </Pressable>
+                    : <Pressable
+                        style={[styles.button, { backgroundColor: "#66666E" }]}
+                        onPress={() => { setItems([blankItem, ...items]) }} >
+                        <Text style={[styles.buttonText, { color: "#FAF6EA" }]}>
+                            <MaterialCommunityIcons name="form-textbox" size={15} /> Insert Another Entry</Text>
+                    </Pressable>}
             </View>
             <ScrollView style={styles.scrollBlok}>
                 <View>
@@ -174,13 +181,15 @@ export default function AddFood() {
                                 { borderWidth: index === focusIndex ? 5 : 1 },
                                 { borderColor: index === focusIndex ? "darkred" : "darkgray" }]}
                                 key={`addFoodItem${index}`}>
-                                <Text style={[styles.verticallySpaced, { color: item.error ? "red" : "black" }]}>{`Name ${item.error && item.error}`}</Text>
+                                <Text style={styles.verticallySpaced}>Name </Text>
+                                {item.error && <Text style={[styles.verticallySpaced, { color: "red" }]}>{item.error}</Text>}
                                 <View style={styles.namefield}>
                                     <TextInput style={styles.userInput}
                                         onFocus={() => {
                                             setFocusIndex(index)
                                             setUseScanner(false)
                                             setScanData(undefined)
+                                            isValid()
                                         }}
                                         placeholder={"Type here, or scan barcode."}
                                         value={item.name}
@@ -260,30 +269,6 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 150
     },
-    modalWindow: {
-        flex: 1,
-        justifyContent: "center",
-        alignContent: "center",
-        marginTop: 20,
-    },
-    modalView: {
-        margin: 30,
-        backgroundColor: '#ddd',
-        borderRadius: 20,
-        padding: 20,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 1,
-            height: 2,
-        },
-    },
-    modalText: {
-        margin: 10,
-        marginBottom: 20,
-        fontSize: 17,
-        textAlign: "center",
-    },
     block3_listContainer: {
     },
     block4_buttonBlock: {
@@ -295,7 +280,6 @@ const styles = StyleSheet.create({
     verticallySpaced: {
         alignSelf: "stretch",
     },
-
     formBox: {
         margin: 10,
         paddingHorizontal: 20,
@@ -338,19 +322,10 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         paddingRight: 15,
     },
-    buttonScanNext: {
-        backgroundColor: '#EFCA46',
-        height: 40,
-        borderRadius: 4,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        paddingLeft: 15,
-        paddingRight: 15,
-    },
     buttonText: {
         fontWeight: "bold",
         textAlignVertical: "center",
+        textAlign: "center",
     },
 
     /**Copied below from the other component, not sure the intention */
