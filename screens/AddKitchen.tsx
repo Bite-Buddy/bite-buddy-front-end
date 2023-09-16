@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TextInput, Button, Pressable } from 'react-native';
 import { Input } from "react-native-elements";
 // import { useStateValue } from '../store/State'
-import { userAtom, kitchensAtom } from '../utilities/store/atoms'
+import { userAtom, kitchensAtom, currentKitchenAtom } from '../utilities/store/atoms'
 import { useAtom } from 'jotai'
 import { createKitchen } from '../utilities/fetchRequests'
 import { useNavigation } from "@react-navigation/native";
@@ -13,6 +13,7 @@ export default function AddKitchen() {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useAtom(userAtom);
   const [kitchens, setKitchens] = useAtom(kitchensAtom);
+  const [currentKitchen, setCurrentKitchen] = useAtom(currentKitchenAtom);
   const navigation = useNavigation();
 
 
@@ -22,6 +23,7 @@ export default function AddKitchen() {
     const newKitchen = await createKitchen(user.id, name);
     console.log("The new kitchen is:", newKitchen);
     setKitchens(kitchens.concat(newKitchen.kitchen));
+    setCurrentKitchen(newKitchen.kitchen);
     navigation.navigate("Kitchen");
   }
     return (

@@ -48,7 +48,7 @@ export default function EditFood() {
     }
     setCurrentFoodList(foodListClone)
     setCurrentFoodItem(null)
-    navigation.navigate("Kitchen Details")
+    navigation.navigate("Kitchen")
   }
 
   async function deleteFoodItem() {
@@ -63,7 +63,7 @@ export default function EditFood() {
     setCurrentFoodList(foodListClone.filter(food => food.id !== response.foodResponse.id)
     )
     setLoading(false)
-    navigation.navigate('Kitchen Details')
+    navigation.navigate('Kitchen')
   }
 
   //Mark selected date on calendar
@@ -89,9 +89,8 @@ export default function EditFood() {
         onRequestClose={() => setModalVisible(!modalVisible)}>
         <View style={styles.modalWindow}>
           <View style={styles.modalView}>
-            <Text style={styles.headline}>Deleted item will be irrecoverable.</Text>
+            <Text style={styles.headline}>{`${currentFoodItem?.name} will be deleted!`}</Text>
             <Text style={styles.modalText}>Are you sure you want to delete this item?</Text>
-            <Text style={styles.modalText}>Deleting: {currentFoodItem && currentFoodItem.name}</Text>
             <View style={styles.buttons}>
               <Pressable style={[styles.button, { backgroundColor: "gray" }]} onPress={() => { setModalVisible(false) }}>
                 <Text style={[styles.buttonText, { color: "white" }]}>

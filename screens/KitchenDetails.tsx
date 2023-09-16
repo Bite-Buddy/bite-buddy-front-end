@@ -1,16 +1,16 @@
 import { StyleSheet, View, ScrollView, Pressable } from "react-native";
-import { Text } from "react-native-elements";
+import { Button, Icon, Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { useAtomValue, useAtom } from 'jotai'
 import { currentKitchenAtom, currentFoodListAtom, currentFoodItemAtom } from "../utilities/store/atoms";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
-import React, { useState } from "react";
-import { updateFoodById } from "../utilities/fetchRequests";
+import React, { useEffect, useState } from "react";
+import { getKitchenByID, updateFoodById } from "../utilities/fetchRequests";
 import { AntDesign } from '@expo/vector-icons';
+import { ListItem } from '@rneui/themed';
 import { IFood } from "../utilities/interfaces";
-
-
+import { ScreenWidth } from "react-native-elements/dist/helpers";
 
 export default function KitchenDetails() {
   const today = new Date();
@@ -21,14 +21,32 @@ export default function KitchenDetails() {
   const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom)
   const [inStock, setinStock] = useState(true)
 
+  useEffect(() => {
+    fetchFoodList();
+  }, [currentKitchen])
 
-  function handleFoodSelect(selectedFood) {
+  function handleFoodSelect(selectedFood: IFood) {
     console.log(selectedFood)
     setCurrentFoodItem(selectedFood)
     navigation.navigate('Edit Food')
   }
 
-  async function handleAddToShopping(selectedFood) {
+  const fetchFoodList = async () => {
+    console.log('fetching foodlist', currentKitchen)
+    if (currentKitchen) {
+      try {
+        let kitchenInfo = await getKitchenByID(currentKitchen.id);
+        let modList = await kitchenInfo.food_list.map(item => { return { ...item, "bought_on": new Date(item.bought_on)} })
+        // setFoodList(modList)
+        console.log('setting', modList)
+        setCurrentFoodList(modList)
+      } catch (e) {
+        console.error("Error fetching food list: ", e)
+      }
+    }
+  }
+
+  async function handleAddToShopping(selectedFood: IFood) {
     if (!selectedFood) return;
     const response = await updateFoodById(selectedFood.id, { inStock: false })
     let foodListClone: IFood[] = JSON.parse(JSON.stringify(currentFoodList))
@@ -46,13 +64,17 @@ export default function KitchenDetails() {
     setCurrentFoodItem(null)
 
   }
-
-
+//<Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
+  async function handleSwipe(item: IFood) {
+    await handleAddToShopping(item)
+  }
 
   return (
     <View style={styles.container}>
       <ScrollView>
         <View>
+          <View>
+          </View>
           <View style={styles.verticallySpaced}>
             {!currentFoodList.length ? <Text style={styles.noItem}>No items in stock</Text>
               //calculate the day offset of the bought item
@@ -60,14 +82,30 @@ export default function KitchenDetails() {
                 //Calculate the day offset of te bought day from today
                 const dayOffSet = Math.floor((today.getTime() - foodItem.bought_on.getTime()) / (24 * 60 * 60 * 1000))
                 return (
-                  <Pressable style={styles.list} key={`foodItem${foodItem.id}`} onPress={() => { handleFoodSelect(foodItem) }} >
-                    <Text style={[styles.name]} ellipsizeMode={"tail"} numberOfLines={1}>{foodItem.name}</Text>
-                    <Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
-                    <Pressable style={styles.button} onPress={() => handleAddToShopping(foodItem)}>
-                      <Text style={styles.text}><AntDesign name="minuscircleo" size={20} color="black" /></Text>
-                    </Pressable>
-                  </Pressable>
+                  <ListItem.Swipeable style={styles.list}  
+                    leftWidth={ScreenWidth/2}
+                    key={`foodItem${foodItem.id}`}
+                    leftContent={(reset) => (
+                      <Button
+                      title="Adding to shopping list"
+                      onPress={() => reset()}
+                      buttonStyle={{ height: 75, backgroundColor: '#4dd377', borderRadius: 7,  marginTop: 5, marginLeft: 10, marginRight: 20, padding: 2 }}
+                  />
+                    )}
+                    onSwipeEnd={() => handleSwipe(foodItem)}
+                  >
+                    <ListItem.Content>
+                      <Pressable  key={`foodItem${foodItem.id}`} onPress={() => { handleFoodSelect(foodItem) }} >
+                      <ListItem.Title><Text style={styles.name} ellipsizeMode={"tail"} numberOfLines={1}>{foodItem.name}</Text>
+                     
+                      </ListItem.Title>
+                      <ListItem.Subtitle><Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text></ListItem.Subtitle>
+                        
+                      </Pressable>
+                    </ListItem.Content>
+                  </ListItem.Swipeable>
 
+                  
                 );
               })}
           </View>
@@ -112,10 +150,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   name: {
-    padding: 2,
+    padding: 10,
     fontSize: 15,
     fontWeight: "bold",
     marginTop: 5,
+    marginRight: 30,
     marginLeft: 10,
     width: 150,
   },
@@ -136,18 +175,21 @@ const styles = StyleSheet.create({
     marginRight: 10
   },
   list: {
-    flexDirection: "row",
+    // flexDirection: "row",
     backgroundColor: 'white',
     borderWidth: 0,
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     marginTop: 5,
+    padding: 2,
     marginLeft: 10,
     marginRight: 10,
-    height: 50,
+    height: 75,
     borderTopLeftRadius: 7,
     borderTopRightRadius: 7,
     borderBottomLeftRadius: 7,
     borderBottomRightRadius: 7,
+    fontSize: 15,
+
   },
   button: {
     display: 'flex',
