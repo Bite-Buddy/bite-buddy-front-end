@@ -16,7 +16,7 @@ export default function Header() {
   }
   return (
     <View style={styles.header}>
-      <Pressable style={styles.button} title="Kitchen" onPress={() => navigate('Kitchen')}>
+      <Pressable style={styles.button} title="Kitchen" onPress={() => navigation.navigate("Kitchen Settings", { screen: 'Kitchen' })}>
       <Text style={styles.text}><MaterialCommunityIcons name="fridge-outline" size={30} color="black" /></Text>
       </Pressable>
       <Pressable style={styles.button} title="List" onPress={() => navigate('List')}>

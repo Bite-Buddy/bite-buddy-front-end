@@ -1,14 +1,13 @@
-import { Pressable, StyleSheet, View } from "react-native";
-import { Text, Input, Button } from "react-native-elements";
+import { Modal, Pressable, StyleSheet, View } from "react-native";
+import { Text, Input } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
+import { Calendar } from "react-native-calendars";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAtom } from 'jotai'
-import { useState, useEffect, useMemo, SetStateAction } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { currentFoodItemAtom, currentFoodListAtom } from "../utilities/store/atoms";
 import { deleteFoodById, updateFoodById } from "../utilities/fetchRequests"
 import { IFood } from "../utilities/interfaces";
-import { Calendar } from "react-native-calendars";
-
-
 
 export default function EditFood() {
   const navigation = useNavigation();
@@ -19,11 +18,12 @@ export default function EditFood() {
   const [loading, setLoading] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>("");
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   //Initial state setup
   useEffect(() => {
     const initialDate = currentFoodItem && new Date(currentFoodItem.bought_on)
-    initialDate && setSelectedDate(`${initialDate.getFullYear()}-${initialDate.getMonth() - 1}-${initialDate.getDate()}`)
+    initialDate && setSelectedDate(`${initialDate.getFullYear()}-${initialDate.getMonth() + 1}-${initialDate.getDate()}`)
   }, [])
 
   //Watch changes in currentFoodItem and selectedDate
@@ -48,7 +48,7 @@ export default function EditFood() {
     }
     setCurrentFoodList(foodListClone)
     setCurrentFoodItem(null)
-    navigation.navigate("Kitchen Details")
+    navigation.navigate("Kitchen")
   }
 
   async function deleteFoodItem() {
@@ -63,7 +63,7 @@ export default function EditFood() {
     setCurrentFoodList(foodListClone.filter(food => food.id !== response.foodResponse.id)
     )
     setLoading(false)
-    navigation.navigate('Kitchen Details')
+    navigation.navigate('Kitchen')
   }
 
   //Mark selected date on calendar
@@ -82,21 +82,42 @@ export default function EditFood() {
 
   return (
     <View style={styles.container}>
-    <View style={styles.verticallySpaced}>
-      <Text style={styles.headline}>Edit Food</Text>
-      <Input
-            label="Name"
-            onChangeText={(text) => setName(text)}
-            value={name}
-            autoCapitalize={'none'}
-          />
-      <Text style={styles.verticallySpaced}>Bought on</Text>
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(!modalVisible)}>
+        <View style={styles.modalWindow}>
+          <View style={styles.modalView}>
+            <Text style={styles.headline}>{`${currentFoodItem?.name} will be deleted!`}</Text>
+            <Text style={styles.modalText}>Are you sure you want to delete this item?</Text>
+            <View style={styles.buttons}>
+              <Pressable style={[styles.button, { backgroundColor: "gray" }]} onPress={() => { setModalVisible(false) }}>
+                <Text style={[styles.buttonText, { color: "white" }]}>
+                  Cancel</Text></Pressable>
+              <Pressable style={[styles.button, { backgroundColor: "red" }]} onPress={() => { deleteFoodItem() }}>
+                <Text style={[styles.buttonText, { color: "white" }]}>
+                  Delete<MaterialCommunityIcons name="delete-alert-outline" size={20} /></Text></Pressable>
+
+            </View>
+          </View>
+        </View>
+      </Modal >
+      <View style={styles.verticallySpaced}>
+        <Text style={styles.headline}>Edit Food</Text>
+        <Input
+          label="Name"
+          onChangeText={(text) => setName(text)}
+          value={name}
+          autoCapitalize={'none'}
+        />
+        <Text style={styles.verticallySpaced}>Bought on</Text>
         <Pressable style={styles.userInput}
           onPress={() => {
             setShowCalendar(true)
             marked;
           }}>
-          <Text >{boughtOn.toLocaleString()}</Text>
+          <Text >{`${boughtOn.getFullYear()}-${boughtOn.getMonth() + 1}-${boughtOn.getDate()}`}</Text>
         </Pressable >
         {showCalendar && <Calendar
           enableSwipeMonths
@@ -108,12 +129,12 @@ export default function EditFood() {
           }}
           markedDates={marked}
         />}
-      <Pressable style={styles.button} disabled={loading} onPress={() => updateFoodItem()} ><Text style={styles.buttonText}>Update Food</Text></Pressable>
-    </View>
-    <View>
-      <Pressable style={styles.button} disabled={loading} onPress={() => deleteFoodItem()} ><Text style={styles.buttonText}>Delete Food</Text></Pressable>
-    </View>
-  </View>
+        <Pressable style={styles.button} disabled={loading} onPress={() => updateFoodItem()} ><Text style={styles.buttonText}>Update Food</Text></Pressable>
+      </View>
+      <View>
+        <Pressable style={styles.button} disabled={loading} onPress={() => setModalVisible(true)} ><Text style={styles.buttonText}>Delete Food</Text></Pressable>
+      </View>
+    </View >
   )
 }
 
@@ -136,7 +157,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  buttons: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    margin: 20,
+  },
   button: {
+    marginHorizontal: 20,
+    paddingHorizontal: 15,
     backgroundColor: '#EFCA46',
     height: 40,
     borderRadius: 4,
@@ -145,7 +174,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonText: {
-    fontWeight: "bold"
+    fontWeight: "bold",
+    textAlignVertical: "center"
   },
   calendar: {
     marginBottom: 10,
@@ -156,5 +186,29 @@ const styles = StyleSheet.create({
     padding: 5,
     borderColor: "lightgray",
     borderWidth: 1,
+  },
+  modalWindow: {
+    flex: 1,
+    justifyContent: "center",
+    alignContent: "center",
+    marginTop: 20,
+  },
+  modalView: {
+    margin: 30,
+    backgroundColor: '#ddd',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 1,
+      height: 2,
+    },
+  },
+  modalText: {
+    margin: 10,
+    marginBottom: 20,
+    fontSize: 17,
+    textAlign: "center",
   },
 })

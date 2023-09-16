@@ -1,14 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, TextInput, Button, Pressable } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { StyleSheet, View, Text, ScrollView, TextInput, Pressable } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
-import { useAtom, useAtomValue } from 'jotai';
-import { currentFoodListAtom, currentKitchenAtom } from '../utilities/store/atoms';
-import { createFood } from '../utilities/fetchRequests';
 import { StatusBar } from 'expo-status-bar';
 import { BarCodeScanner } from "expo-barcode-scanner";
-import { searchByBarcode } from '../utilities/fetchRequests';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useAtom, useAtomValue } from 'jotai';
+import { currentFoodListAtom, currentKitchenAtom } from '../utilities/store/atoms';
+import { createFood, searchByBarcode } from '../utilities/fetchRequests';
 
 type Items = {
     name: string,
@@ -18,24 +17,23 @@ type Items = {
     focus: boolean
 }[]
 
+function dateToSrting(date: Date) {
+    const datestr = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+    return datestr
+}
+
 export default function AddFood() {
-    function dateFormatter(date: Date) {
-        const datestr = `${date.getFullYear()}-${date.getMonth() - 1}-${date.getDate()}`;
-        console.log(datestr)
-        return datestr
-    }
     const navigation = useNavigation();
     const today = new Date();
-    const INITIAL_DATE = dateFormatter(today);
+    const initialDateStr = dateToSrting(today);
     const blankItem = { name: "", boughtOn: today, error: "", showCalendar: false, focus: true }
+    const scanNextMessage = useRef<string>("");
     const currentKitchen = useAtomValue(currentKitchenAtom);
     const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom);
     const [items, setItems] = useState<Items>([blankItem]);
-    const [selectedDate, setSelectedDate] = useState<string>("");
     const [cameraGranted, setCameraGranted] = useState<boolean>(false);
     const [useScanner, setUseScanner] = useState<boolean>(false);
     const [scanData, setScanData] = useState<string>();
-    const [listBlockMargin, setListBlockMargin] = useState<number>(0);
     const [focusIndex, setFocusIndex] = useState<number>(0);
 
     useEffect(() => {
@@ -48,33 +46,34 @@ export default function AddFood() {
     }, []);
 
     async function handleBarCodeScanned({ data }: { data: string }) {
-        setScanData(data);
-        console.log(`Data: ${data}`);
-        const barcodedata = await searchByBarcode(parseInt(data));
-        const name = barcodedata.title;
-        const itemsClone = JSON.parse(JSON.stringify(items))
-        itemsClone[focusIndex].name = name
-        console.log("name,", name)
-        console.log(itemsClone)
-        setItems(itemsClone)
-        setListBlockMargin(50)
+        console.log('Hanldling scan')
+        setScanData(data);//Scanned raw serial number
+        const barcodedata = await searchByBarcode(data.toString());//Get fetch request to the barcode database API
+        const productName = barcodedata.title;//Product's name | undefined
+        if (productName) {
+            const itemsClone = JSON.parse(JSON.stringify(items))
+            itemsClone[focusIndex].name = productName
+            itemsClone[focusIndex].error = `Scanned barcode successfully`
+            console.log("name,", productName)
+            setItems(itemsClone)
+            scanNextMessage.current = ""
+
+        }
+        else {
+            formatItems("Scanned code is not in database", focusIndex, "error")
+        }
+
+        // setListBlockMargin(50)
     };
 
-    const marked = useMemo(() => {
-        if (selectedDate !== "") {
-            return {
-                [selectedDate]: {
-                    selected: true,
-                    disableTouchEvent: true,
-                    selectedColor: 'orange',
-                    selectedTextColor: 'red',
-                }
-            }
-        }
-    }, [selectedDate]);
+    function handleScanNext() {
+        isValid() && setItems([blankItem, ...items])
+        setScanData(undefined)
+    }
 
     //Check if all items name are not blank
     function isValid(): boolean {
+        console.log("Checking validation.---")
         const someEmpty = items.some(item => item.name === "");
         //Update error message if there is any empty input
         if (someEmpty) {
@@ -95,6 +94,7 @@ export default function AddFood() {
     }
 
     const handleSubmit = (): void => {
+        console.log("Handling submit")
         //Checks validation. If not validate, gets out from this block.
         if (!isValid() || !currentKitchen) return
 
@@ -111,18 +111,24 @@ export default function AddFood() {
                 setCurrentFoodList(currentFoodList.concat(preparedFoodList));
             })
             .catch((e) => { console.error(e) })
-            .finally(() => navigation.navigate("Kitchen Details")); //Currently not using, but will be implemented
+            .finally(() => navigation.navigate("Kitchen")); //Currently not using, but will be implemented
     }
 
     function formatItems(value: string | boolean, index: number, key: string) {
-        const newItems = JSON.parse(JSON.stringify(items));
+        console.log("Formatting items");
+        console.log(`value: ${value}, index: ${index}, key: ${key}`);
+        let newItems = JSON.parse(JSON.stringify(items));
         if (key === "boughtOn" && typeof value === "string") {
+            /**This is probably causing a problem with the boughtOn date formating in the Calendar component.
+             * Currently it is patched with alternative not ideal operation.*/
             newItems[index][key] = new Date(value);
             newItems[index].showCalendar = false;
         }
         else {
             newItems[index][key] = value;
-            if (key === "showCalendar") { setSelectedDate(INITIAL_DATE) }
+            if (key === "name" && value !== "") {
+                newItems[index].error = ""
+            }
         }
         console.log(newItems)
         setItems(newItems)
@@ -130,49 +136,72 @@ export default function AddFood() {
 
     return (
         <View style={styles.root}>
-            <ScrollView contentContainerStyle={styles.container}>
-                {/**Block 1 */}
-                <View style={styles.block1_headline}><Text>Add New Item</Text></View>
-                {/**Block 2 */}
-                {useScanner && cameraGranted && (
-                    <View style={styles.block2_scanner}>
-                        <BarCodeScanner
-                            style={styles.block2_scanner}
-                            onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
-                        />
-                        {scanData &&
-                            <Pressable style={styles.buttonScanNext} onPress={() => {
-                                setScanData(undefined)
-                                isValid() && setItems([blankItem, ...items])
-                            }} ><Text style={styles.buttonText}>Scan next?</Text></Pressable>}
-                    </View>)}
-                {!cameraGranted && (
-                    <View>
-                        <Text>Please grant camera permissions to Bite Buddy.</Text>
-                        <StatusBar style="auto" />
-                    </View>)
-                }
-                <View style={styles.more}>
-                    <Pressable
-                        style={styles.button}
-                        onPress={() => { setItems([blankItem, ...items]) }} >
-                        <Text style={styles.buttonText}>
-                            <MaterialCommunityIcons name="form-textbox" size={15} color="black" />
-                            Insert another entry</Text>
+            {/**Block 1 */}
+            <View style={[styles.block1_headline]}>
+                <Text style={styles.headlineText}>Add New Food Item</Text>
+            </View>
+            {/**Block 2 */}
+            {!useScanner && <Text style={[styles.headlineText, { marginVertical: 10, color: "green" }]}>
+                Press <MaterialCommunityIcons name='barcode-scan' size={15} /> button to scan barcode
+            </Text>}
+            {useScanner && cameraGranted && (
+                <View style={styles.block2_scanner}>
+                    <BarCodeScanner
+                        style={styles.scanner}
+                        onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
+                    />
+                </View>)}
+            {!cameraGranted && (
+                <View style={styles.block2_scanner}>
+                    <Text>Please grant camera permissions to Bite Buddy.</Text>
+                    <StatusBar style="auto" />
+                </View>)}
+            <View>
+                {scanData && useScanner ?
+                    <Pressable style={[styles.button, { backgroundColor: "#4F7E17", height: 60 }]} onPress={() => {
+                        setScanData(undefined);
+                        formatItems("", focusIndex, "error");
+                        handleScanNext();
+                    }} >
+                        <Text style={[styles.buttonText, { color: "white" }]}>
+                            {items[focusIndex].error !== "required" && `${items[focusIndex].error}...\n`}
+                            <MaterialCommunityIcons name='barcode-scan' size={18} />  Press here to scan next </Text>
                     </Pressable>
-                </View>
-                <View style={{ marginTop: listBlockMargin /**Need this here to change it dynamically */ }}>
+                    : <Pressable
+                        style={[styles.button, { backgroundColor: "#66666E" }]}
+                        onPress={() => { setItems([blankItem, ...items]) }} >
+                        <Text style={[styles.buttonText, { color: "#FAF6EA" }]}>
+                            <MaterialCommunityIcons name="form-textbox" size={15} /> Insert Another Entry</Text>
+                    </Pressable>}
+            </View>
+            <ScrollView style={styles.scrollBlok}>
+                <View>
                     {items.map((item, index) => {
                         return (
-                            <View style={[styles.formBox, { borderWidth: item.focus ? 5 : 1 }]} key={`addFoodItem${index}`}>
-                                <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
+                            <View style={[
+                                styles.formBox,
+                                { borderWidth: index === focusIndex ? 5 : 1 },
+                                { borderColor: index === focusIndex ? "darkred" : "darkgray" }]}
+                                key={`addFoodItem${index}`}>
+                                <Text style={styles.verticallySpaced}>Name </Text>
+                                {item.error && <Text style={[styles.verticallySpaced, { color: item.error.includes("success") ? "green" : "red" }]}>{item.error}</Text>}
                                 <View style={styles.namefield}>
                                     <TextInput style={styles.userInput}
+                                        onFocus={() => {
+                                            setFocusIndex(index)
+                                            setUseScanner(false)
+                                            setScanData(undefined)
+                                            isValid()
+                                        }}
                                         placeholder={"Type here, or scan barcode."}
                                         value={item.name}
                                         onChangeText={(value) => formatItems(value, index, "name")} />
                                     <View style={{ marginHorizontal: 20, paddingLeft: 10 }}>
-                                        <Pressable style={{ alignItems: 'center' }} onPress={() => setUseScanner(!useScanner)}>
+                                        <Pressable style={{ alignItems: 'center' }}
+                                            onPress={() => {
+                                                setFocusIndex(index)
+                                                setUseScanner(index === focusIndex ? !useScanner : true)
+                                            }}>
                                             <Text><MaterialCommunityIcons name='barcode-scan' size={25} /></Text>
                                             <Text>scan</Text>
                                         </Pressable>
@@ -180,31 +209,36 @@ export default function AddFood() {
                                 </View>
                                 <Text style={styles.verticallySpaced}>Bought on</Text>
                                 <Pressable style={styles.userInput}
-                                    onPress={() => formatItems(true, index, "showCalendar")}>
-                                    <Text >{dateFormatter(item.boughtOn)}</Text>
+                                    onPress={() => {
+                                        formatItems(true, index, "showCalendar");
+                                        setFocusIndex(index);
+                                    }}
+                                    onBlur={() => { formatItems(false, index, "showCalendar") }}>
+                                    <Text >{dateToSrting(new Date(item.boughtOn))/**This is a temporary solution */}</Text>
                                 </Pressable >
                                 {item.showCalendar && <Calendar
                                     enableSwipeMonths
-                                    current={INITIAL_DATE}
+                                    current={initialDateStr}
                                     style={styles.calendar}
                                     onDayPress={(day) => { formatItems(day.dateString, index, "boughtOn") }}
-                                    markedDates={marked}
                                 />}
-                            </View>)
+                            </View>
+                        )
                     })}
                 </View>
-                {/**block 4*/}
-                <View style={styles.block4_buttonBlock}>
-                    <View style={styles.buttons}>
-                        <Pressable style={styles.button} onPress={handleSubmit} >
-                            <Text style={[styles.buttonText,{maxWidth:200}]} ellipsizeMode="tail" numberOfLines={1}>Add to {currentKitchen?.name}</Text>
-                        </Pressable>
-                        <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen Details")} >
-                            <Text style={styles.buttonText}>Cancel</Text>
-                        </Pressable>
-                    </View>
-                </View>
             </ScrollView >
+            {/**block 4*/}
+            <View style={styles.block4_buttonBlock}>
+                <View style={styles.buttons}>
+                    <Pressable style={styles.button} onPress={handleSubmit} >
+                        <Text style={[styles.buttonText, { maxWidth: 200 }]} ellipsizeMode="tail" numberOfLines={1}>Add to {currentKitchen?.name}</Text>
+                    </Pressable>
+                    <Pressable style={[styles.button, { backgroundColor: "lightgray" }]}
+                        onPress={() => navigation.navigate('Kitchen')} >
+                        <Text style={styles.buttonText}>Cancel</Text>
+                    </Pressable>
+                </View>
+            </View>
         </View >
     );
 }
@@ -214,30 +248,39 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
     },
-    container: {
-        flexGrow: 2,
-        marginTop: 0, //might not need this
-        padding: 10,//might not need this
-        marginBottom: 0,//might not need this
-    },
     block1_headline: {
         margin: 10,
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
+        textAlignVertical: 'center',
+    },
+    headlineText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    scrollBlok: {
+        flexGrow: 1,
+        padding: 10,//might not need this
     },
     block2_scanner: {
-        height: 250,
+        marginVertical: 10,
+    },
+    scanner: {
+        width: '100%',
+        height: 150
     },
     block3_listContainer: {
     },
     block4_buttonBlock: {
+        margin: 20,
+        verticalAlign: "middle",
+        borderStyle: "dotted",
+        borderTopWidth: 1,
     },
     verticallySpaced: {
         alignSelf: "stretch",
-    },
-    scanner: {
-        width: '100%'
     },
     formBox: {
         margin: 10,
@@ -249,7 +292,6 @@ const styles = StyleSheet.create({
     },
     userInput: {
         flex: 1,
-        height: 40,
         marginBottom: 15,
         padding: 5,
         borderColor: "lightgray",
@@ -257,9 +299,6 @@ const styles = StyleSheet.create({
     },
     namefield: {
         flexDirection: 'row',
-    },
-    more: {
-        margin: 10
     },
     calendar: {
         marginBottom: 10,
@@ -285,19 +324,10 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         paddingRight: 15,
     },
-    buttonScanNext: {
-        backgroundColor: '#EFCA46',
-        height: 40,
-        borderRadius: 4,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        paddingLeft: 15,
-        paddingRight: 15,
-    },
     buttonText: {
         fontWeight: "bold",
         textAlignVertical: "center",
+        textAlign: "center",
     },
 
     /**Copied below from the other component, not sure the intention */
