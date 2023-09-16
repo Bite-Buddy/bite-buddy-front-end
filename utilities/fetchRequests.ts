@@ -369,7 +369,7 @@ export async function createInvite(kitchenId: number, recipientEmail: string): P
       method: "POST",
       body: JSON.stringify({
         kitchenId: kitchenId,
-        recipientEmail: recipientEmail
+        email: recipientEmail
       }),
       headers: {
         "Accept": "application/json",
