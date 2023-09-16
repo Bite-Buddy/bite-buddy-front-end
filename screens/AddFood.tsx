@@ -109,7 +109,7 @@ export default function AddFood() {
                 setCurrentFoodList(currentFoodList.concat(preparedFoodList));
             })
             .catch((e) => { console.error(e) })
-            .finally(() => navigation.navigate("Kitchen Details")); //Currently not using, but will be implemented
+            .finally(() => navigation.navigate("Kitchen")); //Currently not using, but will be implemented
     }
 
     function formatItems(value: string | boolean, index: number, key: string) {

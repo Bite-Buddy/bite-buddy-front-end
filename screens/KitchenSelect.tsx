@@ -8,7 +8,7 @@ import { useAtom } from "jotai";
 import { kitchensAtom, currentKitchenAtom, currentFoodListAtom } from "../utilities/store/atoms";
 import { IKitchen } from "../utilities/interfaces";
 
-export default function Kitchen() {
+export default function KitchenSelect() {
   const today = new Date();
   const navigation = useNavigation();
   //Initial state is set as an empty array
@@ -41,7 +41,7 @@ export default function Kitchen() {
   }
 
   function selectKitchen(kitchen: IKitchen) {
-    navigation.navigate("Kitchen Settings");
+    navigation.navigate("Kitchen");
     setCurrentKitchen(kitchen);
   }
 
