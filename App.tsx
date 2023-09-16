@@ -5,7 +5,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Header from "./header/Header";
-import { Auth, Account, Profile, List, EditFood, AddFood, AddKitchen, BarcodeScan } from "./screens/screens";
+import { Auth, Account, Profile, List, EditFood, AddFood, AddKitchen, BarcodeScan, ReceivedInvites } from "./screens/screens";
 import Drawer from "./screens/Drawer";
 import { createUser, getBySupabaseID, getUsers } from "./utilities/fetchRequests";
 import { IUser } from "./utilities/interfaces";
@@ -147,6 +147,15 @@ export default function App() {
 
         })} />
         <Stack.Screen name="Barcode Scan" component={BarcodeScan} options={({ navigation }) => ({
+          headerBackVisible: false,
+          headerLeft: () => null,
+          headerTitle: () => <Header />,
+          headerStyle: {
+            backgroundColor: '#EFCA46',
+          },
+
+        })} />
+        <Stack.Screen name="Received Invites" component={ReceivedInvites} options={({ navigation }) => ({
           headerBackVisible: false,
           headerLeft: () => null,
           headerTitle: () => <Header />,
