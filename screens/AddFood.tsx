@@ -53,9 +53,11 @@ export default function AddFood() {
         if (productName) {
             const itemsClone = JSON.parse(JSON.stringify(items))
             itemsClone[focusIndex].name = productName
+            itemsClone[focusIndex].error = `Scanned barcode successfully`
             console.log("name,", productName)
             setItems(itemsClone)
-            scanNextMessage.current = `Scanned "${productName}". \nPress here to insert another one.`
+            scanNextMessage.current = ""
+
         }
         else {
             formatItems("Scanned code is not in database", focusIndex, "error")
@@ -163,7 +165,7 @@ export default function AddFood() {
                     }} >
                         <Text style={[styles.buttonText, { color: "white" }]}>
                             {items[focusIndex].error !== "required" && `${items[focusIndex].error}...\n`}
-                            <MaterialCommunityIcons name='barcode-scan' size={20} />  Scan Next?</Text>
+                            <MaterialCommunityIcons name='barcode-scan' size={18} />  Press here to scan next </Text>
                     </Pressable>
                     : <Pressable
                         style={[styles.button, { backgroundColor: "#66666E" }]}
@@ -182,7 +184,7 @@ export default function AddFood() {
                                 { borderColor: index === focusIndex ? "darkred" : "darkgray" }]}
                                 key={`addFoodItem${index}`}>
                                 <Text style={styles.verticallySpaced}>Name </Text>
-                                {item.error && <Text style={[styles.verticallySpaced, { color: "red" }]}>{item.error}</Text>}
+                                {item.error && <Text style={[styles.verticallySpaced, { color: item.error.includes("success") ? "green" : "red" }]}>{item.error}</Text>}
                                 <View style={styles.namefield}>
                                     <TextInput style={styles.userInput}
                                         onFocus={() => {
@@ -232,7 +234,7 @@ export default function AddFood() {
                         <Text style={[styles.buttonText, { maxWidth: 200 }]} ellipsizeMode="tail" numberOfLines={1}>Add to {currentKitchen?.name}</Text>
                     </Pressable>
                     <Pressable style={[styles.button, { backgroundColor: "lightgray" }]}
-                        onPress={() => navigation.navigate("Kitchen Details")} >
+                        onPress={() => navigation.navigate('Kitchen')} >
                         <Text style={styles.buttonText}>Cancel</Text>
                     </Pressable>
                 </View>
