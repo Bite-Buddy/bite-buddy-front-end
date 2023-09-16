@@ -155,7 +155,7 @@ export default function App() {
           },
 
         })} />
-        <Stack.Screen name="Received Invites" component={ReceivedInvites} options={({ navigation }) => ({
+        <Stack.Screen name="ReceivedInvites" component={ReceivedInvites} options={({ navigation }) => ({
           headerBackVisible: false,
           headerLeft: () => null,
           headerTitle: () => <Header />,
