@@ -34,7 +34,7 @@ export default function KitchenDetails() {
     if (currentKitchen) {
       try {
         let kitchenInfo = await getKitchenByID(currentKitchen.id);
-        let modList = await kitchenInfo.food_list.map(item => { return { ...item, "bought_on": new Date(item.bought_on) } })
+        let modList = await kitchenInfo.food_list.map(item => { return { ...item, "bought_on": new Date(item.bought_on) } });
         // setFoodList(modList)
         console.log('setting', modList)
         setCurrentFoodList(modList)
@@ -76,43 +76,45 @@ export default function KitchenDetails() {
           <View style={styles.verticallySpaced}>
             {!currentFoodList.length ? <Text style={styles.noItem}>No items in stock</Text>
               //calculate the day offset of the bought item
-              : currentFoodList.filter((foodItem) => foodItem.inStock === true).map((foodItem) => {
-                //Calculate the day offset of te bought day from today
-                const dayOffSet = Math.floor((today.getTime() - foodItem.bought_on.getTime()) / (24 * 60 * 60 * 1000))
-                return (
-                  <ListItem.Swipeable style={styles.list}
-                    leftWidth={ScreenWidth / 2}
-                    key={`foodItem${foodItem.id}`}
-                    leftContent={(reset) => (
-                      <Button
-                        title="Adding to shopping list"
-                        onPress={() => reset()}
-                        buttonStyle={{ height: 75, backgroundColor: '#4dd377', borderRadius: 7, marginTop: 5, marginLeft: 10, marginRight: 20, padding: 2 }}
-                      />
-                    )}
-                    onSwipeEnd={() => handleSwipe(foodItem)}
-                  >
-                    <ListItem.Content>
-                      <Pressable key={`foodItem${foodItem.id}`} onPress={() => { handleFoodSelect(foodItem) }} >
-                        <ListItem.Title>
-                          <Text style={styles.name} ellipsizeMode={"tail"} numberOfLines={1}>{foodItem.name}</Text>
-                        </ListItem.Title>
-                        <ListItem.Subtitle>
-                          <Text style={styles.date}>
-                            Added {dayOffSet === 0
-                              ? "today"
-                              : dayOffSet === 1
-                                ? "yesterday"
-                                : `${dayOffSet} days ago`}
-                          </Text>
-                        </ListItem.Subtitle>
-                      </Pressable>
-                    </ListItem.Content>
-                  </ListItem.Swipeable>
+              : currentFoodList.filter((foodItem) => foodItem.inStock === true)
+                .sort((a, b) => (b.bought_on.getTime()) - (a.bought_on.getTime()))
+                .map((foodItem) => {
+                  //Calculate the day offset of te bought day from today
+                  const dayOffSet = Math.floor((today.getTime() - foodItem.bought_on.getTime()) / (24 * 60 * 60 * 1000))
+                  return (
+                    <ListItem.Swipeable style={styles.list}
+                      leftWidth={ScreenWidth / 2}
+                      key={`foodItem${foodItem.id}`}
+                      leftContent={(reset) => (
+                        <Button
+                          title="Adding to shopping list"
+                          onPress={() => reset()}
+                          buttonStyle={{ height: 75, backgroundColor: '#4dd377', borderRadius: 7, marginTop: 5, marginLeft: 10, marginRight: 20, padding: 2 }}
+                        />
+                      )}
+                      onSwipeEnd={() => handleSwipe(foodItem)}
+                    >
+                      <ListItem.Content>
+                        <Pressable key={`foodItem${foodItem.id}`} onPress={() => { handleFoodSelect(foodItem) }} >
+                          <ListItem.Title>
+                            <Text style={styles.name} ellipsizeMode={"tail"} numberOfLines={1}>{foodItem.name}</Text>
+                          </ListItem.Title>
+                          <ListItem.Subtitle>
+                            <Text style={styles.date}>
+                              Added {dayOffSet === 0
+                                ? "today"
+                                : dayOffSet === 1
+                                  ? "yesterday"
+                                  : `${dayOffSet} days ago`}
+                            </Text>
+                          </ListItem.Subtitle>
+                        </Pressable>
+                      </ListItem.Content>
+                    </ListItem.Swipeable>
 
 
-                );
-              })}
+                  );
+                })}
           </View>
         </View>
       </ScrollView>
