@@ -3,10 +3,30 @@ import { Text, Input, Button } from "react-native-elements";
 import { invitesAtom } from "../utilities/store/atoms";
 import { useAtom } from "jotai";
 import { useNavigation } from "@react-navigation/native";
+import { getByDatabaseID, getKitchenByID } from "../utilities/fetchRequests";
+import { useState, useEffect } from "react";
 
 export default function ReceivedInvites() {
     const [invites, setInvites] = useAtom(invitesAtom)
-    console.log(invites);
+    const [inviteNames, setInviteNames] = useState<string[]>([]);
+
+    const fetchFoodNames = async () => {
+      try {
+        if (invites) {
+            let kitchenIds = invites.map((invite => invite.kitchen_id))
+            let kitchenInfo = kitchenIds.map((id => getKitchenByID(id)))
+            let kitchenNames = await Promise.all(kitchenInfo.map(async (kitchen) => {
+              return (await kitchen).name
+            }));
+            setInviteNames(kitchenNames)
+          }
+        }
+      catch {
+
+      }
+    }
+
+
     return (
         <View style={styles.container}>
           <View style={styles.verticallySpaced}>
