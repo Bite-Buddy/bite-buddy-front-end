@@ -94,11 +94,18 @@ export default function KitchenDetails() {
                   >
                     <ListItem.Content>
                       <Pressable key={`foodItem${foodItem.id}`} onPress={() => { handleFoodSelect(foodItem) }} >
-                        <ListItem.Title><Text style={styles.name} ellipsizeMode={"tail"} numberOfLines={1}>{foodItem.name}</Text>
-
+                        <ListItem.Title>
+                          <Text style={styles.name} ellipsizeMode={"tail"} numberOfLines={1}>{foodItem.name}</Text>
                         </ListItem.Title>
-                        <ListItem.Subtitle><Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text></ListItem.Subtitle>
-
+                        <ListItem.Subtitle>
+                          <Text style={styles.date}>
+                            Added {dayOffSet === 0
+                              ? "today"
+                              : dayOffSet === 1
+                                ? "yesterday"
+                                : `${dayOffSet} days ago`}
+                          </Text>
+                        </ListItem.Subtitle>
                       </Pressable>
                     </ListItem.Content>
                   </ListItem.Swipeable>
