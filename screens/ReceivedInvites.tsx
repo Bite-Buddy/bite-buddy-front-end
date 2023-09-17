@@ -1,6 +1,6 @@
 import { Modal, Pressable, StyleSheet, ScrollView, View } from "react-native";
 import { Text, Input, Button } from "react-native-elements";
-import { invitesAtom, currentInviteAtom } from "../utilities/store/atoms";
+import { invitesAtom, currentInviteAtom, inviteNamesAtom } from "../utilities/store/atoms";
 import { useAtom } from "jotai";
 import { useNavigation } from "@react-navigation/native";
 import { getByDatabaseID, getInviteById, getKitchenByID } from "../utilities/fetchRequests";
@@ -9,27 +9,39 @@ import { IInvite, IReceivedInvite } from "../utilities/interfaces";
 
 export default function ReceivedInvites() {
     const [invites, setInvites] = useAtom(invitesAtom)
-    const [inviteNames, setInviteNames] = useState<IReceivedInvite[]>([]);
+    const [inviteNames, setInviteNames] = useAtom(inviteNamesAtom);
     const [currentInvite, setCurrentInvite] = useAtom(currentInviteAtom);
     const navigation = useNavigation();
 
+
     useEffect(() => {
       if (invites) {
-        fetchFoodNames()
+        fetchKitchenNames()
       }
     }, [invites])
-    const fetchFoodNames = async () => {
+    const fetchKitchenNames = async () => {
       try {
         if (invites) {
-            let kitchenIds = invites.map((invite => invite.kitchen_id))
-            let kitchenInfo = kitchenIds.map((id => getKitchenByID(id)))
-            let kitchenNames = await Promise.all(kitchenInfo.map(async (kitchen) => {
-              let receivedInvite: IReceivedInvite = {name: '', id: 0};
-              receivedInvite.name = (await kitchen).name;
-              receivedInvite.id = (await kitchen).id;
-              return receivedInvite;
-            }));
-            setInviteNames(kitchenNames)
+          const inviteIds = invites.map((invite) => invite.id);
+          const kitchenIds = invites.map((invite) => invite.kitchen_id);
+          
+          const kitchenInfo = await Promise.all(
+            kitchenIds.map(async (id) => {
+              const kitchen = await getKitchenByID(id);
+              return {
+                name: kitchen.name,
+                kitchen_id: kitchen.id,
+              };
+            })
+          );
+          
+          const receivedInvites = invites.map((invite, index) => ({
+            id: inviteIds[index],
+            kitchen_id: kitchenIds[index],
+            name: kitchenInfo[index].name,
+          }));
+          
+            setInviteNames(receivedInvites)
           }
         }
       catch (error){ 
