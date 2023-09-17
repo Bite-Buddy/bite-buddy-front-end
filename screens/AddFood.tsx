@@ -1,14 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, TextInput, Button, Pressable } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { StyleSheet, View, Text, ScrollView, TextInput, Pressable } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
-import { useAtom, useAtomValue } from 'jotai';
-import { currentFoodListAtom, currentKitchenAtom } from '../utilities/store/atoms';
-import { createFood } from '../utilities/fetchRequests';
 import { StatusBar } from 'expo-status-bar';
 import { BarCodeScanner } from "expo-barcode-scanner";
-import { searchByBarcode } from '../utilities/fetchRequests';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useAtom, useAtomValue } from 'jotai';
+import { currentFoodListAtom, currentKitchenAtom } from '../utilities/store/atoms';
+import { createFood, searchByBarcode } from '../utilities/fetchRequests';
 
 type Items = {
     name: string,
@@ -28,15 +27,14 @@ export default function AddFood() {
     const today = new Date();
     const initialDateStr = dateToSrting(today);
     const blankItem = { name: "", boughtOn: today, error: "", showCalendar: false, focus: true }
+    const scanNextMessage = useRef<string>("");
     const currentKitchen = useAtomValue(currentKitchenAtom);
     const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom);
     const [items, setItems] = useState<Items>([blankItem]);
-    const [selectedDateStr, setSelectedDateStr] = useState<string>("");
     const [cameraGranted, setCameraGranted] = useState<boolean>(false);
     const [useScanner, setUseScanner] = useState<boolean>(false);
     const [scanData, setScanData] = useState<string>();
-    const [listBlockMargin, setListBlockMargin] = useState<number>(0);
-    const [focusIndex, setFocusIndex] = useState<number | null>(0);
+    const [focusIndex, setFocusIndex] = useState<number>(0);
 
     useEffect(() => {
         (async function getCameraPermission() {
@@ -49,30 +47,29 @@ export default function AddFood() {
 
     async function handleBarCodeScanned({ data }: { data: string }) {
         console.log('Hanldling scan')
-        setScanData(data);
-        console.log(`Data: ${data}`);
-        const barcodedata = await searchByBarcode(parseInt(data));
-        const name = barcodedata.title;
-        const itemsClone = JSON.parse(JSON.stringify(items))
-        if (focusIndex) itemsClone[focusIndex].name = name
-        console.log("name,", name)
-        console.log(itemsClone)
-        setItems(itemsClone)
-        setListBlockMargin(50)
+        setScanData(data);//Scanned raw serial number
+        const barcodedata = await searchByBarcode(data.toString());//Get fetch request to the barcode database API
+        const productName = barcodedata.title;//Product's name | undefined
+        if (productName) {
+            const itemsClone = JSON.parse(JSON.stringify(items))
+            itemsClone[focusIndex].name = productName
+            itemsClone[focusIndex].error = `Scanned barcode successfully`
+            console.log("name,", productName)
+            setItems(itemsClone)
+            scanNextMessage.current = ""
+
+        }
+        else {
+            formatItems("Scanned code is not in database", focusIndex, "error")
+        }
+
+        // setListBlockMargin(50)
     };
 
-    const marked = useMemo(() => {
-        if (selectedDateStr !== "") {
-            return {
-                [selectedDateStr]: {
-                    selected: true,
-                    disableTouchEvent: true,
-                    selectedColor: 'orange',
-                    selectedTextColor: 'red',
-                }
-            }
-        }
-    }, [selectedDateStr]);
+    function handleScanNext() {
+        isValid() && setItems([blankItem, ...items])
+        setScanData(undefined)
+    }
 
     //Check if all items name are not blank
     function isValid(): boolean {
@@ -121,7 +118,10 @@ export default function AddFood() {
         console.log("Formatting items");
         console.log(`value: ${value}, index: ${index}, key: ${key}`);
         let newItems = JSON.parse(JSON.stringify(items));
-        if (key === "boughtOn" && typeof value === "string") {
+        if (key === "remove") {
+            newItems.splice(index, 1);
+        }
+        else if (key === "boughtOn" && typeof value === "string") {
             /**This is probably causing a problem with the boughtOn date formating in the Calendar component.
              * Currently it is patched with alternative not ideal operation.*/
             newItems[index][key] = new Date(value);
@@ -129,7 +129,9 @@ export default function AddFood() {
         }
         else {
             newItems[index][key] = value;
-            if (key === "showCalendar") { setSelectedDateStr(initialDateStr) }
+            if (key === "name" && value !== "") {
+                newItems[index].error = ""
+            }
         }
         console.log(newItems)
         setItems(newItems)
@@ -137,88 +139,119 @@ export default function AddFood() {
 
     return (
         <View style={styles.root}>
-            <ScrollView contentContainerStyle={styles.container}>
-                {/**Block 1 */}
-                <View style={styles.block1_headline}>
-                    <Text style={styles.headlineText}>Add New Item</Text>
-                    <Text style={[styles.headlineText, { marginVertical: 10, color: "green" }]}>Press <MaterialCommunityIcons name='barcode-scan' size={15} /> button to scan barcode </Text>
-                </View>
-                {/**Block 2 */}
-                {scanData &&
-                    <Pressable style={styles.buttonScanNext} onPress={() => {
-                        setScanData(undefined)
-                        isValid() && setItems([blankItem, ...items])
-                    }} ><Text style={styles.buttonText}>Scan next?</Text></Pressable>}
-                {useScanner && cameraGranted && (
-                    <View style={styles.block2_scanner}>
-                        <BarCodeScanner
-                            style={styles.block2_scanner}
-                            onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
-                        />
-
-                    </View>)}
-                {!cameraGranted && (
-                    <View>
-                        <Text>Please grant camera permissions to Bite Buddy.</Text>
-                        <StatusBar style="auto" />
-                    </View>)
-                }
-                <Pressable
-                    style={styles.button}
-                    onPress={() => { setItems([blankItem, ...items]) }} >
-                    <Text style={styles.buttonText}>
-                        <MaterialCommunityIcons name="form-textbox" size={15} color="black" /> Insert Another Entry</Text>
-                </Pressable>
-                <View style={{ marginTop: listBlockMargin /**Need this here to change it dynamically */ }}>
+            {/**Block 1 */}
+            <View style={[styles.block1_headline]}>
+                <Text style={styles.headlineText}>Add New Food Item</Text>
+            </View>
+            {/**Block 2 */}
+            {!useScanner && <Text style={[styles.headlineText, { marginVertical: 10, color: "green" }]}>
+                Press <MaterialCommunityIcons name='barcode-scan' size={15} /> button to scan barcode
+            </Text>}
+            {useScanner && cameraGranted && (
+                <View style={styles.block2_scanner}>
+                    <BarCodeScanner
+                        style={styles.scanner}
+                        onBarCodeScanned={scanData ? undefined : handleBarCodeScanned}
+                    />
+                </View>)}
+            {!cameraGranted && (
+                <View style={styles.block2_scanner}>
+                    <Text>Please grant camera permissions to Bite Buddy.</Text>
+                    <StatusBar style="auto" />
+                </View>)}
+            <View>
+                {scanData && useScanner ?
+                    <Pressable style={[styles.button, { backgroundColor: "#4F7E17", height: 60 }]} onPress={() => {
+                        setScanData(undefined);
+                        formatItems("", focusIndex, "error");
+                        handleScanNext();
+                    }} >
+                        <Text style={[styles.buttonText, { color: "white" }]}>
+                            {items[focusIndex].error !== "required" && `${items[focusIndex].error}...\n`}
+                            <MaterialCommunityIcons name='barcode-scan' size={18} />  Press here to scan next </Text>
+                    </Pressable>
+                    : <Pressable
+                        style={[styles.button, { backgroundColor: "#66666E" }]}
+                        onPress={() => { setItems([blankItem, ...items]) }} >
+                        <Text style={[styles.buttonText, { color: "#FAF6EA" }]}>
+                            <MaterialCommunityIcons name="form-textbox" size={15} /> Insert Another Entry</Text>
+                    </Pressable>}
+            </View>
+            <ScrollView style={styles.scrollBlok}>
+                <View>
                     {items.map((item, index) => {
                         return (
-                            <View style={[styles.formBox, { borderWidth: index === focusIndex ? 5 : 1 }]} key={`addFoodItem${index}`}>
-                                <Text style={styles.verticallySpaced}>{`Name ${item.error && item.error}`}</Text>
-                                <View style={styles.namefield}>
-                                    <TextInput style={styles.userInput}
-                                        onFocus={() => setFocusIndex(index)}
-                                        placeholder={"Type here, or scan barcode."}
-                                        value={item.name}
-                                        onChangeText={(value) => formatItems(value, index, "name")} />
-                                    <View style={{ marginHorizontal: 20, paddingLeft: 10 }}>
-                                        <Pressable style={{ alignItems: 'center' }} onPress={() => setUseScanner(!useScanner)}>
-                                            <Text><MaterialCommunityIcons name='barcode-scan' size={25} /></Text>
-                                            <Text>scan</Text>
-                                        </Pressable>
-                                    </View>
+                            <View style={{ flexDirection: "row" }} key={`addFoodItem${index}`}>
+                                <View style={{ flex: 2, alignContent: "center", alignItems: "stretch" }}>
+                                    <Pressable style={{ alignItems: 'center', marginVertical: 50/**Don't know how to centerize */ }}
+                                        onPress={() => { formatItems("", index, "remove") }}>
+                                        <Text style={{ color: "darkred" }}><MaterialCommunityIcons name='text-box-remove' size={25} /></Text>
+                                        <Text style={{ color: "darkred" }}>remove</Text>
+                                    </Pressable>
                                 </View>
-                                <Text style={styles.verticallySpaced}>Bought on</Text>
-                                <Pressable style={styles.userInput}
-                                    onPress={() => {
-                                        formatItems(true, index, "showCalendar");
-                                        setFocusIndex(index);
-                                    }}
-                                    onBlur={() => { formatItems(false, index, "showCalendar") }}>
-                                    <Text >{dateToSrting(new Date(item.boughtOn))/**This is a temporary solution */}</Text>
-                                </Pressable >
-                                {item.showCalendar && <Calendar
-                                    enableSwipeMonths
-                                    current={initialDateStr}
-                                    style={styles.calendar}
-                                    onDayPress={(day) => { formatItems(day.dateString, index, "boughtOn") }}
-                                    markedDates={marked}
-                                />}
-                            </View>
-                        )
+                                <View style={[
+                                    styles.formBox,
+                                    { borderWidth: index === focusIndex ? 5 : 1 },
+                                    { borderColor: index === focusIndex ? "#E5A732" : "darkgray" }]}>
+                                    <Text style={styles.verticallySpaced}>Name </Text>
+                                    {item.error && <Text style={[styles.verticallySpaced, { color: item.error.includes("success") ? "green" : "red" }]}>{item.error}</Text>}
+                                    <View style={styles.namefield}>
+                                        <TextInput style={styles.userInput}
+                                            textAlign="left"
+                                            textAlignVertical="center"
+                                            onFocus={() => {
+                                                setFocusIndex(index)
+                                                setUseScanner(false)
+                                                setScanData(undefined)
+                                                isValid()
+                                            }}
+                                            placeholder={"Type here, or scan barcode."}
+                                            value={item.name}
+                                            onChangeText={(value) => formatItems(value, index, "name")} />
+                                        <View style={{ marginLeft: 5, paddingLeft: 10 }}>
+                                            <Pressable style={{ alignItems: 'center' }}
+                                                onPress={() => {
+                                                    setFocusIndex(index)
+                                                    setUseScanner(index === focusIndex ? !useScanner : true)
+                                                }}>
+                                                <Text style={{ color: focusIndex === index && useScanner ? "gray" : "green" }}><MaterialCommunityIcons name='barcode-scan' size={25} /></Text>
+                                                <Text style={{ color: focusIndex === index && useScanner ? "gray" : "green" }}>
+                                                    {focusIndex === index && useScanner ? "disable" : "scan"}</Text>
+                                            </Pressable>
+                                        </View>
+                                    </View>
+                                    <Text style={styles.verticallySpaced}>Bought on</Text>
+                                    <Pressable style={styles.userInput}
+                                        onPress={() => {
+                                            formatItems(true, index, "showCalendar");
+                                            setFocusIndex(index);
+                                        }}
+                                        onBlur={() => { formatItems(false, index, "showCalendar") }}>
+                                        <Text >{dateToSrting(new Date(item.boughtOn))/**This is a temporary solution */}</Text>
+                                    </Pressable >
+                                    {item.showCalendar && <Calendar
+                                        enableSwipeMonths
+                                        current={initialDateStr}
+                                        style={styles.calendar}
+                                        onDayPress={(day) => { formatItems(day.dateString, index, "boughtOn") }}
+                                    />}
+                                </View>
+                            </View>)
                     })}
                 </View>
-                {/**block 4*/}
-                <View style={styles.block4_buttonBlock}>
-                    <View style={styles.buttons}>
-                        <Pressable style={styles.button} onPress={handleSubmit} >
-                            <Text style={[styles.buttonText, { maxWidth: 200 }]} ellipsizeMode="tail" numberOfLines={1}>Add to {currentKitchen?.name}</Text>
-                        </Pressable>
-                        <Pressable style={styles.button} onPress={() => navigation.navigate("Kitchen")} >
-                            <Text style={styles.buttonText}>Cancel</Text>
-                        </Pressable>
-                    </View>
-                </View>
             </ScrollView >
+            {/**block 4*/}
+            < View style={styles.block4_buttonBlock} >
+                <View style={styles.buttons}>
+                    <Pressable style={styles.button} onPress={handleSubmit} >
+                        <Text style={[styles.buttonText, { maxWidth: 200 }]} ellipsizeMode="tail" numberOfLines={1}>Add to {currentKitchen?.name}</Text>
+                    </Pressable>
+                    <Pressable style={[styles.button, { backgroundColor: "lightgray" }]}
+                        onPress={() => navigation.navigate('Kitchen')} >
+                        <Text style={styles.buttonText}>Cancel</Text>
+                    </Pressable>
+                </View>
+            </View >
         </View >
     );
 }
@@ -228,14 +261,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
     },
-    container: {
-        flexGrow: 2,
-        marginTop: 0, //might not need this
-        padding: 10,//might not need this
-        marginBottom: 0,//might not need this
-    },
     block1_headline: {
-        flex: 1,
         margin: 10,
         fontSize: 18,
         fontWeight: 'bold',
@@ -247,30 +273,31 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
     },
+    scrollBlok: {
+        flexGrow: 1,
+        padding: 10,//might not need this
+    },
     block2_scanner: {
-        height: 250,
+        marginVertical: 10,
+    },
+    scanner: {
+        width: '100%',
+        height: 150
     },
     block3_listContainer: {
-    },
-    block4_buttonBlock: {
     },
     verticallySpaced: {
         alignSelf: "stretch",
     },
-    scanner: {
-        width: '100%'
-    },
     formBox: {
+        flex: 8,
         margin: 10,
         paddingHorizontal: 20,
         paddingVertical: 10,
-        borderColor: "gray",
-        borderWidth: 1,
         borderRadius: 10,
     },
     userInput: {
         flex: 1,
-        height: 40,
         marginBottom: 15,
         padding: 5,
         borderColor: "lightgray",
@@ -278,9 +305,6 @@ const styles = StyleSheet.create({
     },
     namefield: {
         flexDirection: 'row',
-    },
-    more: {
-        margin: 10
     },
     calendar: {
         marginBottom: 10,
@@ -290,6 +314,12 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: 'lightgrey',
         fontSize: 16,
+    },
+    block4_buttonBlock: {
+        margin: 20,
+        verticalAlign: "middle",
+        borderStyle: "dotted",
+        borderTopWidth: 1,
     },
     buttons: {
         flexDirection: "row",
@@ -306,19 +336,10 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         paddingRight: 15,
     },
-    buttonScanNext: {
-        backgroundColor: '#EFCA46',
-        height: 40,
-        borderRadius: 4,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        paddingLeft: 15,
-        paddingRight: 15,
-    },
     buttonText: {
         fontWeight: "bold",
         textAlignVertical: "center",
+        textAlign: "center",
     },
 
     /**Copied below from the other component, not sure the intention */
