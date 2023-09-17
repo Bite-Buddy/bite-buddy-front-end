@@ -1,6 +1,6 @@
-import { Modal, Pressable, StyleSheet, ScrollView, View } from "react-native";
+import { Modal, Pressable, StyleSheet, ScrollView, View, RefreshControl } from "react-native";
 import { Text, Input, Button } from "react-native-elements";
-import { invitesAtom, currentInviteAtom, inviteNamesAtom } from "../utilities/store/atoms";
+import { invitesAtom, currentInviteAtom, inviteNamesAtom, userAtom } from "../utilities/store/atoms";
 import { useAtom } from "jotai";
 import { useNavigation } from "@react-navigation/native";
 import { getByDatabaseID, getInviteById, getKitchenByID } from "../utilities/fetchRequests";
@@ -10,7 +10,9 @@ import { IInvite, IReceivedInvite } from "../utilities/interfaces";
 export default function ReceivedInvites() {
     const [invites, setInvites] = useAtom(invitesAtom)
     const [inviteNames, setInviteNames] = useAtom(inviteNamesAtom);
+    const [refreshing, setRefreshing] = useState(false);
     const [currentInvite, setCurrentInvite] = useAtom(currentInviteAtom);
+    const [user, setUser] = useAtom(userAtom)
     const navigation = useNavigation();
 
 
@@ -19,12 +21,19 @@ export default function ReceivedInvites() {
         fetchKitchenNames()
       }
     }, [invites])
+
+    const fetchNewInvites = async () => {
+      const userInfo = await getByDatabaseID(user.id);
+      const userInvites = userInfo.invites;
+      setInvites(userInvites)
+      setRefreshing(false)
+    }
+
     const fetchKitchenNames = async () => {
       try {
         if (invites) {
           const inviteIds = invites.map((invite) => invite.id);
           const kitchenIds = invites.map((invite) => invite.kitchen_id);
-          
           const kitchenInfo = await Promise.all(
             kitchenIds.map(async (id) => {
               const kitchen = await getKitchenByID(id);
@@ -40,7 +49,6 @@ export default function ReceivedInvites() {
             kitchen_id: kitchenIds[index],
             name: kitchenInfo[index].name,
           }));
-          
             setInviteNames(receivedInvites)
           }
         }
@@ -49,6 +57,12 @@ export default function ReceivedInvites() {
         throw error;
       }
     }
+
+    async function handleRefresh() {
+      setRefreshing(true)
+      await fetchNewInvites();
+    }
+
     function selectInvite(invite: IInvite) {
       navigation.navigate("InviteResponse")
       setCurrentInvite(invite);
@@ -58,8 +72,10 @@ export default function ReceivedInvites() {
     return (
       <View style={styles.container}>
         <View style={styles.verticallySpaced}>
+          <ScrollView refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }>  
           <Text style={styles.heading}>Received Invites</Text>
-          <ScrollView>
             <View>
               <View>
                 {inviteNames.map(invite => {
@@ -72,7 +88,6 @@ export default function ReceivedInvites() {
                 )})}
               </View>
             </View>
-  
           </ScrollView>
         </View>
       </View>
