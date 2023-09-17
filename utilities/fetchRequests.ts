@@ -363,6 +363,31 @@ export async function getFoodByID(id: string): Promise<IFood> {
 //Invite fetch requests
 //
 
+export async function getInvites(): Promise<IInvite[]> {
+  try {
+    const response = await fetch(`${DOMAIN}/invites/users`, {
+      method: "GET",
+    });
+    return response.json();
+  }
+  catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getInviteById(inviteId: number): Promise<IInvite> {
+  try {
+    const response = await fetch(`${DOMAIN}/invites/users/${inviteId}`, {
+      method: "GET",
+    })
+    return response.json();
+  }
+  catch (error) {
+    throw error;
+  }
+}
+
 export async function createInvite(kitchenId: number, recipientEmail: string): Promise<{message: string, invite: IInvite}> {
   try {
     const response = await fetch(`${DOMAIN}/invites/users`, {
