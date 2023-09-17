@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, View, ScrollView, Pressable } from "react-native";
+import { StyleSheet, View, ScrollView, Pressable, RefreshControl } from "react-native";
 import { Button, Text } from "react-native-elements";
 import { ListItem } from '@rneui/themed';
 import { ScreenWidth } from "react-native-elements/dist/helpers";
@@ -17,6 +17,7 @@ export default function KitchenDetails() {
   // const currentFoodList = useAtomValue(currentFoodListAtom);
   const [currentFoodItem, setCurrentFoodItem] = useAtom(currentFoodItemAtom)
   const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom)
+  const [refreshing, setRefreshing] = useState(false);
   const [inStock, setinStock] = useState(true)
 
   useEffect(() => {
@@ -38,6 +39,7 @@ export default function KitchenDetails() {
         // setFoodList(modList)
         console.log('setting', modList)
         setCurrentFoodList(modList)
+        setRefreshing(false)
       } catch (e) {
         console.error("Error fetching food list: ", e)
       }
@@ -67,9 +69,16 @@ export default function KitchenDetails() {
     await handleAddToShopping(item)
   }
 
+  async function handleRefresh() {
+      setRefreshing(true)
+      await fetchFoodList();
+    }
+
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }>
         <View>
           <View>
           </View>
