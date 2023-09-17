@@ -52,7 +52,7 @@ export default function Auth() {
   async function authenticate(provider: Provider) {
     try {
       const supabase_url = "https://qlpmqnbgyofvhqyhxvhi.supabase.co";
-      const redirectUri = process.env.KINGSHUK_URL; 
+      const redirectUri = process.env.FRONTEND_URL; 
       const response = await WebBrowser.openAuthSessionAsync(
         `${supabase_url}/auth/v1/authorize?provider=${provider}&redirect_to=${redirectUri}`,
         redirectUri
