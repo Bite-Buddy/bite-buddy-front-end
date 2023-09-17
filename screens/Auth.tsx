@@ -12,7 +12,7 @@ import * as WebBrowser from "expo-web-browser";
 import { useNavigation } from "@react-navigation/native";
 // import * as Linking from "expo-linking";
 import { createUser, getBySupabaseID } from "../utilities/fetchRequests";
-import { userAtom, kitchensAtom } from "../utilities/store/atoms";
+import { userAtom, kitchensAtom, invitesAtom, currentKitchenAtom } from "../utilities/store/atoms";
 import { useAtom } from "jotai";
 
 export default function Auth() {
@@ -21,6 +21,8 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useAtom(userAtom);
   const [kitchens, setKitchens] = useAtom(kitchensAtom);
+  const [invites, setInvites] = useAtom(invitesAtom);
+  const [currentKitchen, setCurrentKitchen] = useAtom(currentKitchenAtom)
   const navigation = useNavigation();
 
   // async function signInWithEmail() {
@@ -52,7 +54,7 @@ export default function Auth() {
   async function authenticate(provider: Provider) {
     try {
       const supabase_url = "https://qlpmqnbgyofvhqyhxvhi.supabase.co";
-      const redirectUri = process.env.FRONTEND_URL;
+      const redirectUri = process.env.KINGSHUK_URL;
       const response = await WebBrowser.openAuthSessionAsync(
         `${supabase_url}/auth/v1/authorize?provider=${provider}&redirect_to=${redirectUri}`,
         redirectUri
@@ -90,8 +92,9 @@ export default function Auth() {
         setUser(newUser);
         setKitchens(newUser.kitchens);
         setLoading(false);
-        if (user.kitchens.length > 0) {
-          navigation.navigate("Kitchen");
+        if (dbData.kitchens.length > 0) {
+          setCurrentKitchen(dbData.kitchens[0])
+          navigation.navigate("Kitchen Settings", { screen: 'Kitchen ' });
         }
         else {
           navigation.navigate("Account");
@@ -101,6 +104,7 @@ export default function Auth() {
     else {
       setUser(dbData);
       setKitchens(dbData.kitchens);
+      setInvites(dbData.invites)
       setLoading(false);
       if (user.kitchens.length > 0) {
         navigation.navigate("Kitchen");
