@@ -165,7 +165,7 @@ export default function AddFood() {
                     }} >
                         <Text style={[styles.buttonText, { color: "white" }]}>
                             {items[focusIndex].error !== "required" && `${items[focusIndex].error}...\n`}
-                            <MaterialCommunityIcons name='barcode-scan' size={18} />  Press here to scan next </Text>
+                            <MaterialCommunityIcons name='barcode-scan' size={18}/>  Press here to scan next </Text>
                     </Pressable>
                     : <Pressable
                         style={[styles.button, { backgroundColor: "#66666E" }]}
@@ -202,8 +202,8 @@ export default function AddFood() {
                                                 setFocusIndex(index)
                                                 setUseScanner(index === focusIndex ? !useScanner : true)
                                             }}>
-                                            <Text><MaterialCommunityIcons name='barcode-scan' size={25} /></Text>
-                                            <Text>scan</Text>
+                                            <Text style={{color:"green"}}><MaterialCommunityIcons name='barcode-scan' size={25}/></Text>
+                                            <Text style={{color:"green"}}>scan</Text>
                                         </Pressable>
                                     </View>
                                 </View>
