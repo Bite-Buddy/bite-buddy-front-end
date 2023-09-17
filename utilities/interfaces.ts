@@ -39,3 +39,8 @@ export interface IInvite {
 export interface IInviteForm {
   recipient_email: string
 }
+
+export interface IReceivedInvite {
+  id: number, 
+  name: string
+}
