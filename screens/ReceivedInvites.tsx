@@ -21,8 +21,9 @@ export default function ReceivedInvites() {
             setInviteNames(kitchenNames)
           }
         }
-      catch {
-
+      catch (error){ 
+        console.log(error);
+        throw error;
       }
     }
 
