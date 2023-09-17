@@ -18,6 +18,7 @@ export default function KitchenDetails() {
   const [currentFoodItem, setCurrentFoodItem] = useAtom(currentFoodItemAtom)
   const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom)
   const [inStock, setinStock] = useState(true)
+  const [touchStartTime, setTouchStartTime] = useState(0)
 
   useEffect(() => {
     fetchFoodList();
@@ -62,9 +63,15 @@ export default function KitchenDetails() {
     setCurrentFoodItem(null)
 
   }
-  //<Text style={styles.date}>Added {dayOffSet} day{dayOffSet > 1 ?? "s"} ago</Text>
+
+  function handleTouchStart() {
+    setTouchStartTime(Date.now())
+  }
+
   async function handleSwipe(item: IFood) {
-    await handleAddToShopping(item)
+    if ((Date.now() - touchStartTime) > 500) {
+       await handleAddToShopping(item)
+    }
   }
 
   return (
@@ -84,6 +91,7 @@ export default function KitchenDetails() {
                   return (
                     <ListItem.Swipeable style={styles.list}
                       leftWidth={ScreenWidth / 2}
+                      onTouchStart={handleTouchStart}
                       key={`foodItem${foodItem.id}`}
                       leftContent={(reset) => (
                         <Button
