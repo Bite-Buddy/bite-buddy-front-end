@@ -41,6 +41,7 @@ export interface IInviteForm {
 }
 
 export interface IReceivedInvite {
-  id: number, 
+  id: number,
+  kitchen_id: number, 
   name: string
 }
