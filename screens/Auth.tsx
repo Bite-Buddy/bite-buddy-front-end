@@ -91,8 +91,8 @@ export default function Auth() {
         setUser(newUser);
         setKitchens(newUser.kitchens);
         setLoading(false);
-        if (user.kitchens.length > 0) {
-          navigation.navigate("Kitchen");
+        if (dbData.kitchens.length > 0) {
+          navigation.navigate("Kitchen Settings", { screen: 'Kitchen ' });
         }
         else {
           navigation.navigate("Account");
