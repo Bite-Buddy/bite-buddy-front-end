@@ -412,7 +412,7 @@ export async function createInvite(kitchenId: number, recipientEmail: string): P
 
 export async function deleteInvite(inviteId: number): Promise<{message: string, inviteResponse: IInvite}> {
   try {
-    const response = await fetch(`${DOMAIN}/invites/users/reject`, {
+    const response = await fetch(`${DOMAIN}/invites/users/reject/${inviteId}`, {
       method: "DELETE",
       headers: {
         "Accept": "application/json",
@@ -432,7 +432,7 @@ export async function deleteInvite(inviteId: number): Promise<{message: string, 
 
 export async function acceptInvite(inviteId: number): Promise<{message: string, inviteResponse: IInvite}> {
   try {
-    const response = await fetch(`${DOMAIN}/invites/users/accept`, {
+    const response = await fetch(`${DOMAIN}/invites/users/accept/${inviteId}`, {
       method: "DELETE",
       headers: {
         "Accept": "application/json",
