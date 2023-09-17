@@ -90,7 +90,7 @@ export default function Auth() {
         setUser(newUser);
         setKitchens(newUser.kitchens);
         setLoading(false);
-        if (user.kitchens.length > 0) {
+        if (newUser.kitchens.length > 0) {
           navigation.navigate("Kitchen");
         }
         else {
@@ -102,7 +102,7 @@ export default function Auth() {
       setUser(dbData);
       setKitchens(dbData.kitchens);
       setLoading(false);
-      if (user.kitchens.length > 0) {
+      if (dbData.kitchens.length > 0) {
         navigation.navigate("Kitchen");
       }
       else {
