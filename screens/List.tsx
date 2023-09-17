@@ -20,6 +20,7 @@ export default function List() {
   const [name, setName] = useState("")
   const [boughtOn, setBoughtOn] = useState(new Date())
   const [loading, setLoading] = useState(false)
+  const [touchStartTime, setTouchStartTime] = useState(0)
   
   async function handleAddToKitchen(selectedFood) {
     if (!selectedFood) return;
@@ -38,6 +39,16 @@ export default function List() {
     setCurrentFoodItem(null)
   }
 
+  function handleTouchStart() {
+    setTouchStartTime(Date.now())
+  }
+
+  async function handleSwipe(item: IFood) {
+    if ((Date.now() - touchStartTime) > 500) {
+       await handleAddToKitchen(item)
+    }
+  }
+
   return (
     <View style={styles.container}>
             <ScrollView>
@@ -49,6 +60,7 @@ export default function List() {
                   <ListItem.Swipeable style={styles.list}
                     rightWidth={ScreenWidth/2}
                     minSlideWidth={50}
+                    onTouchStart={handleTouchStart}
                     key={`shoppingListItem${foodItem.id}`}
                     rightContent={(reset) => (
                       <Button
@@ -58,7 +70,7 @@ export default function List() {
                     />
                     )}
 
-                    onSwipeEnd={() => handleAddToKitchen(foodItem)}
+                    onSwipeEnd={() => handleSwipe(foodItem)}
                   >
                     <ListItem.Content>
                       <Pressable key={`foodItem${foodItem.id}`} >
