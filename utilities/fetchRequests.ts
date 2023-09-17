@@ -64,7 +64,7 @@ export async function getBySupabaseID(supabase_id: string): Promise<IUser> {
   }
 }
 
-export async function getByDatabaseID(id: string): Promise<IUser> {
+export async function getByDatabaseID(id: number): Promise<IUser> {
   try {
     const response = await fetch(`${DOMAIN}/users/${id}`, {
       method: "GET",
