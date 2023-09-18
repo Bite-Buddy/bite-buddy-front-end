@@ -40,9 +40,9 @@ async function invitesHandler() {
               <Pressable style={[styles.button, { backgroundColor: "gray" }]} onPress={() => { setModalVisible(false) }}>
                 <Text style={[styles.buttonText, { color: "white" }]}>
                   Cancel</Text></Pressable>
-              <Pressable style={[styles.button, { backgroundColor: "red" }]} onPress={() => { deleteHandler() }}>
+              <Pressable style={[styles.button, { backgroundColor: "#FD5D5D" }]} onPress={() => { deleteHandler() }}>
                 <Text style={[styles.buttonText, { color: "white" }]}>
-                  Delete<MaterialCommunityIcons name="delete-alert-outline" size={20} /></Text></Pressable>
+                  Delete</Text></Pressable>
 
             </View>
           </View>
@@ -68,7 +68,7 @@ async function invitesHandler() {
         <Pressable style={styles.button} onPressIn={() => signOutHandler()}>
           <Text style={styles.buttonText}>Sign Out</Text>
         </Pressable>
-        <Pressable style={styles.button} onPressIn={() => setModalVisible(true)}>
+        <Pressable style={styles.buttonD} onPressIn={() => setModalVisible(true)}>
           <Text style={styles.buttonText}>Delete Account</Text>
         </Pressable>
       </View>
@@ -99,13 +99,14 @@ const styles = StyleSheet.create({
   },
   button: {
     marginHorizontal: 20,
+    paddingHorizontal: 15,
     backgroundColor: '#FFD43A',
     height: 40,
     borderRadius: 4,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 10
+    marginVertical: 5,
   },
   buttonText: {
     fontWeight: "bold"
@@ -121,6 +122,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     margin: 20,
+  },
+  buttonD: {
+    marginHorizontal: 20,
+    backgroundColor: '#FD5D5D',
+    height: 40,
+    borderRadius: 4,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 180
   },
   modalWindow: {
     flex: 1,

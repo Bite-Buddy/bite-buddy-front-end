@@ -194,7 +194,7 @@ export default function AddFood() {
                                     { borderWidth: index === focusIndex ? 5 : 1 },
                                     { borderColor: index === focusIndex ? "#FFD43A" : "darkgray" }]}>
                                     <Text style={styles.verticallySpaced}>Name </Text>
-                                    {item.error && <Text style={[styles.verticallySpaced, { color: item.error.includes("success") ? "green" : "red" }]}>{item.error}</Text>}
+                                    {item.error && <Text style={[styles.verticallySpaced, { color: item.error.includes("success") ? "green" : "#FD5D5D" }]}>{item.error}</Text>}
                                     <View style={styles.namefield}>
                                         <TextInput style={styles.userInput}
                                             textAlign="left"

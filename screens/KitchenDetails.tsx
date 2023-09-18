@@ -102,17 +102,16 @@ export default function KitchenDetails() {
                       onTouchStart={handleTouchStart}
                       onPress={() => handleFoodSelect(foodItem)}
                       key={`foodItem${foodItem.id}`}
-                      minSlideWidth={20}
                       leftContent={(reset) => (
                         <Button
-                          title="Adding to shopping list"
+                          title="Add to shopping list"
                            onPress={
                               () => {
                                 reset();
                                 handleSwipe(foodItem);
                               }
                             }
-                          buttonStyle={{ height: 75, backgroundColor: '#4dd377', borderRadius: 7, marginTop: 15, marginLeft: 10, marginRight: 20, padding: 4 }}
+                          buttonStyle={{ height: 75, backgroundColor: '#4dd377', borderRadius: 7, marginTop: 15, marginLeft: 10, marginRight: 20, padding: 4, paddingHorizontal: 10, width: 120 }}
                         />
                       )}
                       rightContent={(reset) => (
@@ -125,7 +124,7 @@ export default function KitchenDetails() {
                           }
                           }
                           icon={{ name: 'delete', color: 'white' }}
-                          buttonStyle={{ height: 75, backgroundColor: 'red', borderRadius: 7, marginTop: 15, marginLeft: 10, marginRight: 20, padding: 2 }}
+                          buttonStyle={{ height: 75, backgroundColor: '#FD5D5D', borderRadius: 7, marginTop: 15, marginLeft: 10, marginRight: 20, padding: 2 }}
                         />
                       )}
                     >
@@ -143,7 +142,6 @@ export default function KitchenDetails() {
                             </Text>
                           </ListItem.Subtitle>
                       </ListItem.Content>
-                      <ListItem.Chevron />
                     </ListItem.Swipeable>
 
                   );

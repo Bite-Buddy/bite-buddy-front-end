@@ -65,7 +65,7 @@ export default function List() {
                     key={`shoppingListItem${foodItem.id}`}
                     rightContent={(reset) => (
                       <Button
-                      title="Adding to kitchen"
+                      title="Add to kitchen"
                       onPress={
                         () => {
                           reset();
