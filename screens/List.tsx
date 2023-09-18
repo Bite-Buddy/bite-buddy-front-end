@@ -51,26 +51,28 @@ export default function List() {
 
   return (
     <View style={styles.container}>
-            <ScrollView>
+      <ScrollView>
       <View style={styles.verticallySpaced}>
         <View style={styles.verticallySpaced}>
             {!currentFoodList.filter(food => food.inStock === false).length ? <Text style={styles.noItem}>The shopping list is empty</Text>
               : currentFoodList.filter((foodItem) => foodItem.inStock === false).map((foodItem) => {
                 return (
                   <ListItem.Swipeable style={styles.list}
-                    rightWidth={ScreenWidth/2}
-                    minSlideWidth={50}
+                    minSlideWidth={20}
                     onTouchStart={handleTouchStart}
                     key={`shoppingListItem${foodItem.id}`}
                     rightContent={(reset) => (
                       <Button
-                      title="Adding to kitchen"
-                      onPress={() => reset()}
+                      title="Add to kitchen"
+                      onPress={
+                        () => {
+                          reset();
+                          handleSwipe(foodItem);
+                        }
+                    }
                       buttonStyle={{ height: 60, backgroundColor: '#4dd377', borderRadius: 7, marginTop: 5, marginLeft: 10, marginRight: 20 }}
                     />
                     )}
-
-                    onSwipeEnd={() => handleSwipe(foodItem)}
                   >
                     <ListItem.Content>
                       <Pressable key={`foodItem${foodItem.id}`} >
