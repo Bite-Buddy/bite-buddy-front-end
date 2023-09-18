@@ -64,7 +64,7 @@ export async function getBySupabaseID(supabase_id: string): Promise<IUser> {
   }
 }
 
-export async function getByDatabaseID(id: string): Promise<IUser> {
+export async function getByDatabaseID(id: number): Promise<IUser> {
   try {
     const response = await fetch(`${DOMAIN}/users/${id}`, {
       method: "GET",
@@ -363,6 +363,31 @@ export async function getFoodByID(id: string): Promise<IFood> {
 //Invite fetch requests
 //
 
+export async function getInvites(): Promise<IInvite[]> {
+  try {
+    const response = await fetch(`${DOMAIN}/invites/users`, {
+      method: "GET",
+    });
+    return response.json();
+  }
+  catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getInviteById(inviteId: number): Promise<IInvite> {
+  try {
+    const response = await fetch(`${DOMAIN}/invites/users/${inviteId}`, {
+      method: "GET",
+    })
+    return response.json();
+  }
+  catch (error) {
+    throw error;
+  }
+}
+
 export async function createInvite(kitchenId: number, recipientEmail: string): Promise<{message: string, invite: IInvite}> {
   try {
     const response = await fetch(`${DOMAIN}/invites/users`, {
@@ -387,7 +412,7 @@ export async function createInvite(kitchenId: number, recipientEmail: string): P
 
 export async function deleteInvite(inviteId: number): Promise<{message: string, inviteResponse: IInvite}> {
   try {
-    const response = await fetch(`${DOMAIN}/invites/users/reject`, {
+    const response = await fetch(`${DOMAIN}/invites/users/reject/${inviteId}`, {
       method: "DELETE",
       headers: {
         "Accept": "application/json",
@@ -407,7 +432,7 @@ export async function deleteInvite(inviteId: number): Promise<{message: string, 
 
 export async function acceptInvite(inviteId: number): Promise<{message: string, inviteResponse: IInvite}> {
   try {
-    const response = await fetch(`${DOMAIN}/invites/users/accept`, {
+    const response = await fetch(`${DOMAIN}/invites/users/accept/${inviteId}`, {
       method: "DELETE",
       headers: {
         "Accept": "application/json",

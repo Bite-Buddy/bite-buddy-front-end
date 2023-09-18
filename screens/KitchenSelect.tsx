@@ -1,11 +1,11 @@
-import { StyleSheet, View, ScrollView, Pressable } from "react-native";
+import { StyleSheet, View, ScrollView, Pressable, RefreshControl } from "react-native";
 import { Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useEffect, useState } from "react";
-import { getKitchenByID } from "../utilities/fetchRequests"
+import { getKitchenByID, getByDatabaseID } from "../utilities/fetchRequests"
 import { useAtom } from "jotai";
-import { kitchensAtom, currentKitchenAtom, currentFoodListAtom } from "../utilities/store/atoms";
+import { kitchensAtom, currentKitchenAtom, currentFoodListAtom, userAtom } from "../utilities/store/atoms";
 import { IKitchen } from "../utilities/interfaces";
 
 export default function KitchenSelect() {
@@ -15,6 +15,8 @@ export default function KitchenSelect() {
   interface IfoodItem { name: string, bought_on: Date, id: string | number }
   // const [foodList, setFoodList] = useState<IfoodItem[] | null>(null);
   const [kitchens, setKitchens] = useAtom(kitchensAtom)
+  const [refreshing, setRefreshing] = useState(false);
+  const [user, setUser] = useAtom(userAtom)
   const [currentKitchen, setCurrentKitchen] = useAtom(currentKitchenAtom)
   const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom)
 
@@ -45,11 +47,24 @@ export default function KitchenSelect() {
     setCurrentKitchen(kitchen);
   }
 
+  const fetchNewKitchens = async () => {
+    const userInfo = await getByDatabaseID(user.id);
+    const userKitchens = userInfo.kitchens;
+    setKitchens(userKitchens)
+    setRefreshing(false)
+  }
+  async function handleRefresh() {
+    setRefreshing(true)
+    await fetchNewKitchens();
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.verticallySpaced}>
         <Text style={styles.heading}>My Kitchens</Text>
-        <ScrollView>
+        <ScrollView refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }>
           <View>
             <View>
               {kitchens.map(kitchen => {

@@ -12,7 +12,7 @@ import * as WebBrowser from "expo-web-browser";
 import { useNavigation } from "@react-navigation/native";
 // import * as Linking from "expo-linking";
 import { createUser, getBySupabaseID } from "../utilities/fetchRequests";
-import { userAtom, kitchensAtom, currentKitchenAtom } from "../utilities/store/atoms";
+import { userAtom, kitchensAtom, invitesAtom, currentKitchenAtom } from "../utilities/store/atoms";
 import { useAtom } from "jotai";
 
 export default function Auth() {
@@ -21,6 +21,7 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useAtom(userAtom);
   const [kitchens, setKitchens] = useAtom(kitchensAtom);
+  const [invites, setInvites] = useAtom(invitesAtom);
   const [currentKitchen, setCurrentKitchen] = useAtom(currentKitchenAtom)
   const navigation = useNavigation();
 
@@ -91,8 +92,8 @@ export default function Auth() {
         setUser(newUser);
         setKitchens(newUser.kitchens);
         setLoading(false);
-        if (newUser.kitchens.length > 0) {
-          setCurrentKitchen(newUser.kitchens[0])
+        if (dbData.kitchens.length > 0) {
+          setCurrentKitchen(dbData.kitchens[0])
           navigation.navigate("Kitchen Settings", { screen: 'Kitchen ' });
         }
         else {
@@ -103,10 +104,10 @@ export default function Auth() {
     else {
       setUser(dbData);
       setKitchens(dbData.kitchens);
+      setInvites(dbData.invites)
       setLoading(false);
-      if (dbData.kitchens.length > 0) {
-        setCurrentKitchen(dbData.kitchens[0])
-        navigation.navigate("Kitchen Settings", { screen: 'Kitchen ' });
+      if (user.kitchens.length > 0) {
+        navigation.navigate("Kitchen");
       }
       else {
         navigation.navigate("Account")
