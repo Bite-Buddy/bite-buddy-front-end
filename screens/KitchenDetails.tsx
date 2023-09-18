@@ -125,7 +125,7 @@ export default function KitchenDetails() {
                           }
                           }
                           icon={{ name: 'delete', color: 'white' }}
-                          buttonStyle={{ height: 75, backgroundColor: 'red', borderRadius: 7, marginTop: 5, marginLeft: 10, marginRight: 20, padding: 2 }}
+                          buttonStyle={{ height: 75, backgroundColor: 'red', borderRadius: 7, marginTop: 15, marginLeft: 10, marginRight: 20, padding: 2 }}
                         />
                       )}
                     >
