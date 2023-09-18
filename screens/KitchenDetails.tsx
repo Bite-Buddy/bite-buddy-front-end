@@ -105,7 +105,7 @@ export default function KitchenDetails() {
                       minSlideWidth={20}
                       leftContent={(reset) => (
                         <Button
-                          title="Adding to shopping list"
+                          title="Add to shopping list"
                            onPress={
                               () => {
                                 reset();
