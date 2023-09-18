@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View, Image } from "react-native";
 import { Text } from "react-native-elements";
 import { supabase } from "../supabaseService";
 import { useNavigation } from "@react-navigation/native";
@@ -12,7 +12,8 @@ export default function Account() {
   return (
     <View style={styles.container}>
       <View style={styles.verticallySpaced}>
-        <Text style={styles.heading}>Welcome to BiteBuddy</Text>
+        <Text style={styles.heading}>Welcome to</Text>
+        <Image style={styles.logoH} source={require('../assets/header.png')}/>
         <Pressable style={styles.button} onPress={() => createKitchen()} ><Text style={styles.name} >Create a Kitchen</Text></Pressable>
       </View>
     </View>
@@ -30,16 +31,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    backgroundColor: '#F8E8AF',
+    backgroundColor: '#FFF',
     padding: 20,
     margin: 0,
 
+  },
+  logoH: {
+    // marginBottom: 30,
+    alignItems: 'center',
   },
   verticallySpaced: {
     flex: 1,
     borderWidth: 0,
     borderRadius: 20,
     marginBottom: 20,
+    alignItems: 'center',
   },
   mt20: {
     marginTop: 20,
@@ -54,7 +60,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     flex: 1,
     fontWeight: 'bold',
-    color: 'black',
+    color: '#1D1D1D',
     textAlign: 'center',
   },
   name: {
@@ -73,7 +79,7 @@ const styles = StyleSheet.create({
   },
   list: {
     flexDirection: "row",
-    backgroundColor: '#EFCA46',
+    backgroundColor: '#FFD43A',
     borderWidth: 0,
     justifyContent: 'center',
     alignItems: "center",
@@ -87,13 +93,14 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 7,
   },
   button: {
-    backgroundColor: '#EFCA46',
+    backgroundColor: '#FFD43A',
     height: 40,
     borderRadius: 4,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     marginTop: 10,
-    marginBottom: 400
+    marginBottom: 400,
+    paddingHorizontal: 20,
   },
 })

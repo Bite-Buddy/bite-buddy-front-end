@@ -9,6 +9,7 @@ const Stack = createStackNavigator();
 
 export default function App() {
 
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Auth">
@@ -17,15 +18,15 @@ export default function App() {
           headerLeft: () => null,
           headerTitle: () => <Header />,
           headerStyle: {
-            backgroundColor: '#EFCA46',
+            backgroundColor: '#FFD43A',
           },
         })} />
         <Stack.Screen name="Auth" component={Auth} options={({ navigation }) => ({
           headerBackVisible: false,
           headerLeft: () => null,
-          headerTitle: () => <Text style={styles.auth}>BiteBuddy</Text>,
+          headerTitle: () => <Text style={styles.auth}></Text>,
           headerStyle: {
-            backgroundColor: '#EFCA46',
+            backgroundColor: '#FFD43A',
           },
 
         })} />
@@ -34,7 +35,7 @@ export default function App() {
           headerLeft: () => null,
           headerTitle: () => <Header />,
           headerStyle: {
-            backgroundColor: '#EFCA46',
+            backgroundColor: '#FFD43A',
           },
 
         })} />
@@ -43,7 +44,7 @@ export default function App() {
           headerLeft: () => null,
           headerTitle: () => <Header />,
           headerStyle: {
-            backgroundColor: '#EFCA46',
+            backgroundColor: '#FFD43A',
           },
 
         })} />
@@ -52,7 +53,7 @@ export default function App() {
           headerLeft: () => null,
           headerTitle: () => <Header />,
           headerStyle: {
-            backgroundColor: '#EFCA46',
+            backgroundColor: '#FFD43A',
           },
 
         })} />
@@ -61,7 +62,7 @@ export default function App() {
           headerLeft: () => null,
           headerTitle: () => <Header />,
           headerStyle: {
-            backgroundColor: '#EFCA46',
+            backgroundColor: '#FFD43A',
           },
 
         })} />
@@ -71,7 +72,7 @@ export default function App() {
           headerLeft: () => null,
           headerTitle: () => <Header />,
           headerStyle: {
-            backgroundColor: '#EFCA46',
+            backgroundColor: '#FFD43A',
           },
 
         })} />
@@ -80,7 +81,7 @@ export default function App() {
           headerLeft: () => null,
           headerTitle: () => <Header />,
           headerStyle: {
-            backgroundColor: '#EFCA46',
+            backgroundColor: '#FFD43A',
           },
 
         })} />
@@ -89,7 +90,7 @@ export default function App() {
           headerLeft: () => null,
           headerTitle: () => <Header />,
           headerStyle: {
-            backgroundColor: '#EFCA46',
+            backgroundColor: '#FFD43A',
           },
 
         })} />
@@ -98,7 +99,7 @@ export default function App() {
           headerLeft: () => null,
           headerTitle: () => <Header />,
           headerStyle: {
-            backgroundColor: '#EFCA46',
+            backgroundColor: '#FFD43A',
           },
 
         })} />
@@ -107,7 +108,7 @@ export default function App() {
           headerLeft: () => null,
           headerTitle: () => <Header />,
           headerStyle: {
-            backgroundColor: '#EFCA46',
+            backgroundColor: '#FFD43A',
           },
 
         })} />
@@ -121,6 +122,5 @@ const styles = StyleSheet.create({
   auth: {
     fontSize: 26,
     fontWeight: "bold",
-
   }
 })

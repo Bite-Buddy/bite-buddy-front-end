@@ -6,7 +6,8 @@
 //const DOMAIN = process.env.DOMAIN
 import { supabase } from "../supabaseService";
 import { IKitchen, IUser, IFood, IFoodRequest, IInvite } from "./interfaces";
-const DOMAIN = process.env.DOMAIN;
+
+const DOMAIN = process.env.BACKEND;
 
 //
 //User fetch requests
