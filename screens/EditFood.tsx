@@ -19,6 +19,7 @@ export default function EditFood() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   //Initial state setup
   useEffect(() => {
@@ -36,6 +37,10 @@ export default function EditFood() {
 
   async function updateFoodItem() {
     if (!currentFoodItem) return;
+    if (name === "") {
+      setError("*required");
+      return;
+    }
     const response = await updateFoodById(currentFoodItem.id, { name: name, bought_on: boughtOn })
     let foodListClone: IFood[] = JSON.parse(JSON.stringify(currentFoodList))
     foodListClone = foodListClone.map(food => {
@@ -107,10 +112,11 @@ export default function EditFood() {
         <Text style={styles.headline}>Edit Food</Text>
         <Input
           label="Name"
-          onChangeText={(text) => setName(text)}
+          onChangeText={(text: string) => setName(text)}
           value={name}
           autoCapitalize={'none'}
         />
+        {error !== "" && <Text style={{ color: "darkred" }}>{error}</Text>}
         <Text style={styles.verticallySpaced}>Bought on</Text>
         <Pressable style={styles.userInput}
           onPress={() => {
