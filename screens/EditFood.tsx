@@ -1,4 +1,4 @@
-import { Modal, Pressable, StyleSheet, View } from "react-native";
+import { Modal, Pressable, StyleSheet, View, TextInput } from "react-native";
 import { Text, Input } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { Calendar } from "react-native-calendars";
@@ -110,13 +110,15 @@ export default function EditFood() {
       </Modal >
       <View style={styles.verticallySpaced}>
         <Text style={styles.headline}>Edit Food</Text>
-        <Input
-          label="Name"
+        <View style={{ flexDirection: "row" ,alignItems:"center"}}>
+          <Text style={styles.verticallySpaced}>Name</Text>
+          {error !== "" && <Text style={{ color: "darkred" }}>{"  "+error}</Text>}
+        </View>
+        <TextInput style={styles.userInput}
           onChangeText={(text: string) => setName(text)}
+          textAlign="left"
           value={name}
-          autoCapitalize={'none'}
         />
-        {error !== "" && <Text style={{ color: "darkred" }}>{error}</Text>}
         <Text style={styles.verticallySpaced}>Bought on</Text>
         <Pressable style={styles.userInput}
           onPress={() => {
