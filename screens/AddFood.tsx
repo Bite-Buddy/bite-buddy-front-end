@@ -9,13 +9,13 @@ import { useAtom, useAtomValue } from 'jotai';
 import { currentFoodListAtom, currentKitchenAtom } from '../utilities/store/atoms';
 import { createFood, searchByBarcode } from '../utilities/fetchRequests';
 
-type Items = {
+type Item = {
     name: string,
     boughtOn: Date,
     error: string,
     showCalendar: boolean,
     focus: boolean
-}[]
+}
 
 function dateToSrting(date: Date) {
     const datestr = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
@@ -30,7 +30,7 @@ export default function AddFood() {
     const scanNextMessage = useRef<string>("");
     const currentKitchen = useAtomValue(currentKitchenAtom);
     const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom);
-    const [items, setItems] = useState<Items>([blankItem]);
+    const [items, setItems] = useState<Item[]>([blankItem]);
     const [cameraGranted, setCameraGranted] = useState<boolean>(false);
     const [useScanner, setUseScanner] = useState<boolean>(false);
     const [scanData, setScanData] = useState<string>();
@@ -74,7 +74,7 @@ export default function AddFood() {
     //Check if all items name are not blank
     function isValid(): boolean {
         console.log("Checking validation.---")
-        const someEmpty = items.some(item => item.name === "");
+        const someEmpty = items.some((item: { name: string; }) => item.name === "");
         //Update error message if there is any empty input
         if (someEmpty) {
             const currItems = [...items]
@@ -99,9 +99,9 @@ export default function AddFood() {
         if (!isValid() || !currentKitchen) return
 
         //POST request to add all items to the server.
-        Promise.all(items.map(item => createFood(currentKitchen.id, { name: item.name, bought_on: item.boughtOn })))
+        Promise.all(items.map((item: Item) => createFood(currentKitchen.id, { name: item.name, bought_on: item.boughtOn })))
             .then((res) => {
-                const preparedFoodList = res.map(response => {
+                const preparedFoodList = res.map((response: { food: { bought_on: string | number | Date; updated_on: string | number | Date; }; }) => {
                     return {
                         ...response.food,
                         bought_on: new Date(response.food.bought_on),
@@ -139,10 +139,6 @@ export default function AddFood() {
 
     return (
         <View style={styles.root}>
-            {/**Block 1 */}
-            <View style={[styles.block1_headline]}>
-                <Text style={styles.headlineText}>Add New Food Item</Text>
-            </View>
             {/**Block 2 */}
             {!useScanner && <Text style={[styles.headlineText, { marginVertical: 10, color: "green" }]}>
                 Press <MaterialCommunityIcons name='barcode-scan' size={15} /> button to scan barcode
@@ -179,7 +175,7 @@ export default function AddFood() {
             </View>
             <ScrollView style={styles.scrollBlok}>
                 <View>
-                    {items.map((item, index) => {
+                    {items.map((item: { error: string | string[]; name: any; boughtOn: string | number | Date; showCalendar: any; }, index: number) => {
                         return (
                             <View style={{ flexDirection: "row" }} key={`addFoodItem${index}`}>
                                 <View style={{ flex: 2, alignContent: "center", alignItems: "stretch" }}>
@@ -207,7 +203,7 @@ export default function AddFood() {
                                             }}
                                             placeholder={"Type here, or scan barcode."}
                                             value={item.name}
-                                            onChangeText={(value) => formatItems(value, index, "name")} />
+                                            onChangeText={(value: string) => formatItems(value, index, "name")} />
                                         <View style={{ marginLeft: 5, paddingLeft: 10 }}>
                                             <Pressable style={{ alignItems: 'center' }}
                                                 onPress={() => {
@@ -260,13 +256,6 @@ const styles = StyleSheet.create({
     root: {
         flex: 1,
         flexDirection: 'column',
-    },
-    block1_headline: {
-        margin: 10,
-        fontSize: 18,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        textAlignVertical: 'center',
     },
     headlineText: {
         fontSize: 18,
