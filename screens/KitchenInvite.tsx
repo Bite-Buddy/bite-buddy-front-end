@@ -48,7 +48,9 @@ export default function KitchenInvite() {
         <Pressable style={styles.button} onPressIn={() => handleSubmit()}>
           <Text style={styles.buttonText}>Send Invite</Text>
         </Pressable>
+        
         </View>
+        
             )}
         </Formik>
             )

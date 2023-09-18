@@ -49,7 +49,7 @@ export default function InviteResponse() {
               <Pressable style={[styles.button, { backgroundColor: "gray" }]} onPress={() => { setModalVisible(false) }}>
                 <Text style={[styles.buttonText, { color: "white" }]}>
                   Cancel</Text></Pressable>
-              <Pressable style={[styles.button, { backgroundColor: "red" }]} onPress={() => { handleReject(currentInvite.id) }}>
+              <Pressable style={[styles.button, { backgroundColor: "#FD5D5D" }]} onPress={() => { handleReject(currentInvite.id) }}>
                 <Text style={[styles.buttonText, { color: "white" }]}>
                   Delete<MaterialCommunityIcons name="delete-alert-outline" size={20} /></Text></Pressable>
 
