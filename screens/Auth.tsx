@@ -92,13 +92,7 @@ export default function Auth() {
         setUser(newUser);
         setKitchens(newUser.kitchens);
         setLoading(false);
-        if (dbData.kitchens.length > 0) {
-          setCurrentKitchen(dbData.kitchens[0])
-          navigation.navigate("Kitchen Settings", { screen: 'Kitchen ' });
-        }
-        else {
-          navigation.navigate("Account");
-        }
+        navigation.navigate("Account");
       }
     }
     else {
@@ -107,7 +101,7 @@ export default function Auth() {
       setInvites(dbData.invites)
       setLoading(false);
       if (user.kitchens.length > 0) {
-        navigation.navigate("Kitchen");
+        navigation.navigate("Kitchen Settings", { screen: 'Kitchen ' });
       }
       else {
         navigation.navigate("Account")
