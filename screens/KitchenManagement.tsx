@@ -70,9 +70,9 @@ useEffect(() => {
               <Pressable style={[styles.button, { backgroundColor: "gray" }]} onPress={() => { setModalVisible(false) }}>
                 <Text style={[styles.buttonText, { color: "white" }]}>
                   Cancel</Text></Pressable>
-              <Pressable style={[styles.button, { backgroundColor: "red" }]} onPress={() => { deleteKitchen() }}>
+              <Pressable style={[styles.button, { backgroundColor: "#FD5D5D" }]} onPress={() => { deleteKitchen() }}>
                 <Text style={[styles.buttonText, { color: "white" }]}>
-                  Delete<MaterialCommunityIcons name="delete-alert-outline" size={20} /></Text></Pressable>
+                  Delete</Text></Pressable>
 
             </View>
           </View>
@@ -89,7 +89,10 @@ useEffect(() => {
             <Pressable style={styles.button} disabled={loading} onPress={() => submitKitchen()}><Text style={styles.buttonText}>Submit</Text></Pressable>
       </View>
       <View>
-      <Pressable  style={styles.button} disabled={loading} onPress={() => setModalVisible(true)}><Text style={styles.buttonText}>Delete</Text></Pressable>
+      <Pressable  style={styles.buttonD} disabled={loading} onPress={() => setModalVisible(true)}><Text style={styles.buttonText}>Delete</Text></Pressable>
+      </View>
+      <View>
+        <Pressable style={styles.cancelButton} disabled={loading} onPress={() => navigation.navigate("Kitchen Settings", { screen: 'Kitchen' })} ><Text style={styles.buttonText}>Cancel</Text></Pressable>
       </View>
     </View>
   )
@@ -165,6 +168,26 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+  },
+  buttonD: {
+    backgroundColor: "#FD5D5D",
+    marginHorizontal: 20,
+    paddingHorizontal: 15,
+    height: 40,
+    borderRadius: 4,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  cancelButton: {
+    marginHorizontal: 20,
+    backgroundColor: '#DDD',
+    height: 40,
+    borderRadius: 4,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10
   },
   buttonText: {
     fontWeight: "bold",

@@ -95,9 +95,9 @@ export default function EditFood() {
               <Pressable style={[styles.button, { backgroundColor: "gray" }]} onPress={() => { setModalVisible(false) }}>
                 <Text style={[styles.buttonText, { color: "white" }]}>
                   Cancel</Text></Pressable>
-              <Pressable style={[styles.button, { backgroundColor: "red" }]} onPress={() => { deleteFoodItem() }}>
+              <Pressable style={[styles.button, { backgroundColor: "#FD5D5D" }]} onPress={() => { deleteFoodItem() }}>
                 <Text style={[styles.buttonText, { color: "white" }]}>
-                  Delete<MaterialCommunityIcons name="delete-alert-outline" size={20} /></Text></Pressable>
+                  Delete</Text></Pressable>
 
             </View>
           </View>
@@ -132,7 +132,10 @@ export default function EditFood() {
         <Pressable style={styles.button} disabled={loading} onPress={() => updateFoodItem()} ><Text style={styles.buttonText}>Update Food</Text></Pressable>
       </View>
       <View>
-        <Pressable style={styles.button} disabled={loading} onPress={() => setModalVisible(true)} ><Text style={styles.buttonText}>Delete Food</Text></Pressable>
+        <Pressable style={styles.deleteButton} disabled={loading} onPress={() => setModalVisible(true)} ><Text style={styles.buttonText}>Delete Food</Text></Pressable>
+      </View>
+      <View>
+        <Pressable style={styles.cancelButton} disabled={loading} onPress={() => navigation.navigate("Kitchen Settings", { screen: 'Kitchen' })} ><Text style={styles.buttonText}>Cancel</Text></Pressable>
       </View>
     </View >
   )
@@ -140,8 +143,10 @@ export default function EditFood() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
+    paddingTop: 40,
     padding: 12,
+    backgroundColor: "#FFF",
+    flex: 1
   },
   verticallySpaced: {
     paddingTop: 4,
@@ -163,6 +168,25 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     margin: 20,
   },
+  deleteButton: {
+    marginHorizontal: 20,
+    backgroundColor: '#FD5D5D',
+    height: 40,
+    borderRadius: 4,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  cancelButton: {
+    marginHorizontal: 20,
+    backgroundColor: '#DDD',
+    height: 40,
+    borderRadius: 4,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10
+  },
   button: {
     marginHorizontal: 20,
     paddingHorizontal: 15,
@@ -172,6 +196,7 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    marginVertical: 5,
   },
   buttonText: {
     fontWeight: "bold",

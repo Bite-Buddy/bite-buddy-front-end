@@ -12,8 +12,11 @@ export default function Account() {
   return (
     <View style={styles.container}>
       <View style={styles.verticallySpaced}>
+      <View style={styles.authTop}>
         <Text style={styles.heading}>Welcome to</Text>
         <Image style={styles.logoH} source={require('../assets/header.png')}/>
+        
+        </View>
         <Pressable style={styles.button} onPress={() => createKitchen()} ><Text style={styles.name} >Create a Kitchen</Text></Pressable>
       </View>
     </View>
@@ -30,22 +33,24 @@ navigation.navigate("Auth")}}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between',
     backgroundColor: '#FFF',
-    padding: 20,
     margin: 0,
 
   },
+  authTop: {
+    backgroundColor: '#FFD43A',
+    alignItems: 'center',
+    paddingBottom: 0,
+    paddingTop: 80,
+    borderBottomRightRadius: 40,
+    borderBottomLeftRadius: 40,
+    height: 500,
+    // flex: 1,
+  },
   logoH: {
-    // marginBottom: 30,
     alignItems: 'center',
   },
   verticallySpaced: {
-    flex: 1,
-    borderWidth: 0,
-    borderRadius: 20,
-    marginBottom: 20,
-    alignItems: 'center',
   },
   mt20: {
     marginTop: 20,
@@ -55,27 +60,21 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   },
   heading: {
-    fontSize: 40,
-    marginTop: 10,
-    marginBottom: 0,
-    flex: 1,
+    fontSize: 20,
+    marginBottom: 40,
     fontWeight: 'bold',
     color: '#1D1D1D',
     textAlign: 'center',
   },
   name: {
     padding: 2,
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: "bold",
     marginTop: 0,
     marginLeft: 10,
+    
   },
   date: {
-    padding: 0,
-    fontSize: 15,
-    marginTop: 10,
-    marginLeft: 30,
-    marginRight: 10
   },
   list: {
     flexDirection: "row",
@@ -93,14 +92,16 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 7,
   },
   button: {
-    backgroundColor: '#FFD43A',
-    height: 40,
+    borderWidth: 1,
+    height: 50,
     borderRadius: 4,
     display: "flex",
+    alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 10,
-    marginBottom: 400,
+    marginTop: 40,
+    marginHorizontal: 'auto',
+    width: 300,
     paddingHorizontal: 20,
   },
 })
