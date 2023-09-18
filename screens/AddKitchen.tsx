@@ -30,7 +30,7 @@ export default function AddKitchen() {
     console.log("The new kitchen is:", newKitchen);
     setKitchens(kitchens.concat(newKitchen.kitchen));
     setCurrentKitchen(newKitchen.kitchen);
-    navigation.navigate("Kitchen");
+    navigation.navigate("Kitchen Settings", { screen: 'Kitchen ' });
   }
   return (
     <ScrollView style={styles.container}>
