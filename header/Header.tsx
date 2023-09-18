@@ -5,21 +5,54 @@ import { FontAwesome } from '@expo/vector-icons';
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
-
-
-
+import { currentKitchenAtom, kitchensAtom } from "../utilities/store/atoms";
+import { useAtomValue } from "jotai";
 
 export default function Header() {
   const navigation = useNavigation();
+  const kitchens = useAtomValue(kitchensAtom);
+  const currentKitchen = useAtomValue(currentKitchenAtom)
   function navigate(destination) {
     navigation.navigate(destination)
   }
   return (
     <View style={styles.header}>
-      <Pressable style={styles.button} title="Kitchen" onPress={() => navigation.navigate("Kitchen Settings", { screen: 'Kitchen' })}>
+      <Pressable style={styles.button} title="Kitchen" onPress={() => {       
+        if (currentKitchen) {
+          navigation.navigate("Kitchen Settings", { screen: 'Kitchen' })
+          return
+        }
+   
+        if (!currentKitchen && kitchens.length) {
+          navigation.navigate("Kitchen Settings", { screen: 'All Kitchens' })
+          return
+        } 
+
+        if (!currentKitchen && !kitchens.length) {
+          navigation.navigate("Account")
+          return
+        }
+ 
+      }}>
       <Text style={styles.text}><MaterialCommunityIcons name="fridge-outline" size={30} color="black" /></Text>
       </Pressable>
-      <Pressable style={styles.button} title="List" onPress={() => navigate('List')}>
+      <Pressable style={styles.button} title="List"onPress={() => {       
+        if (currentKitchen) {
+          navigation.navigate("List")
+          return
+        }
+   
+        if (!currentKitchen && kitchens.length) {
+          navigation.navigate("Kitchen Settings", { screen: 'All Kitchens' })
+          return
+        } 
+
+        if (!currentKitchen && !kitchens.length) {
+          navigation.navigate("Account")
+          return
+        }
+ 
+      }}>
       <Text style={styles.text}><FontAwesome5 name="list-alt" size={24} color="black" /></Text>
       </Pressable>
       <Pressable style={styles.button} title="Profile" onPress={() => navigate('Profile')}>
