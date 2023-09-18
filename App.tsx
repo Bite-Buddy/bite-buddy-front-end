@@ -21,56 +21,7 @@ export default function App() {
   const [kitchens, setKitchens] = useAtom(kitchensAtom);
   const [user, setUser] = useAtom(userAtom);
   const [session, setSession] = useState<Session | null>(null);
-  // useEffect(() => {
-  //   (async () => {
-  //     const session = (await supabase.auth.getSession()).data.session;
-  //     if (session) {
-  //       setSession(session);
-  //       const sessionUser = await getSessionUser();
-  //       if (sessionUser) {
-  //         setUser(sessionUser);
-  //         setKitchens(user.kitchens);
-  //       }
-  //     }
-  //     setSessionChecked(true);
-
-  //     // supabase.auth.onAuthStateChange((event, session) => {
-  //     //   if (event == 'SIGNED_IN') console.log('SIGNED_IN', session)
-  //     // })
-  //     // supabase.auth.onAuthStateChange((event, session) => {
-  //     //   if (event == 'SIGNED_OUT') console.log('SIGNED_OUT', session)
-  //     // })
-
-  //   })()
-  // }, [])
-  // useEffect(() => {
-  //   if (user.id > 0 && sessionChecked) {
-  //     console.log("THE USER", user);
-  //   }
-  // }, [user, sessionChecked])
-
-  // async function getSessionUser() {
-  //   try {
-  //     const user = await getBySupabaseID(session?.user.id);
-  //     return user;
-  //   }
-  //   catch (error) {
-  //     throw error;
-  //   }
-  // }
-
-  // if (!sessionChecked) {
-  //   // Render a loading screen while authentication check is in progress
-  //   // it's normally too quick to see anyway
-  //   return (
-  //     <NavigationContainer>
-  //       <View>
-  //         <Text>Loading</Text>
-  //       </View>
-  //     </NavigationContainer>
-  //   );
-  // }
-
+ 
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Auth">
