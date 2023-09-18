@@ -54,11 +54,16 @@ async function invitesHandler() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
+    paddingTop: 20,
     padding: 12,
+    backgroundColor: "#FFF",
+    flex: 1,
   },
   header: {
-    fontSize: 30
+    fontSize: 25,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    marginLeft: 10,
   },
   verticallySpaced: {
     paddingTop: 4,
@@ -69,7 +74,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
-    backgroundColor: '#EFCA46',
+    marginHorizontal: 20,
+    backgroundColor: '#FFD43A',
     height: 40,
     borderRadius: 4,
     display: "flex",

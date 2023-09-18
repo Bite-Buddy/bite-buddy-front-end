@@ -44,29 +44,30 @@ export default function List() {
   }
 
   async function handleSwipe(item: IFood) {
-    if ((Date.now() - touchStartTime) > 500) {
+    if ((Date.now() - touchStartTime) > 200) {
        await handleAddToKitchen(item)
     }
   }
 
   return (
     <View style={styles.container}>
-            <ScrollView>
+      <Text style={styles.header}>Shopping List</Text>
+      <ScrollView>
       <View style={styles.verticallySpaced}>
+
         <View style={styles.verticallySpaced}>
             {!currentFoodList.filter(food => food.inStock === false).length ? <Text style={styles.noItem}>The shopping list is empty</Text>
               : currentFoodList.filter((foodItem) => foodItem.inStock === false).map((foodItem) => {
                 return (
                   <ListItem.Swipeable style={styles.list}
                     rightWidth={ScreenWidth/2}
-                    minSlideWidth={50}
                     onTouchStart={handleTouchStart}
                     key={`shoppingListItem${foodItem.id}`}
                     rightContent={(reset) => (
                       <Button
                       title="Adding to kitchen"
                       onPress={() => reset()}
-                      buttonStyle={{ height: 60, backgroundColor: '#4dd377', borderRadius: 7, marginTop: 15, marginLeft: 10, marginRight: 20 }}
+                      buttonStyle={{ height: 70, backgroundColor: '#4dd377', borderRadius: 7, marginTop: 15, marginLeft: 10, marginRight: 20 }}
                     />
                     )}
 
@@ -74,7 +75,7 @@ export default function List() {
                   >
                     <ListItem.Content>
                       <Pressable key={`foodItem${foodItem.id}`} >
-                      <ListItem.Title>{foodItem.name}</ListItem.Title>
+                      <ListItem.Title style={styles.name}>{foodItem.name}</ListItem.Title>
                     </Pressable>
                     </ListItem.Content>
                   </ListItem.Swipeable>
@@ -94,10 +95,15 @@ export default function List() {
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    backgroundColor: 'FFFFFFF',
+    backgroundColor: '#FFFFFF',
     padding: 20,
     margin: 0,
-
+  },
+  header: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    marginLeft: 10,
   },
   noItem: {
     fontSize: 24,
@@ -124,7 +130,7 @@ export default function List() {
     marginBottom: 0,
     flex: 1,
     fontWeight: 'bold',
-    color: 'black',
+    color: '#1D1D1D',
     textAlign: 'center',
   },
   name: {
@@ -133,7 +139,7 @@ export default function List() {
     fontWeight: "bold",
     marginTop: 5,
     marginLeft: 10,
-    color: 'black',
+    color: '#1D1D1D',
   },
   date: {
     padding: 0,
@@ -152,7 +158,7 @@ export default function List() {
     padding: 2,
     marginLeft: 10,
     marginRight: 10,
-    height: 60,
+    height: 70,
     borderTopLeftRadius: 7,
     borderTopRightRadius: 7,
     borderBottomLeftRadius: 7,

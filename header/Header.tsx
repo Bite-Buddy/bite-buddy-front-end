@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     
   },
   button: {
-    color: 'black',
+    color: '#1D1D1D',
     
 
   }

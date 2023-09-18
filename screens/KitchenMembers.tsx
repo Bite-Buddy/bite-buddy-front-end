@@ -36,9 +36,9 @@ const navigation = useNavigation();
     <View style={styles.container}>
       <View style={styles.verticallySpaced}>
       <Text style={styles.heading}>Kitchen Members</Text>
-        {emailList.map((user) => {
+        {emailList.map((user, i) => {
           return (
-          <View>
+          <View key={`kitchenMembers${i}`}>
             <Text style={styles.item}>{user}</Text>
           </View>
           )
@@ -50,8 +50,10 @@ const navigation = useNavigation();
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
+    paddingTop: 40,
     padding: 12,
+    backgroundColor: "#FFF",
+    flex: 1
   },
   verticallySpaced: {
     paddingTop: 4,
@@ -63,7 +65,7 @@ const styles = StyleSheet.create({
   },
   item: {
     padding: 20,
-    fontSize: 15,
+    fontSize: 18,
     marginTop: 5,
     textAlign: 'center',
   },
@@ -73,7 +75,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     flex: 1,
     fontWeight: 'bold',
-    color: 'black',
+    color: '#1D1D1D',
     textAlign: 'center',
   },
 })

@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     flex: 1,
     fontWeight: 'bold',
-    color: 'black',
+    color: '#1D1D1D',
     textAlign: 'center',
   },
   name: {
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   },
   list: {
     flexDirection: "row",
-    backgroundColor: '#EFCA46',
+    backgroundColor: '#FFD43A',
     borderWidth: 0,
     justifyContent: 'center',
     alignItems: "center",

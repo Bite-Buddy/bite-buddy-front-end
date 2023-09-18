@@ -61,7 +61,7 @@ export default function InviteResponse() {
             marginTop: 20,
         },  
         button: {
-            backgroundColor: '#EFCA46',
+            backgroundColor: '#FFD43A',
             height: 40,
             borderRadius: 4,
             display: "flex",

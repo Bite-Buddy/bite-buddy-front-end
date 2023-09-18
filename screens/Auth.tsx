@@ -4,7 +4,7 @@ DEVURI=exp://<your local IPv4 address>:8081/
  * replace <your local IPv4 address> to your acrtual IP address.
 */
 import React, { useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View, Image, Text, Pressable } from "react-native";
 import { Button, Input } from "react-native-elements";
 import { supabase } from "../supabaseService";
 import { Provider, Session } from "@supabase/supabase-js";
@@ -12,7 +12,7 @@ import * as WebBrowser from "expo-web-browser";
 import { useNavigation } from "@react-navigation/native";
 // import * as Linking from "expo-linking";
 import { createUser, getBySupabaseID } from "../utilities/fetchRequests";
-import { userAtom, kitchensAtom, invitesAtom, currentKitchenAtom } from "../utilities/store/atoms";
+import { userAtom, kitchensAtom, currentKitchenAtom, currentFoodListAtom } from "../utilities/store/atoms";
 import { useAtom } from "jotai";
 
 export default function Auth() {
@@ -153,7 +153,19 @@ export default function Auth() {
   return (
     <View style={styles.container}>
       <View style={styles.verticallySpaced}>
-        <Button title="Google" disabled={loading} onPress={() => logInWithThirdParty("google")} />
+        <View style={styles.authTop}>
+          <Text style={styles.welcome}>Welcome to</Text>
+          <Image style={styles.logoH} source={require('../assets/header.png')}/>
+          <Image style={styles.groceries} source={require('../assets/groceries.png')}/>
+          <Pressable style={styles.button} disabled={loading} onPress={() => logInWithThirdParty("google")}><Text style={styles.buttonText}><Image style={styles.google} source={require('../assets/google.png')}/>    Login with Google</Text></Pressable>
+        </View>
+        <View style={styles.authBottom}>
+              <Text style={styles.slogan}>Manage food in {"\n"}your 
+                <Text style={styles.highlight}> kitchen</Text>
+              </Text>
+             
+              <Text style={styles.small}>share your kitchen with any buddy</Text>
+        </View>
       </View>
     </View>
   )
@@ -161,15 +173,72 @@ export default function Auth() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
-    padding: 12,
+    backgroundColor: "#FFF",
+    flex: 1,
+    // marginTop: 40,
+    // padding: 12,
+  },
+  google: {
+    
+  },
+  slogan: {
+    fontSize: 30,
+    color: '#1D1D1D',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  highlight: {
+    fontSize: 30,
+    color: '#FFD43A',
+    fontWeight: 'bold',
+  },
+  small: {
+    fontSize: 18,
+    color: "#767676"
+  },
+  welcome: {
+    fontSize: 20,
+    marginBottom: 20
+  },
+  logoH: {
+    marginBottom: 30,
   },
   verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
+    // paddingTop: 4,
+    // paddingBottom: 4,
     alignSelf: 'stretch',
   },
+  authTop: {
+    backgroundColor: '#FFD43A',
+    alignItems: 'center',
+    paddingBottom: 30,
+    borderBottomRightRadius: 40,
+    borderBottomLeftRadius: 40,
+    // flex: 1,
+  },
+  groceries: {
+    marginLeft: 100,
+    marginBottom: 50,
+  },
+  authBottom: {
+    backgroundColor: '#FFF',
+    padding: 30,
+    alignItems: 'center'
+    // flex: 1,
+  },
+  button: {
+    // width: 300,
+    backgroundColor: "#4285F4",
+    paddingTop: 12,
+    paddingBottom: 18,
+    paddingHorizontal: 30,
+    borderRadius: 6
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 19,
+  },
   mt20: {
-    marginTop: 20,
+    // marginTop: 20,
   },
 })

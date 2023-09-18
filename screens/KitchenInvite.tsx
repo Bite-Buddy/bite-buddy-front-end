@@ -39,14 +39,14 @@ export default function KitchenInvite() {
             {({handleChange, handleSubmit, values}) => (
         <View style={styles.container}>
         <View>
-            <Text>Enter the email of the user you want to invite:</Text>
+            <Text  style={styles.text}>Enter the email of the user you want to invite:</Text>
             <Input
                 onChangeText={handleChange('recipient_email')}
                 value={values.recipient_email}
                 />
         </View>
         <Pressable style={styles.button} onPressIn={() => handleSubmit()}>
-          <Text style={styles.buttonText}>Submit</Text>
+          <Text style={styles.buttonText}>Send Invite</Text>
         </Pressable>
         </View>
             )}
@@ -56,8 +56,10 @@ export default function KitchenInvite() {
 
     const styles = StyleSheet.create({
     container: {
-        marginTop: 40,
+        paddingTop: 40,
         padding: 12,
+        backgroundColor: '#FFF',
+        flex: 1,
     },
     verticallySpaced: {
         paddingTop: 4,
@@ -67,8 +69,13 @@ export default function KitchenInvite() {
     mt20: {
         marginTop: 20,
     },  
+    text: {
+      fontSize:16,
+      marginLeft: 10,
+    },
     button: {
-        backgroundColor: '#EFCA46',
+        marginHorizontal: 20,
+        backgroundColor: '#FFD43A',
         height: 40,
         borderRadius: 4,
         display: "flex",
@@ -77,6 +84,7 @@ export default function KitchenInvite() {
         marginTop: 10
       },
       buttonText: {
-        fontWeight: "bold"
+        fontWeight: "bold",
+        fontSize: 16,
       },
     })

@@ -26,13 +26,11 @@ export default function KitchenDetails() {
   }, [currentKitchen])
 
   function handleFoodSelect(selectedFood: IFood) {
-    console.log(selectedFood)
     setCurrentFoodItem(selectedFood)
     navigation.navigate('Edit Food')
   }
 
   const fetchFoodList = async () => {
-    console.log('fetching foodlist', currentKitchen)
     if (currentKitchen) {
       try {
         let kitchenInfo = await getKitchenByID(currentKitchen.id);
@@ -60,7 +58,6 @@ export default function KitchenDetails() {
       target.name = response.foodResponse.name
       target.bought_on = new Date(response.foodResponse.bought_on)
     }
-    console.log('clone', foodListClone)
     setCurrentFoodList(foodListClone)
     setCurrentFoodItem(null)
 
@@ -71,7 +68,7 @@ export default function KitchenDetails() {
   }
 
   async function handleSwipe(item: IFood) {
-    if ((Date.now() - touchStartTime) > 500) {
+    if ((Date.now() - touchStartTime) > 200) {
        await handleAddToShopping(item)
     }
   }
@@ -92,7 +89,7 @@ export default function KitchenDetails() {
 
 
           <View style={styles.verticallySpaced}>
-            {!currentFoodList.length ? <Text style={styles.noItem}>No items in stock</Text>
+            {!currentFoodList.filter((foodItem) => foodItem.inStock === true).length ? <Text style={styles.noItem}>No items in stock</Text>
               //calculate the day offset of the bought item
               : currentFoodList.filter((foodItem) => foodItem.inStock === true)
                 .sort((a, b) => (b.bought_on.getTime()) - (a.bought_on.getTime()))
@@ -103,6 +100,7 @@ export default function KitchenDetails() {
                     <ListItem.Swipeable style={styles.list}
                       leftWidth={ScreenWidth / 2}
                       onTouchStart={handleTouchStart}
+                      onPress={() => handleFoodSelect(foodItem)}
                       key={`foodItem${foodItem.id}`}
                       leftContent={(reset) => (
                         <Button
@@ -114,7 +112,6 @@ export default function KitchenDetails() {
                       onSwipeEnd={() => handleSwipe(foodItem)}
                     >
                       <ListItem.Content>
-                        <Pressable onPress={() => { handleFoodSelect(foodItem) }} >
                           <ListItem.Title>
                             <Text style={styles.name} ellipsizeMode={"tail"} numberOfLines={1}>{foodItem.name}</Text>
                           </ListItem.Title>
@@ -127,7 +124,6 @@ export default function KitchenDetails() {
                                   : `${dayOffSet} days ago`}
                             </Text>
                           </ListItem.Subtitle>
-                        </Pressable>
                       </ListItem.Content>
                     </ListItem.Swipeable>
 
@@ -155,6 +151,9 @@ const styles = StyleSheet.create({
     margin: 0,
 
   },
+  press: {
+    height: 50
+  },
   verticallySpaced: {
     flex: 1,
     // height: 30,
@@ -173,17 +172,18 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     flex: 1,
     fontWeight: 'bold',
-    color: 'black',
+    color: '#1D1D1D',
     textAlign: 'center',
   },
   name: {
     padding: 10,
-    fontSize: 15,
+    fontSize: 17,
     fontWeight: "bold",
     marginTop: 5,
     marginRight: 30,
     marginLeft: 10,
     width: 150,
+    color: "#1D1D1D"
   },
   noItem: {
     fontSize: 24,
@@ -200,6 +200,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: 0,
     marginRight: 10,
+    color: "#8D8D8D"
   },
   list: {
     // flexDirection: "row",

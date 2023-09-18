@@ -24,7 +24,7 @@ export default function App() {
         <Stack.Screen name="Auth" component={Auth} options={({ navigation }) => ({
           headerBackVisible: false,
           headerLeft: () => null,
-          headerTitle: () => <Text style={styles.auth}>BiteBuddy</Text>,
+          headerTitle: () => <Text style={styles.auth}></Text>,
           headerStyle: {
             backgroundColor: '#FFD43A',
           },
@@ -99,7 +99,7 @@ export default function App() {
           headerLeft: () => null,
           headerTitle: () => <Header />,
           headerStyle: {
-            backgroundColor: '#EFCA46',
+            backgroundColor: '#FFD43A',
           },
 
         })} />
@@ -108,7 +108,7 @@ export default function App() {
           headerLeft: () => null,
           headerTitle: () => <Header />,
           headerStyle: {
-            backgroundColor: '#EFCA46',
+            backgroundColor: '#FFD43A',
           },
 
         })} />

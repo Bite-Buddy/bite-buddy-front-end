@@ -43,8 +43,10 @@ export default function AddKitchen() {
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 40,
+        paddingTop: 30,
         padding: 12,
+        backgroundColor: "#FFF",
+        flex: 1
     },
     headline: {
         margin: 10,
@@ -53,6 +55,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     button: {
+      marginHorizontal: 20,
       backgroundColor: '#FFD43A',
       height: 40,
       borderRadius: 4,
@@ -61,6 +64,7 @@ const styles = StyleSheet.create({
       justifyContent: "center",
     },
     buttonText: {
-      fontWeight: "bold"
+      fontWeight: "bold",
+      fontSize: 16,
     },
 })
