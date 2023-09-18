@@ -12,7 +12,7 @@ import * as WebBrowser from "expo-web-browser";
 import { useNavigation } from "@react-navigation/native";
 // import * as Linking from "expo-linking";
 import { createUser, getBySupabaseID } from "../utilities/fetchRequests";
-import { userAtom, kitchensAtom, currentKitchenAtom, currentFoodListAtom } from "../utilities/store/atoms";
+import { userAtom, kitchensAtom, currentKitchenAtom, currentFoodListAtom, invitesAtom } from "../utilities/store/atoms";
 import { useAtom } from "jotai";
 
 export default function Auth() {

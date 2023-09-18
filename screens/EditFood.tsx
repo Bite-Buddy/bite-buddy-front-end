@@ -1,4 +1,4 @@
-import { Modal, Pressable, StyleSheet, View } from "react-native";
+import { Modal, Pressable, StyleSheet, View, TextInput } from "react-native";
 import { Text, Input } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { Calendar } from "react-native-calendars";
@@ -19,6 +19,7 @@ export default function EditFood() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   //Initial state setup
   useEffect(() => {
@@ -36,6 +37,10 @@ export default function EditFood() {
 
   async function updateFoodItem() {
     if (!currentFoodItem) return;
+    if (name === "") {
+      setError("*required");
+      return;
+    }
     const response = await updateFoodById(currentFoodItem.id, { name: name, bought_on: boughtOn })
     let foodListClone: IFood[] = JSON.parse(JSON.stringify(currentFoodList))
     foodListClone = foodListClone.map(food => {
@@ -105,11 +110,14 @@ export default function EditFood() {
       </Modal >
       <View style={styles.verticallySpaced}>
         <Text style={styles.headline}>Edit Food</Text>
-        <Input
-          label="Name"
-          onChangeText={(text) => setName(text)}
+        <View style={{ flexDirection: "row" ,alignItems:"center"}}>
+          <Text style={styles.verticallySpaced}>Name</Text>
+          {error !== "" && <Text style={{ color: "darkred" }}>{"  "+error}</Text>}
+        </View>
+        <TextInput style={styles.userInput}
+          onChangeText={(text: string) => setName(text)}
+          textAlign="left"
           value={name}
-          autoCapitalize={'none'}
         />
         <Text style={styles.verticallySpaced}>Bought on</Text>
         <Pressable style={styles.userInput}

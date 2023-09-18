@@ -1,4 +1,4 @@
-import { Modal, Pressable, StyleSheet, View } from "react-native";
+import { Modal, Pressable, StyleSheet, TextInput, View } from "react-native";
 import { Text, Input, Button } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
@@ -10,20 +10,27 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 export default function KitchenManagement() {
-const navigation = useNavigation();
-const [currentKitchen, setCurrentKitchen] = useAtom(currentKitchenAtom)
-const [kitchens, setKitchens] = useAtom(kitchensAtom)
-const [name, setName] = useState("")
-const [loading, setLoading] = useState(false)
-const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const navigation = useNavigation();
+  const [currentKitchen, setCurrentKitchen] = useAtom(currentKitchenAtom)
+  const [kitchens, setKitchens] = useAtom(kitchensAtom)
+  const [name, setName] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
-useEffect(() => {
-  if (currentKitchen) setName(currentKitchen.name)
-}, [currentKitchen])
+  useEffect(() => {
+    if (currentKitchen) setName(currentKitchen.name)
+  }, [currentKitchen])
 
   async function submitKitchen() {
+    console.log(name)
     setLoading(true)
     if (!currentKitchen) return;
+    if (name === "") {
+      setError("*required");
+      setLoading(false);
+      return;
+    }
     const response = await updateKitchenById(currentKitchen.id, name);
     const kitchensClone: IKitchen[] = JSON.parse(JSON.stringify(kitchens))
     let target = kitchensClone.find(kitchen => kitchen.id === currentKitchen.id)
@@ -38,7 +45,7 @@ useEffect(() => {
 
   async function deleteKitchen() {
     setLoading(true)
-    
+
     if (!currentKitchen) return;
     const response = await deleteKitchenById(currentKitchen.id);
     setCurrentKitchen(null)
@@ -57,7 +64,7 @@ useEffect(() => {
 
   return (
     <View style={styles.container}>
-       <Modal
+      <Modal
         animationType="none"
         transparent={true}
         visible={modalVisible}
@@ -79,14 +86,17 @@ useEffect(() => {
         </View>
       </Modal >
       <View style={styles.verticallySpaced}>
-        <Text style={styles.text}>Change Kitchen Name</Text>
-        <Input
-              onChangeText={(text) => setName(text)}
-              value={name}
-              placeholder="My Kitchen"
-              autoCapitalize={'none'}
-            />
-            <Pressable style={styles.button} disabled={loading} onPress={() => submitKitchen()}><Text style={styles.buttonText}>Submit</Text></Pressable>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Text style={styles.text}>Change Kitchen Name</Text>
+          {error !== "" && <Text style={{ color: "darkred" }}>{"  " + error}</Text>}
+        </View>
+        <TextInput
+          onChangeText={(text: string) => setName(text)}
+          value={name}
+          placeholder="My Kitchen"
+          style={styles.userInput}
+        />
+        <Pressable style={styles.button} disabled={loading} onPress={() => submitKitchen()}><Text style={styles.buttonText}>Submit</Text></Pressable>
       </View>
       <View>
       <Pressable  style={styles.buttonD} disabled={loading} onPress={() => setModalVisible(true)}><Text style={styles.buttonText}>Delete</Text></Pressable>
@@ -152,6 +162,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  userInput: {
+    height: 40,
+    marginBottom: 15,
+    padding: 5,
+    borderColor: "lightgray",
+    borderWidth: 1,
   },
   buttons: {
     flexDirection: "row",
