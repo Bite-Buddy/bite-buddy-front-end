@@ -141,12 +141,12 @@ export default function AddFood() {
         <View style={styles.root}>
             {/**Block 1 */}
             <View style={[styles.block1_headline]}>
-                <Text style={styles.headlineText}>Add New Food Item</Text>
+                <Text style={styles.headlineText}>Add New Food Item(s)</Text>
             </View>
             {/**Block 2 */}
-            {!useScanner && <Text style={[styles.headlineText, { marginVertical: 10, color: "green" }]}>
+            {/* {!useScanner && <Text style={[styles.headlineText, { marginVertical: 10, color: "green" }]}>
                 Press <MaterialCommunityIcons name='barcode-scan' size={15} /> button to scan barcode
-            </Text>}
+            </Text>} */}
             {useScanner && cameraGranted && (
                 <View style={styles.block2_scanner}>
                     <BarCodeScanner
@@ -171,10 +171,10 @@ export default function AddFood() {
                             <MaterialCommunityIcons name='barcode-scan' size={18} />  Press here to scan next </Text>
                     </Pressable>
                     : <Pressable
-                        style={[styles.button, { backgroundColor: "#66666E" }]}
+                        style={[styles.button, { backgroundColor: "#FFD43A" }]}
                         onPress={() => { setItems([blankItem, ...items]) }} >
-                        <Text style={[styles.buttonText, { color: "#FAF6EA" }]}>
-                            <MaterialCommunityIcons name="form-textbox" size={15} /> Insert Another Entry</Text>
+                        <Text style={[styles.buttonText, { color: "#1D1D1D" }]}>
+                            Add Another Food Item</Text>
                     </Pressable>}
             </View>
             <ScrollView style={styles.scrollBlok}>
@@ -192,7 +192,7 @@ export default function AddFood() {
                                 <View style={[
                                     styles.formBox,
                                     { borderWidth: index === focusIndex ? 5 : 1 },
-                                    { borderColor: index === focusIndex ? "#E5A732" : "darkgray" }]}>
+                                    { borderColor: index === focusIndex ? "#FFD43A" : "darkgray" }]}>
                                     <Text style={styles.verticallySpaced}>Name </Text>
                                     {item.error && <Text style={[styles.verticallySpaced, { color: item.error.includes("success") ? "green" : "red" }]}>{item.error}</Text>}
                                     <View style={styles.namefield}>
@@ -214,8 +214,8 @@ export default function AddFood() {
                                                     setFocusIndex(index)
                                                     setUseScanner(index === focusIndex ? !useScanner : true)
                                                 }}>
-                                                <Text style={{ color: focusIndex === index && useScanner ? "gray" : "green" }}><MaterialCommunityIcons name='barcode-scan' size={25} /></Text>
-                                                <Text style={{ color: focusIndex === index && useScanner ? "gray" : "green" }}>
+                                                <Text style={{ color: focusIndex === index && useScanner ? "gray" : "#1D1D1D" }}><MaterialCommunityIcons name='barcode-scan' size={25} /></Text>
+                                                <Text style={{ color: focusIndex === index && useScanner ? "gray" : "#1D1D1D" }}>
                                                     {focusIndex === index && useScanner ? "disable" : "scan"}</Text>
                                             </Pressable>
                                         </View>
@@ -244,7 +244,7 @@ export default function AddFood() {
             < View style={styles.block4_buttonBlock} >
                 <View style={styles.buttons}>
                     <Pressable style={styles.button} onPress={handleSubmit} >
-                        <Text style={[styles.buttonText, { maxWidth: 200 }]} ellipsizeMode="tail" numberOfLines={1}>Add to {currentKitchen?.name}</Text>
+                        <Text style={[styles.buttonText, { maxWidth: 200 }]} ellipsizeMode="tail" numberOfLines={1}>Add All to {currentKitchen?.name}</Text>
                     </Pressable>
                     <Pressable style={[styles.button, { backgroundColor: "lightgray" }]}
                         onPress={() => navigation.navigate('Kitchen')} >
@@ -260,6 +260,7 @@ const styles = StyleSheet.create({
     root: {
         flex: 1,
         flexDirection: 'column',
+        backgroundColor: "#FFF"
     },
     block1_headline: {
         margin: 10,
@@ -317,9 +318,6 @@ const styles = StyleSheet.create({
     },
     block4_buttonBlock: {
         margin: 20,
-        verticalAlign: "middle",
-        borderStyle: "dotted",
-        borderTopWidth: 1,
     },
     buttons: {
         flexDirection: "row",
@@ -327,7 +325,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-evenly"
     },
     button: {
-        backgroundColor: '#EFCA46',
+        backgroundColor: '#FFD43A',
         height: 40,
         borderRadius: 4,
         display: "flex",
@@ -335,15 +333,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         paddingLeft: 15,
         paddingRight: 15,
+        marginHorizontal: 20,
     },
     buttonText: {
         fontWeight: "bold",
         textAlignVertical: "center",
         textAlign: "center",
     },
-
-    /**Copied below from the other component, not sure the intention */
-    // mt20: {
-    //   marginTop: 20,
-    // },
 })

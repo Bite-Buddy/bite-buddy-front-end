@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
    flexDirection: 'row',
    alignItems: 'center',
    justifyContent: 'space-between',
-   backgroundColor: '#EFCA46',
+   backgroundColor: '#FFD43A',
   },
   text: {
     fontWeight: 'bold',
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     
   },
   button: {
-    color: 'black',
+    color: '#1D1D1D',
     
 
   }

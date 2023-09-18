@@ -79,18 +79,17 @@ useEffect(() => {
         </View>
       </Modal >
       <View style={styles.verticallySpaced}>
-        <Text>Change Kitchen Name</Text>
+        <Text style={styles.text}>Change Kitchen Name</Text>
         <Input
-              label="Name"
               onChangeText={(text) => setName(text)}
               value={name}
               placeholder="My Kitchen"
               autoCapitalize={'none'}
             />
-            <Button title="Submit" disabled={loading} onPress={() => submitKitchen()} />
+            <Pressable style={styles.button} disabled={loading} onPress={() => submitKitchen()}><Text style={styles.buttonText}>Submit</Text></Pressable>
       </View>
       <View>
-      <Button title="Delete Kitchen" disabled={loading} onPress={() => setModalVisible(true)} />
+      <Pressable  style={styles.button} disabled={loading} onPress={() => setModalVisible(true)}><Text style={styles.buttonText}>Delete</Text></Pressable>
       </View>
     </View>
   )
@@ -98,8 +97,10 @@ useEffect(() => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
+    paddingTop: 40,
     padding: 12,
+    backgroundColor: "#FFF",
+    flex: 1,
   },
   verticallySpaced: {
     paddingTop: 4,
@@ -115,6 +116,10 @@ const styles = StyleSheet.create({
     alignContent: "center",
     marginTop: 20,
   },
+  text: {
+    fontSize: 16,
+    marginLeft: 10,
+  },
   modalView: {
     margin: 30,
     backgroundColor: '#ddd',
@@ -126,6 +131,12 @@ const styles = StyleSheet.create({
       width: 1,
       height: 2,
     },
+  },
+  header: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    marginLeft: 10,
   },
   modalText: {
     margin: 10,
@@ -148,7 +159,7 @@ const styles = StyleSheet.create({
   button: {
     marginHorizontal: 20,
     paddingHorizontal: 15,
-    backgroundColor: '#EFCA46',
+    backgroundColor: '#FFD43A',
     height: 40,
     borderRadius: 4,
     display: "flex",
@@ -157,6 +168,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontWeight: "bold",
-    textAlignVertical: "center"
+    textAlignVertical: "center",
+    fontSize: 16,
   },
 })

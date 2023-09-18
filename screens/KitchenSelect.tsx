@@ -61,7 +61,6 @@ export default function KitchenSelect() {
   return (
     <View style={styles.container}>
       <View style={styles.verticallySpaced}>
-        <Text style={styles.heading}>My Kitchens</Text>
         <ScrollView refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
           }>
@@ -81,7 +80,7 @@ export default function KitchenSelect() {
         </ScrollView>
       </View>
       <View>
-        <Pressable style={styles.button} onPress={() => navigation.navigate('AddKitchen')}>
+        <Pressable style={styles.button2} onPress={() => navigation.navigate('AddKitchen')}>
           <Text style={styles.text}><MaterialCommunityIcons style={styles.icon} name="plus" size={30} color="black" /></Text>
         </Pressable>
       </View>
@@ -93,7 +92,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    backgroundColor: '#F8E8AF',
+    backgroundColor: '#FFF',
     padding: 20,
     margin: 0,
 
@@ -117,7 +116,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     flex: 1,
     fontWeight: 'bold',
-    color: 'black',
+    color: '#1D1D1D',
     textAlign: 'center',
   },
   name: {
@@ -136,7 +135,7 @@ const styles = StyleSheet.create({
   },
   list: {
     flexDirection: "row",
-    backgroundColor: '#EFCA46',
+    backgroundColor: '#FFD43A',
     borderWidth: 0,
     justifyContent: 'center',
     alignItems: "center",
@@ -148,6 +147,18 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 7,
     borderBottomLeftRadius: 7,
     borderBottomRightRadius: 7,
+  },
+  button2: {
+    display: 'flex',
+    alignItems: 'center',
+    alignSelf: 'center',
+    fontSize: 1,
+    backgroundColor: '#FFD43A',
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    borderRadius: 15,
+    marginTop: 20,
   },
   button: {
     display: 'flex',
