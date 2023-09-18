@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 7,
   },
   button: {
-    backgroundColor: '#EFCA46',
+    backgroundColor: '#FFD43A',
     height: 40,
     borderRadius: 4,
     display: "flex",

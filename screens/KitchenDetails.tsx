@@ -80,6 +80,8 @@ export default function KitchenDetails() {
         <View>
           <View>
           </View>
+
+
           <View style={styles.verticallySpaced}>
             {!currentFoodList.length ? <Text style={styles.noItem}>No items in stock</Text>
               //calculate the day offset of the bought item
@@ -97,13 +99,13 @@ export default function KitchenDetails() {
                         <Button
                           title="Adding to shopping list"
                           onPress={() => reset()}
-                          buttonStyle={{ height: 75, backgroundColor: '#4dd377', borderRadius: 7, marginTop: 5, marginLeft: 10, marginRight: 20, padding: 2 }}
+                          buttonStyle={{ height: 75, backgroundColor: '#4dd377', borderRadius: 7, marginTop: 15, marginLeft: 10, marginRight: 20, padding: 4 }}
                         />
                       )}
                       onSwipeEnd={() => handleSwipe(foodItem)}
                     >
                       <ListItem.Content>
-                        <Pressable key={`foodItem${foodItem.id}`} onPress={() => { handleFoodSelect(foodItem) }} >
+                        <Pressable onPress={() => { handleFoodSelect(foodItem) }} >
                           <ListItem.Title>
                             <Text style={styles.name} ellipsizeMode={"tail"} numberOfLines={1}>{foodItem.name}</Text>
                           </ListItem.Title>
@@ -139,7 +141,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    backgroundColor: '#F8E8AF',
+    backgroundColor: '#FFFFFF',
     padding: 20,
     margin: 0,
 
@@ -148,6 +150,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // height: 30,
     // backgroundColor: '#EFCA46',
+
     borderWidth: 0,
     borderRadius: 20,
     marginBottom: 20,
@@ -187,14 +190,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginTop: 10,
     marginLeft: 0,
-    marginRight: 10
+    marginRight: 10,
   },
   list: {
     // flexDirection: "row",
     backgroundColor: 'white',
-    borderWidth: 0,
+    // borderWidth: 0,
     // justifyContent: 'space-between',
-    marginTop: 5,
+    marginTop: 15,
     padding: 2,
     marginLeft: 10,
     marginRight: 10,
@@ -204,6 +207,22 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 7,
     borderBottomRightRadius: 7,
     fontSize: 15,
+
+
+    borderWidth: 0,
+    borderRadius: 20,
+    borderColor: '#ddd',
+    borderBottomWidth: 0,
+    shadowColor: '#333',
+    shadowOffset: { width: 5, height: 5 },
+    shadowOpacity: 0.8,
+    shadowRadius: 400,
+    elevation: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'visible',
+    // width: 120,
+    // height: 150
 
   },
   button: {
@@ -218,14 +237,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     fontSize: 1,
-    backgroundColor: '#4dd377',
+    backgroundColor: '#FFD43A',
     width: 50,
     height: 50,
     justifyContent: "center",
-    borderRadius: 50,
+    borderRadius: 15,
     marginTop: 20,
   },
   icon: {
     fontSize: 36
-  }
+  },
+  shadow: {
+    borderWidth: 1,
+    borderRadius: 20,
+    borderColor: '#ddd',
+    borderBottomWidth: 0,
+    shadowColor: '#ccc',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 40,
+    elevation: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    width: 120,
+    height: 150},
+    
 })

@@ -26,33 +26,49 @@ const Drawer = () => {
       <Drawer.Screen name="Kitchen" component={KitchenDetails} options={({ navigation }) => ({
             headerTitle: () => <Text>{`${currentKitchen ? currentKitchen.name : ""}`}</Text>,
             headerStyle: {
-              backgroundColor: '#EFCA46',
+              backgroundColor: '#FFFFFF',
             },
+            drawerActiveBackgroundColor: '#F5F5F5',
+            drawerActiveTintColor: '#1D1D1D',
+            drawerInactiveTintColor: '#1D1D1D',
           })} />
     
     <Drawer.Screen name="Settings" component={KitchenManagement} options={({ navigation }) => ({
         headerTitle: () => <Text>{`${currentKitchen ? currentKitchen.name : ""} Settings`}</Text>,
         headerStyle: {
-          backgroundColor: '#EFCA46',
+          backgroundColor: '#FFFFFF',
         },
+        drawerActiveBackgroundColor: '#F5F5F5',
+        drawerActiveTintColor: '#1D1D1D',
+        drawerInactiveTintColor: '#1D1D1D',
+        
       })} />
       <Drawer.Screen name="Members" component={KitchenMembers} options={({ navigation }) => ({
         headerTitle: () => <Text>{`${currentKitchen ? currentKitchen.name : ""} Members`}</Text>,
         headerStyle: {
-          backgroundColor: '#EFCA46',
+          backgroundColor: '#FFFFFF',
         },
+        drawerActiveBackgroundColor: '#F5F5F5',
+        drawerActiveTintColor: '#1D1D1D',
+        drawerInactiveTintColor: '#1D1D1D',
       })} />
       <Drawer.Screen name="All Kitchens" component={KitchenSelect} options={({ navigation }) => ({
         headerTitle: () => <Text>All Kitchens</Text>,
         headerStyle: {
-          backgroundColor: '#EFCA46',
+          backgroundColor: '#FFFFFF',
         },
+        drawerActiveBackgroundColor: '#F5F5F5',
+        drawerActiveTintColor: '#1D1D1D',
+        drawerInactiveTintColor: '#1D1D1D',
       })} />
       <Drawer.Screen name="Invite" component={KitchenInvite} options={({ navigation }) => ({
         headerTitle: () => <Text>{`Manage ${currentKitchen ? currentKitchen.name : ""}`}</Text>,
         headerStyle: {
-          backgroundColor: '#EFCA46',
+          backgroundColor: '#FFFFFF',
         },
+        drawerActiveBackgroundColor: '#F5F5F5',
+        drawerActiveTintColor: '#1D1D1D',
+        drawerInactiveTintColor: '#1D1D1D',
       })} />
       {/* Drawer Screens here */}
       {/* <Drawer.Screen name="Home" component={Home} />
