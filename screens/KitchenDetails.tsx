@@ -118,14 +118,16 @@ export default function KitchenDetails() {
                       rightContent={(reset) => (
                         <Button
                           title="Delete"
-                          onPress={() => reset()}
+                          onPress={
+                            () => {
+                            reset();
+                            //insert delete logic here
+                          }
+                          }
                           icon={{ name: 'delete', color: 'white' }}
                           buttonStyle={{ height: 75, backgroundColor: 'red', borderRadius: 7, marginTop: 5, marginLeft: 10, marginRight: 20, padding: 2 }}
                         />
                       )}
-                      
-                      // onSwipeEnd={() => handleSwipe(foodItem)}
-                      
                     >
                       <ListItem.Content>
                         <Pressable key={`foodItem${foodItem.id}`} onPress={() => { handleFoodSelect(foodItem) }} >
