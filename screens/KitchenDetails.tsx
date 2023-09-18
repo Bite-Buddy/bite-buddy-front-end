@@ -97,19 +97,37 @@ export default function KitchenDetails() {
                   //Calculate the day offset of te bought day from today
                   const dayOffSet = Math.floor((today.getTime() - foodItem.bought_on.getTime()) / (24 * 60 * 60 * 1000))
                   return (
-                    <ListItem.Swipeable style={styles.list}
-                      leftWidth={ScreenWidth / 2}
+                    <ListItem.Swipeable 
+                      style={styles.list}
                       onTouchStart={handleTouchStart}
                       onPress={() => handleFoodSelect(foodItem)}
                       key={`foodItem${foodItem.id}`}
+                      minSlideWidth={20}
                       leftContent={(reset) => (
                         <Button
                           title="Adding to shopping list"
-                          onPress={() => reset()}
+                           onPress={
+                              () => {
+                                reset();
+                                handleSwipe(foodItem);
+                              }
+                            }
                           buttonStyle={{ height: 75, backgroundColor: '#4dd377', borderRadius: 7, marginTop: 15, marginLeft: 10, marginRight: 20, padding: 4 }}
                         />
                       )}
-                      onSwipeEnd={() => handleSwipe(foodItem)}
+                      rightContent={(reset) => (
+                        <Button
+                          title="Delete"
+                          onPress={
+                            () => {
+                            reset();
+                            //insert delete logic here
+                          }
+                          }
+                          icon={{ name: 'delete', color: 'white' }}
+                          buttonStyle={{ height: 75, backgroundColor: 'red', borderRadius: 7, marginTop: 5, marginLeft: 10, marginRight: 20, padding: 2 }}
+                        />
+                      )}
                     >
                       <ListItem.Content>
                           <ListItem.Title>
@@ -125,8 +143,8 @@ export default function KitchenDetails() {
                             </Text>
                           </ListItem.Subtitle>
                       </ListItem.Content>
+                      <ListItem.Chevron />
                     </ListItem.Swipeable>
-
 
                   );
                 })}

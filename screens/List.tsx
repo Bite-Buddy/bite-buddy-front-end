@@ -66,12 +66,16 @@ export default function List() {
                     rightContent={(reset) => (
                       <Button
                       title="Adding to kitchen"
-                      onPress={() => reset()}
+                      onPress={
+                        () => {
+                          reset();
+                          handleSwipe(foodItem);
+                        }
+                    }
                       buttonStyle={{ height: 70, backgroundColor: '#4dd377', borderRadius: 7, marginTop: 15, marginLeft: 10, marginRight: 20 }}
+
                     />
                     )}
-
-                    onSwipeEnd={() => handleSwipe(foodItem)}
                   >
                     <ListItem.Content>
                       <Pressable key={`foodItem${foodItem.id}`} >
