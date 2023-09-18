@@ -71,7 +71,7 @@ export default function KitchenDetails() {
   }
 
   async function handleSwipe(item: IFood) {
-    if ((Date.now() - touchStartTime) > 500) {
+    if ((Date.now() - touchStartTime) > 200) {
        await handleAddToShopping(item)
     }
   }
@@ -98,18 +98,34 @@ export default function KitchenDetails() {
                   //Calculate the day offset of te bought day from today
                   const dayOffSet = Math.floor((today.getTime() - foodItem.bought_on.getTime()) / (24 * 60 * 60 * 1000))
                   return (
-                    <ListItem.Swipeable style={styles.list}
-                      leftWidth={ScreenWidth / 2}
+                    <ListItem.Swipeable 
+                      style={styles.list}
                       onTouchStart={handleTouchStart}
                       key={`foodItem${foodItem.id}`}
+                      minSlideWidth={20}
                       leftContent={(reset) => (
                         <Button
-                          title="Adding to shopping list"
-                          onPress={() => reset()}
+                          title="Add to shopping list"
+                          onPress={
+                            () => {
+                              reset();
+                              handleSwipe(foodItem);
+                            }
+                          }
                           buttonStyle={{ height: 75, backgroundColor: '#4dd377', borderRadius: 7, marginTop: 5, marginLeft: 10, marginRight: 20, padding: 2 }}
                         />
                       )}
-                      onSwipeEnd={() => handleSwipe(foodItem)}
+                      rightContent={(reset) => (
+                        <Button
+                          title="Delete"
+                          onPress={() => reset()}
+                          icon={{ name: 'delete', color: 'white' }}
+                          buttonStyle={{ height: 75, backgroundColor: 'red', borderRadius: 7, marginTop: 5, marginLeft: 10, marginRight: 20, padding: 2 }}
+                        />
+                      )}
+                      
+                      // onSwipeEnd={() => handleSwipe(foodItem)}
+                      
                     >
                       <ListItem.Content>
                         <Pressable key={`foodItem${foodItem.id}`} onPress={() => { handleFoodSelect(foodItem) }} >
@@ -127,8 +143,8 @@ export default function KitchenDetails() {
                           </ListItem.Subtitle>
                         </Pressable>
                       </ListItem.Content>
+                      <ListItem.Chevron />
                     </ListItem.Swipeable>
-
 
                   );
                 })}
