@@ -75,7 +75,7 @@ export default function ReceivedInvites() {
           <ScrollView refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
           }>  
-          <Text style={styles.heading}>Received Invites</Text>
+          <Text style={styles.header}>Received Invites</Text>
             <View>
               <View>
                 {inviteNames.map(invite => {
@@ -98,10 +98,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    backgroundColor: '#F8E8AF',
+    backgroundColor: '#FFFFFF',
     padding: 20,
     margin: 0,
-
+  },
+  header: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    marginLeft: 10,
   },
   verticallySpaced: {
     flex: 1,
@@ -115,15 +120,6 @@ const styles = StyleSheet.create({
   kitchen: {
     fontSize: 18,
     fontWeight: "bold"
-  },
-  heading: {
-    fontSize: 20,
-    marginTop: 10,
-    marginBottom: 0,
-    flex: 1,
-    fontWeight: 'bold',
-    color: '#1D1D1D',
-    textAlign: 'center',
   },
   name: {
     padding: 2,
