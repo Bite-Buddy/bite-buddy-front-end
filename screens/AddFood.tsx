@@ -181,18 +181,17 @@ export default function AddFood() {
                 <View>
                     {items.map((item: { error: string | string[]; name: any; boughtOn: string | number | Date; showCalendar: any; }, index: number) => {
                         return (
-                            <View style={{ flexDirection: "row" }} key={`addFoodItem${index}`}>
-                                <View style={{ flex: 2, alignContent: "center", alignItems: "stretch" }}>
-                                    <Pressable style={{ alignItems: 'center', marginVertical: 50/**Don't know how to centerize */ }}
-                                        onPress={() => { formatItems("", index, "remove") }}>
-                                        <Text style={{ color: "darkred" }}><MaterialCommunityIcons name='text-box-remove' size={25} /></Text>
-                                        <Text style={{ color: "darkred" }}>remove</Text>
-                                    </Pressable>
-                                </View>
+                            <View key={`addFoodItem${index}`}>
                                 <View style={[
                                     styles.formBox,
                                     { borderWidth: index === focusIndex ? 5 : 1 },
                                     { borderColor: index === focusIndex ? "#FFD43A" : "darkgray" }]}>
+                                    <View>
+                                        <Pressable style={{ alignItems: 'center'/**Don't know how to centerize */ }}
+                                            onPress={() => { formatItems("", index, "remove") }}>
+                                            <Text style={{ color: "darkred" }}><MaterialCommunityIcons name='progress-close' size={25} /></Text>
+                                        </Pressable>
+                                    </View>
                                     <Text style={styles.verticallySpaced}>Name </Text>
                                     {item.error && <Text style={[styles.verticallySpaced, { color: item.error.includes("success") ? "green" : "#FD5D5D" }]}>{item.error}</Text>}
                                     <View style={styles.namefield}>
@@ -214,7 +213,7 @@ export default function AddFood() {
                                                     setFocusIndex(index)
                                                     setUseScanner(index === focusIndex ? !useScanner : true)
                                                 }}>
-                                                <Text style={{ color: focusIndex === index && useScanner ? "gray" : "#1D1D1D" }}><MaterialCommunityIcons name='barcode-scan' size={25} /></Text>
+                                                <Text style={{ color: focusIndex === index && useScanner ? "gray" : "#1D1D1D" }}><MaterialCommunityIcons name='barcode-scan' size={30} /></Text>
                                                 <Text style={{ color: focusIndex === index && useScanner ? "gray" : "#1D1D1D" }}>
                                                     {focusIndex === index && useScanner ? "stop" : "scan"}</Text>
                                             </Pressable>
@@ -290,7 +289,6 @@ const styles = StyleSheet.create({
         alignSelf: "stretch",
     },
     formBox: {
-        flex: 8,
         margin: 10,
         paddingHorizontal: 20,
         paddingVertical: 10,
