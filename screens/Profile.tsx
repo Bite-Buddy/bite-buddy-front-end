@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 180
+    marginTop: 80
   },
   modalWindow: {
     flex: 1,
