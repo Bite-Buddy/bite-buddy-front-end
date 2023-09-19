@@ -244,7 +244,7 @@ export default function AddFood() {
             < View style={styles.block4_buttonBlock} >
                 <View style={styles.buttons}>
                     <Pressable style={styles.button} onPress={handleSubmit} >
-                        <Text style={[styles.buttonText, { maxWidth: 200 }]} ellipsizeMode="tail" numberOfLines={1}>Add All to {currentKitchen?.name}</Text>
+                        <Text style={[styles.buttonText, { maxWidth: 200 }]} ellipsizeMode="tail" numberOfLines={1}>Add all to {currentKitchen?.name}</Text>
                     </Pressable>
                     <Pressable style={[styles.button, { backgroundColor: "lightgray" }]}
                         onPress={() => navigation.navigate('Kitchen')} >
