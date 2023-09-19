@@ -26,13 +26,6 @@ How to run the program
 * Run the program in vs code with ```npm start```.
 * Let the program bundle and then scan the QR code in your console using an android device.
 
-## Help
-
-Any advise for common problems or issues.
-```
-command to run if program contains helper info
-```
-
 ## Authors
 
 [Daniel Price](https://github.com/Pricey-93)
