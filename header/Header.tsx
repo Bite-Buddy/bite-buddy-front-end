@@ -34,7 +34,7 @@ export default function Header() {
         }
  
       }}>
-      <Text style={styles.text}><MaterialCommunityIcons name="fridge-outline" size={30} color="black" /></Text>
+      <Text style={styles.text}><MaterialCommunityIcons name="fridge-outline" size={30} color="#1D1D1D" /></Text>
       </Pressable>
       <Pressable style={styles.button} title="List"onPress={() => {       
         if (currentKitchen) {
@@ -53,10 +53,10 @@ export default function Header() {
         }
  
       }}>
-      <Text style={styles.text}><FontAwesome5 name="list-alt" size={24} color="black" /></Text>
+      <Text style={styles.text}><FontAwesome5 name="list-alt" size={24} color="#1D1D1D" /></Text>
       </Pressable>
       <Pressable style={styles.button} title="Profile" onPress={() => navigate('Profile')}>
-      <Text style={styles.text}><Ionicons name="person-circle" size={33} color="black" /></Text>
+      <Text style={styles.text}><Ionicons name="person-circle" size={33} color="#1D1D1D" /></Text>
       </Pressable>
     </View>
   )
