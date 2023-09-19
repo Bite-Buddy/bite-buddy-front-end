@@ -9,6 +9,13 @@ Bite Buddy is a kitchen management application aimed at reducing food waste and 
 * Users can add food items to their kitchen by scanning a barcode or via manual data entry.
 * Users can swipe food from their kitchen into their shopping list and vice versa.
 
+![Screenshot_20230919-151623](https://github.com/Bite-Buddy/bite-buddy-front-end/assets/56130851/ae398994-762b-4a68-ad42-1f31c27c3f5c)
+![Screenshot_20230919-151612](https://github.com/Bite-Buddy/bite-buddy-front-end/assets/56130851/fbcce8eb-ea90-4350-a7fe-7782db4122b1)
+![Screenshot_20230919-151604](https://github.com/Bite-Buddy/bite-buddy-front-end/assets/56130851/01c6e2a3-29f7-4c7e-af05-9bae6df2c42b)
+![Screenshot_20230919-151309](https://github.com/Bite-Buddy/bite-buddy-front-end/assets/56130851/b545a75b-0ea9-4a15-ab77-dd7135ff9f57)
+![Screenshot_20230919-151253](https://github.com/Bite-Buddy/bite-buddy-front-end/assets/56130851/7b611a83-e699-4d49-aa15-d6a5c94ef3cb)
+![Screenshot_20230919-150652](https://github.com/Bite-Buddy/bite-buddy-front-end/assets/56130851/13b3c57e-22ad-4c04-b2ad-d1c0aa5c5385)
+
 ## Getting Started
 
 ### Dependencies
