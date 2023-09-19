@@ -20,6 +20,7 @@ Bite Buddy is a kitchen management application aimed at reducing food waste and 
 
 ### Dependencies
 
+This application is built using React Native with Expo.
 In order to clone this repo and run it on your own device, you will need to have android studio installed on your pc.
 
 ### Installing
