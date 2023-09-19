@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, View, ScrollView, Pressable, RefreshControl } from "react-native";
+import { StyleSheet, View, ScrollView, Pressable, RefreshControl, Modal } from "react-native";
 import { Button, Text } from "react-native-elements";
 import { ListItem } from '@rneui/themed';
 import { ScreenWidth } from "react-native-elements/dist/helpers";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { IFood } from "../utilities/interfaces";
-import { getKitchenByID, updateFoodById } from "../utilities/fetchRequests";
+import { deleteFoodById, getKitchenByID, updateFoodById } from "../utilities/fetchRequests";
 import { currentKitchenAtom, currentFoodListAtom, currentFoodItemAtom } from "../utilities/store/atoms";
 import { useAtomValue, useAtom } from 'jotai'
 
@@ -19,7 +19,9 @@ export default function KitchenDetails() {
   const [currentFoodList, setCurrentFoodList] = useAtom(currentFoodListAtom)
   const [refreshing, setRefreshing] = useState(false);
   const [inStock, setinStock] = useState(true)
-  const [touchStartTime, setTouchStartTime] = useState(0)
+  const [touchStartTime, setTouchStartTime] = useState(0);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+
 
   useEffect(() => {
     fetchFoodList();
@@ -60,7 +62,25 @@ export default function KitchenDetails() {
     }
     setCurrentFoodList(foodListClone)
     setCurrentFoodItem(null)
+  }
 
+  async function handleDelete(selectedFood: IFood) {
+    if (!selectedFood) return;
+    const response = await deleteFoodById(selectedFood.id)
+    let foodListClone: IFood[] = JSON.parse(JSON.stringify(currentFoodList))
+    foodListClone = foodListClone.map(food => {
+      return { ...food, inStock: food.inStock, bought_on: new Date(food.bought_on), updated_on: new Date(food.updated_on) }
+    }).filter((food) => { return food.id !== selectedFood.id })
+
+    // let target = foodListClone.find(food => food.id === selectedFood.id)
+    // if (target) {
+    //   target.inStock = response.foodResponse.inStock
+    //   target.name = response.foodResponse.name
+    //   target.bought_on = new Date(response.foodResponse.bought_on)
+    // }
+    setModalVisible(false);
+    setCurrentFoodList(foodListClone)
+    setCurrentFoodItem(null)
   }
 
   function handleTouchStart() {
@@ -68,21 +88,43 @@ export default function KitchenDetails() {
   }
 
   async function handleSwipe(item: IFood) {
-    if ((Date.now() - touchStartTime) > 200) {
-       await handleAddToShopping(item)
-    }
+    await handleAddToShopping(item)
+  }
+
+  async function handleDeleteSwipe(item: IFood) {
+    await handleDelete(item)
   }
 
   async function handleRefresh() {
-      setRefreshing(true)
-      await fetchFoodList();
-    }
+    setRefreshing(true)
+    await fetchFoodList();
+  }
 
   return (
     <View style={styles.container}>
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(!modalVisible)}>
+        <View style={styles.modalWindow}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalHeadline}>{`${currentFoodItem?.name} will be deleted!`}</Text>
+            <Text style={styles.modalText}>Are you sure you want to delete this item?</Text>
+            <View style={styles.modalButtons}>
+              <Pressable style={[styles.modalButton, { backgroundColor: "gray" }]} onPress={() => { setModalVisible(false) }}>
+                <Text style={[styles.modalButtonText, { color: "white" }]}>
+                  Cancel</Text></Pressable>
+              <Pressable style={[styles.modalButton, { backgroundColor: "#FD5D5D" }]} onPress={() => { handleDeleteSwipe(currentFoodItem) }}>
+                <Text style={[styles.modalButtonText, { color: "white" }]}>
+                  Delete</Text></Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal >
       <ScrollView refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-          }>
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }>
         <View>
           <View>
           </View>
@@ -97,7 +139,7 @@ export default function KitchenDetails() {
                   //Calculate the day offset of te bought day from today
                   const dayOffSet = Math.floor((today.getTime() - foodItem.bought_on.getTime()) / (24 * 60 * 60 * 1000))
                   return (
-                    <ListItem.Swipeable 
+                    <ListItem.Swipeable
                       style={styles.list}
                       onTouchStart={handleTouchStart}
                       onPress={() => handleFoodSelect(foodItem)}
@@ -105,12 +147,12 @@ export default function KitchenDetails() {
                       leftContent={(reset) => (
                         <Button
                           title="Add to shopping list"
-                           onPress={
-                              () => {
-                                reset();
-                                handleSwipe(foodItem);
-                              }
+                          onPress={
+                            () => {
+                              reset();
+                              handleSwipe(foodItem);
                             }
+                          }
                           buttonStyle={{ height: 75, backgroundColor: '#4dd377', borderRadius: 7, marginTop: 15, marginLeft: 10, marginRight: 20, padding: 4, paddingHorizontal: 10, width: 120 }}
                         />
                       )}
@@ -119,9 +161,10 @@ export default function KitchenDetails() {
                           title="Delete"
                           onPress={
                             () => {
-                            reset();
-                            //insert delete logic here
-                          }
+                              reset();
+                              setCurrentFoodItem(foodItem)
+                              setModalVisible(true)
+                            }
                           }
                           icon={{ name: 'delete', color: 'white' }}
                           buttonStyle={{ height: 75, backgroundColor: '#FD5D5D', borderRadius: 7, marginTop: 15, marginLeft: 10, marginRight: 20, padding: 2 }}
@@ -129,18 +172,18 @@ export default function KitchenDetails() {
                       )}
                     >
                       <ListItem.Content>
-                          <ListItem.Title>
-                            <Text style={styles.name} ellipsizeMode={"tail"} numberOfLines={1}>{foodItem.name}</Text>
-                          </ListItem.Title>
-                          <ListItem.Subtitle>
-                            <Text style={styles.date}>
-                              Added {dayOffSet === 0
-                                ? "today"
-                                : dayOffSet === 1
-                                  ? "yesterday"
-                                  : `${dayOffSet} days ago`}
-                            </Text>
-                          </ListItem.Subtitle>
+                        <ListItem.Title>
+                          <Text style={styles.name} ellipsizeMode={"tail"} numberOfLines={1}>{foodItem.name}</Text>
+                        </ListItem.Title>
+                        <ListItem.Subtitle>
+                          <Text style={styles.date}>
+                            Added {dayOffSet === 0
+                              ? "today"
+                              : dayOffSet === 1
+                                ? "yesterday"
+                                : `${dayOffSet} days ago`}
+                          </Text>
+                        </ListItem.Subtitle>
                       </ListItem.Content>
                     </ListItem.Swipeable>
 
@@ -233,8 +276,6 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 7,
     borderBottomRightRadius: 7,
     fontSize: 15,
-
-
     borderWidth: 0,
     borderRadius: 20,
     borderColor: '#ddd',
@@ -249,14 +290,12 @@ const styles = StyleSheet.create({
     overflow: 'visible',
     // width: 120,
     // height: 150
-
   },
   button: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 8,
-
   },
   button2: {
     display: 'flex',
@@ -287,6 +326,57 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
     width: 120,
-    height: 150},
-    
+    height: 150
+  },
+  modalWindow: {
+    flex: 1,
+    justifyContent: "center",
+    alignContent: "center",
+    marginTop: 20,
+  },
+  modalView: {
+    margin: 30,
+    backgroundColor: '#ddd',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 1,
+      height: 2,
+    },
+  },
+  modalHeadline: {
+    margin: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    margin: 10,
+    marginBottom: 20,
+    fontSize: 17,
+    textAlign: "center",
+  },
+  modalButtons: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    margin: 20,
+  },
+  modalButton: {
+    marginHorizontal: 20,
+    paddingHorizontal: 15,
+    backgroundColor: '#FFD43A',
+    height: 40,
+    borderRadius: 4,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 5,
+  },
+  modalButtonText: {
+    fontWeight: "bold",
+    textAlignVertical: "center"
+  },
 })
