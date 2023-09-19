@@ -21,11 +21,10 @@ You will be able to install the app on to your android device via the google pla
 
 ### Executing program
 
-* How to run the program
-* Step-by-step bullets
-```
-code blocks for commands
-```
+How to run the program
+* Install android studio.
+* Run the program in vs code with ```npm start```.
+* Let the program bundle and then scan the QR code in your console using an android device.
 
 ## Help
 
