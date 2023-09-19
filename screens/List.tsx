@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react'
 import { currentFoodItemAtom, currentFoodListAtom } from "../utilities/store/atoms";
 import { deleteFoodById, updateFoodById } from "../utilities/fetchRequests"
 import { IFood } from "../utilities/interfaces";
-import { AntDesign } from '@expo/vector-icons'; 
+import { AntDesign } from '@expo/vector-icons';
 import { ListItem } from "@rneui/themed";
 import { ScreenWidth } from "react-native-elements/dist/helpers";
 
@@ -21,20 +21,20 @@ export default function List() {
   const [boughtOn, setBoughtOn] = useState(new Date())
   const [loading, setLoading] = useState(false)
   const [touchStartTime, setTouchStartTime] = useState(0)
-  
+
   async function handleAddToKitchen(selectedFood) {
     if (!selectedFood) return;
-    const response = await updateFoodById(selectedFood.id, {inStock: true})
+    const response = await updateFoodById(selectedFood.id, { inStock: true })
     let foodListClone: IFood[] = JSON.parse(JSON.stringify(currentFoodList))
     foodListClone = foodListClone.map(food => {
-      return  {...food, inStock: food.inStock, bought_on: new Date(food.bought_on), updated_on: new Date(food.updated_on)}
+      return { ...food, inStock: food.inStock, bought_on: new Date(food.bought_on), updated_on: new Date(food.updated_on) }
     })
     let target = foodListClone.find(food => food.id === selectedFood.id)
     if (target) {
       target.inStock = response.foodResponse.inStock
       target.name = response.foodResponse.name
-      target.bought_on = new Date(response.foodResponse.bought_on)
-    } 
+      target.bought_on = new Date()
+    }
     setCurrentFoodList(foodListClone)
     setCurrentFoodItem(null)
   }
@@ -45,7 +45,7 @@ export default function List() {
 
   async function handleSwipe(item: IFood) {
     if ((Date.now() - touchStartTime) > 200) {
-       await handleAddToKitchen(item)
+      await handleAddToKitchen(item)
     }
   }
 
@@ -53,49 +53,49 @@ export default function List() {
     <View style={styles.container}>
       <Text style={styles.header}>Shopping List</Text>
       <ScrollView>
-      <View style={styles.verticallySpaced}>
-
         <View style={styles.verticallySpaced}>
+
+          <View style={styles.verticallySpaced}>
             {!currentFoodList.filter(food => food.inStock === false).length ? <Text style={styles.noItem}>The shopping list is empty</Text>
               : currentFoodList.filter((foodItem) => foodItem.inStock === false).map((foodItem) => {
                 return (
                   <ListItem.Swipeable style={styles.list}
-                    rightWidth={ScreenWidth/2}
+                    rightWidth={ScreenWidth / 2}
                     onTouchStart={handleTouchStart}
                     key={`shoppingListItem${foodItem.id}`}
                     rightContent={(reset) => (
                       <Button
-                      title="Add to kitchen"
-                      onPress={
-                        () => {
-                          reset();
-                          handleSwipe(foodItem);
+                        title="Add to kitchen"
+                        onPress={
+                          () => {
+                            reset();
+                            handleSwipe(foodItem);
+                          }
                         }
-                    }
-                      buttonStyle={{ height: 70, backgroundColor: '#4dd377', borderRadius: 7, marginTop: 15, marginLeft: 10, marginRight: 20 }}
+                        buttonStyle={{ height: 70, backgroundColor: '#4dd377', borderRadius: 7, marginTop: 15, marginLeft: 10, marginRight: 20 }}
 
-                    />
+                      />
                     )}
                   >
                     <ListItem.Content>
                       <Pressable key={`foodItem${foodItem.id}`} >
-                      <ListItem.Title style={styles.name}>{foodItem.name}</ListItem.Title>
-                    </Pressable>
+                        <ListItem.Title style={styles.name}>{foodItem.name}</ListItem.Title>
+                      </Pressable>
                     </ListItem.Content>
                   </ListItem.Swipeable>
-                  
-                 
+
+
                 );
-              })}              
+              })}
           </View>
-      </View>
+        </View>
       </ScrollView>
     </View>
   )
- }
+}
 
 
- const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
@@ -155,7 +155,7 @@ export default function List() {
   list: {
     // flexDirection: "row",
     backgroundColor: 'white',
-    
+
     borderWidth: 0,
     // justifyContent: 'space-between',
     marginTop: 15,
