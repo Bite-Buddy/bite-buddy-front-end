@@ -35,8 +35,6 @@ command to run if program contains helper info
 
 ## Authors
 
-Contributors names and contact info
-
 [Daniel Price](https://github.com/Pricey-93)
 
 [Kingshuk Roy](https://github.com/KingshukR)
