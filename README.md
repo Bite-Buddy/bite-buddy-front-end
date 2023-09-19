@@ -4,10 +4,10 @@ Bite Buddy is a kitchen management application aimed at reducing food waste and 
 
 ## Description
 
-Users can make an account through google Oauth authentication system.
-Users can create a kitchen or join another person's kitchen.
-Users can add food items to their kitchen by scanning a barcode or via manual data entry.
-Users can swipe food from their kitchen into their shopping list and vice versa.
+* Users can make an account through google Oauth authentication system.
+* Users can create a kitchen or join another person's kitchen.
+* Users can add food items to their kitchen by scanning a barcode or via manual data entry.
+* Users can swipe food from their kitchen into their shopping list and vice versa.
 
 ## Getting Started
 
