@@ -38,17 +38,13 @@ command to run if program contains helper info
 
 Contributors names and contact info
 
-Daniel Price  
-[](https://github.com/Pricey-93)
+[Daniel Price](https://github.com/Pricey-93)
 
-Kingshuk Roy
-[](https://github.com/KingshukR)
+[Kingshuk Roy](https://github.com/KingshukR)
 
-Emi Hokama Eckstein
-[](https://github.com/Emi-HE)
+[Emi Hokama Eckstein](https://github.com/Emi-HE)
 
-Izabela Kucharska
-[](https://github.com/izabelakucharska)
+[Izabela Kucharska](https://github.com/izabelakucharska)
 
 ## Version History
 
