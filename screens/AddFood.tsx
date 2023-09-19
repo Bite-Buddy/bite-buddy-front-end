@@ -141,7 +141,7 @@ export default function AddFood() {
         <View style={styles.root}>
             {/**Block 1 */}
             <View style={[styles.block1_headline]}>
-                <Text style={styles.headlineText}>Add New Food Item(s)</Text>
+                <Text style={styles.headlineText}>Add New Item(s)</Text>
             </View>
             {/**Block 2 */}
             {/* {!useScanner && <Text style={[styles.headlineText, { marginVertical: 10, color: "green" }]}>
@@ -174,7 +174,7 @@ export default function AddFood() {
                         style={[styles.button, { backgroundColor: "#FFD43A" }]}
                         onPress={() => { setItems([blankItem, ...items]) }} >
                         <Text style={[styles.buttonText, { color: "#1D1D1D" }]}>
-                            Add Another Food Item</Text>
+                            Insert Another Item</Text>
                     </Pressable>}
             </View>
             <ScrollView style={styles.scrollBlok}>
@@ -216,7 +216,7 @@ export default function AddFood() {
                                                 }}>
                                                 <Text style={{ color: focusIndex === index && useScanner ? "gray" : "#1D1D1D" }}><MaterialCommunityIcons name='barcode-scan' size={25} /></Text>
                                                 <Text style={{ color: focusIndex === index && useScanner ? "gray" : "#1D1D1D" }}>
-                                                    {focusIndex === index && useScanner ? "disable" : "scan"}</Text>
+                                                    {focusIndex === index && useScanner ? "stop" : "scan"}</Text>
                                             </Pressable>
                                         </View>
                                     </View>
