@@ -17,7 +17,7 @@ In order to clone this repo and run it on your own device, you will need to have
 
 ### Installing
 
-You will be able to install the app on to your android device via the google play store.
+If you want to use the application you will be able to install it on your android device via the google play store.
 
 ### Executing program
 
